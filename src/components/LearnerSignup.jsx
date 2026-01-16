@@ -47,7 +47,12 @@ export default function LearnerSignup({ onNavigate }) {
         isDark ? 'bg-black/80 border-gray-800' : 'bg-white/80 border-gray-200'
       }`}>
         <nav className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
-          <div className="text-2xl font-bold">hobski</div>
+          <button 
+            onClick={() => onNavigate('landing')}
+            className="text-2xl font-bold hover:opacity-80 transition-opacity"
+          >
+            hobski
+          </button>
           <div className="flex gap-6 items-center">
             <button 
               onClick={() => setTheme(isDark ? 'light' : 'dark')}

@@ -12,7 +12,12 @@ export default function About({ onNavigate, theme, setTheme }) {
         isDark ? 'bg-black/80 border-gray-800' : 'bg-white/80 border-gray-200'
       }`}>
         <nav className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
-          <div className="text-4xl font-bold">hobski</div>
+          <button 
+            onClick={() => onNavigate('landing')}
+            className="text-4xl font-bold hover:opacity-80 transition-opacity"
+          >
+            hobski
+          </button>
           <div className="flex gap-4 items-center">
             <button 
               onClick={() => setTheme(isDark ? 'light' : 'dark')}
@@ -48,7 +53,7 @@ export default function About({ onNavigate, theme, setTheme }) {
             <p className={`text-lg leading-relaxed ${
               isDark ? 'text-gray-300' : 'text-gray-700'
             }`}>
-              Hi, we're Tala and Fares Habbab, the sibling founders of hobski! This all started when we each ran into obstacles with our hobbies. At roughly the same time, Tala wished she knew someone who could help her with her sewing project that she'd been stuck on for months, while Fares was having trouble reaching students interested in learning Muay Thai. We found ourselves wishing for a platform where people could connect and help each other grow their interests.
+              Hi, we're Tala and Fares Habbab, the sibling founders of hobski! This all started when we each ran into obstacles with our hobbies. At roughly the same time, Tala wished she knew someone who could help her with her sewing project that she'd been stuck on for months, while Fares was having trouble reaching students interested in learning Muay Thai. We found ourselves wishing for a platform where peers could connect and help each other grow their interests.
             </p>
 
             <p className={`text-lg leading-relaxed ${
