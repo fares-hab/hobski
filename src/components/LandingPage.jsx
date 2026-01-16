@@ -20,7 +20,7 @@ export default function HobskiLanding() {
         isDark ? 'bg-black/80 border-gray-800' : 'bg-white/80 border-gray-200'
       }`}>
         <nav className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
-          <div className="text-2xl font-bold">hobski</div>
+          <div className="text-4xl font-bold">hobski</div>
           <div className="flex gap-6 items-center">
             <button 
               onClick={() => setTheme(isDark ? 'light' : 'dark')}
@@ -61,7 +61,7 @@ export default function HobskiLanding() {
       {/* Hero Section */}
       <section className="pt-32 pb-20 px-6 text-center">
         <div className="max-w-5xl mx-auto">
-          <h1 className="text-6xl md:text-7xl font-bold mb-6 leading-tight">
+          <h1 className="text-6xl md:text-5xl font-bold mb-6 leading-tight">
             Find your mentor.<br />
             Master your hobby.<br />
             Bring your projects to life.
