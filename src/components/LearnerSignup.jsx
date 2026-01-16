@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Sun, Moon, ChevronLeft } from 'lucide-react';
 
-export default function LearnerSignup() {
+export default function LearnerSignup({ onNavigate }) {
   const [theme, setTheme] = useState('light');
   const [currentPage, setCurrentPage] = useState(1);
   const [formData, setFormData] = useState({
@@ -64,7 +64,9 @@ export default function LearnerSignup() {
               <ChevronLeft className="w-4 h-4" />
               Home
             </button>
-            <button className={`px-6 py-2 transition-colors ${
+            <button 
+            onClick={() => onNavigate('landing')}
+            className={`px-6 py-2 transition-colors ${
               isDark ? 'text-white hover:text-gray-300' : 'text-black hover:text-gray-600'
             }`}>
               About

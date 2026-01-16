@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { ChevronDown, Sun, Moon } from 'lucide-react';
 
-export default function HobskiLanding() {
+export default function HobskiLanding({ onNavigate }) {
   const [activeTab, setActiveTab] = useState('learner');
   const [theme, setTheme] = useState('dark');
 
@@ -169,7 +169,9 @@ export default function HobskiLanding() {
 
           <div className="flex gap-8 justify-center items-stretch">
             {/* As a Learner Card */}
-            <button className={`group rounded-2xl p-8 text-left transition-all hover:scale-105 transform w-full max-w-md border-2 ${
+            <button 
+            onClick={() => onNavigate('learner-signup')}
+            className={`group rounded-2xl p-8 text-left transition-all hover:scale-105 transform w-full max-w-md border-2 ${
               isDark 
                 ? 'bg-black border-gray-700 hover:border-white' 
                 : 'bg-white border-gray-300 hover:border-black'
@@ -190,7 +192,9 @@ export default function HobskiLanding() {
             </button>
 
             {/* As a Mentor Card */}
-            <button className={`group rounded-2xl p-8 text-left transition-all hover:scale-105 transform w-full max-w-md border-2 ${
+            <button 
+            onClick={() => onNavigate('mentor-signup')}
+            className={`group rounded-2xl p-8 text-left transition-all hover:scale-105 transform w-full max-w-md border-2 ${
               isDark 
                 ? 'bg-black border-gray-700 hover:border-white' 
                 : 'bg-white border-gray-300 hover:border-black'
