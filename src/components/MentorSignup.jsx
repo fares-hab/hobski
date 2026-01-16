@@ -58,14 +58,16 @@ export default function MentorSignup({ onNavigate }) {
             >
               {isDark ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
             </button>
-            <button className={`flex items-center gap-2 px-6 py-2 transition-colors ${
+            <button 
+            onClick={() => onNavigate('landing')}
+            className={`flex items-center gap-2 px-6 py-2 transition-colors ${
               isDark ? 'text-white hover:text-gray-300' : 'text-black hover:text-gray-600'
             }`}>
               <ChevronLeft className="w-4 h-4" />
               Home
             </button>
             <button 
-            onClick={() => onNavigate('landing')}
+            
             className={`px-6 py-2 transition-colors ${
               isDark ? 'text-white hover:text-gray-300' : 'text-black hover:text-gray-600'
             }`}>
