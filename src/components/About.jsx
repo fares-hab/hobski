@@ -8,8 +8,8 @@ export default function About({ onNavigate, theme, setTheme }) {
       isDark ? 'bg-black text-white' : 'bg-white text-black'
     }`}>
       {/* Header */}
-      <header className={`border-b transition-colors ${
-        isDark ? 'border-gray-800' : 'border-gray-200'
+      <header className={`fixed top-0 left-0 right-0 z-50 backdrop-blur-sm border-b transition-colors ${
+        isDark ? 'bg-black/80 border-gray-800' : 'bg-white/80 border-gray-200'
       }`}>
         <nav className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
           <div className="text-4xl font-bold">hobski</div>
@@ -37,7 +37,7 @@ export default function About({ onNavigate, theme, setTheme }) {
       </header>
 
       {/* Main Content */}
-      <main className="max-w-6xl mx-auto px-6 py-16">
+      <main className="max-w-6xl mx-auto px-6 py-16 pt-32">
         <h1 className="text-5xl md:text-6xl font-bold mb-12">
           Who are we?
         </h1>
