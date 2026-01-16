@@ -1,9 +1,8 @@
 import { useState } from 'react';
 import { ChevronDown, Sun, Moon } from 'lucide-react';
 
-export default function HobskiLanding({ onNavigate }) {
+export default function HobskiLanding({ onNavigate, theme, setTheme }) {
   const [activeTab, setActiveTab] = useState('learner');
-  const [theme, setTheme] = useState('dark');
 
   const scrollToSection = (id) => {
     document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
@@ -41,7 +40,9 @@ export default function HobskiLanding({ onNavigate }) {
             >
               Join
             </button>
-            <button className={`px-6 py-2 transition-colors ${
+            <button 
+              onClick={() => onNavigate('about')}
+              className={`px-6 py-2 transition-colors ${
               isDark ? 'text-white hover:text-gray-300' : 'text-black hover:text-gray-600'
             }`}>
               About
