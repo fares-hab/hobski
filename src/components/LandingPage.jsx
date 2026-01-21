@@ -1,8 +1,22 @@
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { ChevronDown, Sun, Moon } from 'lucide-react';
+import { motion } from 'framer-motion';
+import gsap from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
+
+gsap.registerPlugin(ScrollTrigger);
 
 export default function HobskiLanding({ onNavigate, theme, setTheme }) {
   const [activeTab, setActiveTab] = useState('learner');
+  const [isMobile, setIsMobile] = useState(false);
+  
+  // Detect mobile viewport
+  useEffect(() => {
+    const checkMobile = () => setIsMobile(window.innerWidth < 768);
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
 
   const scrollToSection = (id) => {
     document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
@@ -11,9 +25,11 @@ export default function HobskiLanding({ onNavigate, theme, setTheme }) {
   const isDark = theme === 'dark';
 
   return (
-    <div className={`min-h-screen font-['Inter',sans-serif] transition-colors ${
-      isDark ? 'bg-black text-white' : 'bg-white text-black'
-    }`}>
+    <div 
+      className={`min-h-screen font-['Inter',sans-serif] transition-colors ${
+        isDark ? 'bg-black text-white' : 'bg-white text-black'
+      }`}
+    >
       {/* Header */}
       <header className={`fixed top-0 left-0 right-0 z-50 backdrop-blur-sm border-b transition-colors ${
         isDark ? 'bg-black/80 border-gray-800' : 'bg-white/80 border-gray-200'
@@ -64,28 +80,21 @@ export default function HobskiLanding({ onNavigate, theme, setTheme }) {
         </nav>
       </header>
 
-      {/* Hero Section */}
-      <section className="pt-32 pb-20 px-6 text-center">
-        <div className="max-w-5xl mx-auto">
-          <h1 className="text-6xl md:text-5xl font-bold mb-6 leading-tight">
-            Find your mentor.<br />
-            Master your hobby.<br />
-            Bring your projects to life.
-          </h1>
-          <button 
-            onClick={() => scrollToSection('how-it-works')}
-            className={`inline-flex items-center gap-2 transition-colors mt-8 group ${
-              isDark ? 'text-gray-400 hover:text-white' : 'text-gray-600 hover:text-black'
-            }`}
-          >
-            Keep scrolling
-            <ChevronDown className="w-5 h-5 group-hover:translate-y-1 transition-transform" />
-          </button>
-        </div>
-      </section>
+      {/* Hero Section with GSAP ScrollTrigger */}
+      {isMobile ? (
+        <MobileHeroSection isDark={isDark} scrollToSection={scrollToSection} />
+      ) : (
+        <GSAPHeroSection 
+          isDark={isDark} 
+          scrollToSection={scrollToSection}
+        />
+      )}
 
       {/* How Does It Work Section */}
-      <section id="how-it-works" className="py-20 px-6">
+      <section 
+        id="how-it-works" 
+        className="py-20 px-6"
+      >
         <div className="max-w-6xl mx-auto">
           <h2 className="text-5xl md:text-6xl font-bold mb-12">
             How does it work?
@@ -323,6 +332,279 @@ export default function HobskiLanding({ onNavigate, theme, setTheme }) {
           © 2024 hobski. All rights reserved.
         </div>
       </footer>
+    </div>
+  );
+}
+
+// GSAP Hero Section - Horizontal scroll through illustrations
+function GSAPHeroSection({ isDark, scrollToSection }) {
+  const containerRef = useRef(null);
+  const [progress, setProgress] = useState(0);
+  
+  const illustrations = [
+    { text: '/images/DreamIt.png', art: '/images/DreamItArt.png', id: 'dream' },
+    { text: '/images/LearnIt.png', art: '/images/LearnItArt.png', id: 'learn' },
+    { text: '/images/DoIt.png', art: '/images/DoItArt.png', id: 'do' }
+  ];
+
+  useEffect(() => {
+    const container = containerRef.current;
+    if (!container) return;
+
+    // Get all elements
+    const elements = illustrations.map((_, index) => ({
+      text: container.querySelector(`#text-${index}`),
+      art: container.querySelector(`#art-${index}`)
+    }));
+
+    // Set ALL initial positions BEFORE creating timeline
+    elements.forEach((el, index) => {
+      if (!el.text || !el.art) return;
+
+      if (index === 0) {
+        // First illustration: visible in center
+        gsap.set([el.text, el.art], { x: 0, opacity: 1 });
+      } else {
+        // Others: offscreen right
+        gsap.set([el.text, el.art], { x: window.innerWidth * 1.2, opacity: 0 });
+      }
+    });
+
+    // Create timeline
+    // SCROLL DISTANCE ADJUSTMENT:
+    // Change the 'end' value to adjust how much scrolling is needed:
+    // - '+=200%' = faster transitions (2x viewport height)
+    // - '+=300%' = current speed (3x viewport height) 
+    // - '+=400%' = slower transitions (4x viewport height)
+    // - '+=500%' = very slow transitions (5x viewport height)
+    const mainTimeline = gsap.timeline({
+      scrollTrigger: {
+        trigger: container,
+        start: 'top top',
+        end: '+=300%', // <-- CHANGE THIS VALUE to adjust scroll distance
+        scrub: 1,
+        pin: true,
+        anticipatePin: 1,
+        onUpdate: (self) => {
+          setProgress(self.progress);
+        }
+      }
+    });
+
+    // Add animations for each transition
+    // IMMEDIATE RESPONSIVENESS: Transitions start right at 0.0
+    // 0.0 - 0.35: Transition 1→2 (starts immediately)
+    // 0.35 - 0.40: Illustration 2 visible briefly
+    // 0.40 - 0.75: Transition 2→3
+    // 0.75 - 1.0: Illustration 3 visible
+    
+    illustrations.forEach((_, index) => {
+      if (index === illustrations.length - 1) return; // Skip last (no transition after it)
+
+      const current = elements[index];
+      const next = elements[index + 1];
+      
+      if (!current.text || !current.art || !next.text || !next.art) return;
+
+      // Transitions start immediately with no delay
+      const transitionDuration = 0.35; // Each transition takes 35% of timeline
+      const pauseDuration = 0.05; // Brief pause between transitions
+      
+      const transitionStart = index * (transitionDuration + pauseDuration);
+      
+      // Current illustration exits left
+      mainTimeline.to([current.text, current.art], {
+        x: -window.innerWidth,
+        opacity: 0,
+        ease: 'power2.inOut',
+        duration: transitionDuration
+      }, transitionStart);
+
+      // Next illustration ART enters from right FIRST
+      mainTimeline.to(next.art, {
+        x: 0,
+        opacity: 1,
+        ease: 'power2.inOut',
+        duration: transitionDuration
+      }, transitionStart);
+
+      // Next illustration TEXT enters from right (slightly delayed for parallax)
+      // TEXT POSITION ADJUSTMENT:
+      // - For illustrations 1 & 2 (index 0, 1): text stops at 15% from left
+      // - For illustration 3 (index 2): text stops at -10% (slightly left of center)
+      // Adjust these multipliers to move text left/right:
+      //   Positive values = text stays right, Negative values = text goes left
+      const textFinalX = index === 1 ? window.innerWidth * 0.02 : window.innerWidth * 0.15;
+      
+      mainTimeline.to(next.text, {
+        x: textFinalX, // Position based on which illustration
+        opacity: 1,
+        ease: 'power2.inOut',
+        duration: transitionDuration
+      }, transitionStart + 0.05); // Art enters first, then text follows
+    });
+
+    // Add minimal dead-scroll buffer at the end (illustration 3 stays visible)
+    // This prevents abrupt transition to next section
+    // Adjust the duration value to change buffer length:
+    //   0.10 = very minimal buffer
+    //   0.15 = current setting (moderate buffer)
+    //   0.20 = more buffer
+    mainTimeline.to({}, { duration: 0.15 });
+
+    return () => {
+      ScrollTrigger.getAll().forEach(trigger => trigger.kill());
+    };
+  }, []);
+
+  return (
+    <div ref={containerRef} className="relative h-screen overflow-hidden">
+      {/* Illustrations - all positioned absolutely */}
+      {illustrations.map((illust, index) => (
+        <div key={illust.id} className="absolute inset-0 flex items-center justify-center">
+          {/* Text layer 
+              SIZE ADJUSTMENT FOR TEXT:
+              Change max-w-[XXvw] and max-h-[XXvh] to resize
+              Examples:
+              - max-w-[60vw] max-h-[60vh] = smaller text
+              - max-w-[80vw] max-h-[80vh] = current size
+              - max-w-[90vw] max-h-[90vh] = larger text
+              vw = viewport width, vh = viewport height
+          */}
+          <img
+            id={`text-${index}`}
+            src={illust.text}
+            alt={`${illust.id} text`}
+            className="absolute max-w-[80vw] max-h-[80vh] object-contain z-10"
+            style={{ 
+              opacity: index === 0 ? 1 : 0,
+              maxWidth: index === 2 ? '90vw' : '80vw',  // Third illustration (index 2) is smaller
+              maxHeight: index === 2 ? '90vh' : '80vh'
+            }}
+          />
+          
+          {/* Art layer 
+              SIZE ADJUSTMENT FOR ART:
+              Change max-w-[XXvw] and max-h-[XXvh] to resize
+              Examples:
+              - max-w-[70vw] max-h-[70vh] = smaller art
+              - max-w-[80vw] max-h-[80vh] = current size
+              - max-w-[95vw] max-h-[95vh] = larger art
+          */}
+          <img
+            id={`art-${index}`}
+            src={illust.art}
+            alt={`${illust.id} art`}
+            className="absolute max-w-[80vw] max-h-[80vh] object-contain"
+            style={{ opacity: index === 0 ? 1 : 0 }}
+          />
+        </div>
+      ))}
+
+      {/* Progress bar */}
+      <div className="absolute bottom-8 left-1/2 -translate-x-1/2 z-50">
+        <div className={`h-1 w-32 rounded-full ${
+          isDark ? 'bg-gray-800' : 'bg-gray-200'
+        } overflow-hidden`}>
+          <div
+            className={`h-full transition-all duration-300 ${isDark ? 'bg-white' : 'bg-black'}`}
+            style={{ width: `${progress * 100}%` }}
+          />
+        </div>
+        <div className={`mt-2 text-xs font-medium text-center ${
+          isDark ? 'text-gray-400' : 'text-gray-600'
+        }`}>
+          {Math.min(Math.floor(progress * 3) + 1, 3)}/3
+        </div>
+      </div>
+
+      {/* Keep scrolling button */}
+      <div 
+        className="absolute bottom-20 left-1/2 -translate-x-1/2 z-50"
+        style={{ opacity: progress > 0.9 ? 1 : 0, transition: 'opacity 0.3s' }}
+      >
+        <button 
+          onClick={() => scrollToSection('how-it-works')}
+          className={`inline-flex items-center gap-2 transition-colors group ${
+            isDark ? 'text-gray-400 hover:text-white' : 'text-gray-600 hover:text-black'
+          }`}
+        >
+          Keep scrolling
+          <ChevronDown className="w-5 h-5 group-hover:translate-y-1 transition-transform" />
+        </button>
+      </div>
+    </div>
+  );
+}
+
+// Mobile Hero Section with Vertical Fade Animations
+function MobileHeroSection({ isDark, scrollToSection }) {
+  const illustrations = [
+    { text: '/images/DreamIt.png', art: '/images/DreamItArt.png', id: 'dream' },
+    { text: '/images/LearnIt.png', art: '/images/LearnItArt.png', id: 'learn' },
+    { text: '/images/DoIt.png', art: '/images/DoItArt.png', id: 'do' }
+  ];
+
+  return (
+    <div className="pt-20 pb-10">
+      {illustrations.map((illust, index) => (
+        <motion.div
+          key={illust.id}
+          className="min-h-screen flex items-center justify-center px-6 relative"
+          initial={{ opacity: 0, y: 50 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ 
+            duration: 0.8,
+            ease: "easeOut",
+            delay: 0.2
+          }}
+          viewport={{ once: true, margin: "-100px" }}
+        >
+          <div className="relative w-full max-w-md">
+            {/* Text appears first */}
+            <motion.img
+              src={illust.text}
+              alt={`${illust.id} text`}
+              className="w-full relative z-10"
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ 
+                duration: 0.6,
+                ease: "easeOut"
+              }}
+              viewport={{ once: true }}
+            />
+            
+            {/* Art appears 0.3s after */}
+            <motion.img
+              src={illust.art}
+              alt={`${illust.id} art`}
+              className="w-full absolute top-0 left-0"
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ 
+                duration: 0.6,
+                ease: "easeOut",
+                delay: 0.3
+              }}
+              viewport={{ once: true }}
+            />
+          </div>
+        </motion.div>
+      ))}
+
+      {/* Keep scrolling button */}
+      <div className="flex justify-center pb-10">
+        <button 
+          onClick={() => scrollToSection('how-it-works')}
+          className={`inline-flex items-center gap-2 transition-colors group ${
+            isDark ? 'text-gray-400 hover:text-white' : 'text-gray-600 hover:text-black'
+          }`}
+        >
+          Keep scrolling
+          <ChevronDown className="w-5 h-5 group-hover:translate-y-1 transition-transform" />
+        </button>
+      </div>
     </div>
   );
 }
