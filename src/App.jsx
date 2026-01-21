@@ -6,7 +6,7 @@ import MentorSignup from './components/MentorSignup';
 
 function App() {
   const [currentPage, setCurrentPage] = useState('landing');
-  const [theme, setTheme] = useState('dark');
+  const [theme, setTheme] = useState('light');
 
   const handleNavigation = (page) => {
     setCurrentPage(page);

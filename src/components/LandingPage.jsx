@@ -27,7 +27,7 @@ export default function HobskiLanding({ onNavigate, theme, setTheme }) {
   return (
     <div 
       className={`min-h-screen font-['Inter',sans-serif] transition-colors ${
-        isDark ? 'bg-black text-white' : 'bg-white text-black'
+        isDark ? 'bg-black text-white' : 'bg-blue-200 text-black'
       }`}
     >
       {/* Header */}
@@ -434,7 +434,7 @@ function GSAPHeroSection({ isDark, scrollToSection }) {
       // - For illustration 3 (index 2): text stops at -10% (slightly left of center)
       // Adjust these multipliers to move text left/right:
       //   Positive values = text stays right, Negative values = text goes left
-      const textFinalX = index === 1 ? window.innerWidth * 0.02 : window.innerWidth * -0.30;
+      const textFinalX = index === 1 ? window.innerWidth * 0.02 : window.innerWidth * -0.32;
       
       mainTimeline.to(next.text, {
         x: textFinalX, // Position based on which illustration
