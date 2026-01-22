@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { ChevronDown, Sun, Moon } from 'lucide-react';
-import { motion } from 'framer-motion';
+import { motion, useScroll, useTransform } from 'framer-motion';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 
@@ -27,7 +27,7 @@ export default function HobskiLanding({ onNavigate, theme, setTheme }) {
   return (
     <div 
       className={`min-h-screen font-['Inter',sans-serif] transition-colors ${
-        isDark ? 'bg-black text-white' : 'bg-blue-200 text-black'
+        isDark ? 'bg-black text-white' : 'bg-blue-300 text-black'
       }`}
     >
       {/* Header */}
@@ -80,7 +80,7 @@ export default function HobskiLanding({ onNavigate, theme, setTheme }) {
         </nav>
       </header>
 
-      {/* Hero Section with GSAP ScrollTrigger */}
+      {/* Hero Section with GSAP ScrollTrigger - UNTOUCHED */}
       {isMobile ? (
         <MobileHeroSection isDark={isDark} scrollToSection={scrollToSection} />
       ) : (
@@ -90,165 +90,202 @@ export default function HobskiLanding({ onNavigate, theme, setTheme }) {
         />
       )}
 
+      {/* Hand-drawn border after hero */}
+      <HandDrawnBorder isDark={isDark} variant="hero" />
+
       {/* How Does It Work Section */}
-      <section 
-        id="how-it-works" 
-        className="py-20 px-6"
-      >
-        <div className="max-w-6xl mx-auto">
-          <h2 className="text-5xl md:text-6xl font-bold mb-12">
-            How does it work?
-          </h2>
+      <ScrollSection 
+          id="how-it-works" 
+          isDark={isDark}
+        >
+          <div className="max-w-6xl mx-auto px-6">
+            <h2 className="text-5xl md:text-6xl font-bold mb-12">
+              How does it work?
+            </h2>
 
-          {/* Tab Buttons */}
-          <div className="flex justify-center gap-6 mb-12">
-            <button
-              onClick={() => setActiveTab('learner')}
-              className={`px-12 py-4 rounded-full font-medium transition-all text-lg ${
-                activeTab === 'learner'
-                  ? isDark 
-                    ? 'bg-white text-black' 
-                    : 'bg-black text-white'
-                  : isDark
-                    ? 'bg-transparent text-white border border-white hover:bg-white/10'
-                    : 'bg-transparent text-black border border-black hover:bg-black/10'
-              }`}
-            >
-              As a Learner
-            </button>
-            <button
-              onClick={() => setActiveTab('mentor')}
-              className={`px-12 py-4 rounded-full font-medium transition-all text-lg ${
-                activeTab === 'mentor'
-                  ? isDark 
-                    ? 'bg-white text-black' 
-                    : 'bg-black text-white'
-                  : isDark
-                    ? 'bg-transparent text-white border border-white hover:bg-white/10'
-                    : 'bg-transparent text-black border border-black hover:bg-black/10'
-              }`}
-            >
-              As a Mentor
-            </button>
+            {/* Tab Buttons */}
+            <div className="flex justify-center gap-6 mb-12">
+              <button
+                onClick={() => setActiveTab('learner')}
+                className={`px-12 py-4 rounded-full font-medium transition-all text-lg ${
+                  activeTab === 'learner'
+                    ? isDark 
+                      ? 'bg-white text-black' 
+                      : 'bg-black text-white'
+                    : isDark
+                      ? 'bg-transparent text-white border border-white hover:bg-white/10'
+                      : 'bg-transparent text-black border border-black hover:bg-black/10'
+                }`}
+              >
+                As a Learner
+              </button>
+              <button
+                onClick={() => setActiveTab('mentor')}
+                className={`px-12 py-4 rounded-full font-medium transition-all text-lg ${
+                  activeTab === 'mentor'
+                    ? isDark 
+                      ? 'bg-white text-black' 
+                      : 'bg-black text-white'
+                    : isDark
+                      ? 'bg-transparent text-white border border-white hover:bg-white/10'
+                      : 'bg-transparent text-black border border-black hover:bg-black/10'
+                }`}
+              >
+                As a Mentor
+              </button>
+            </div>
+
+            {/* Content Area */}
+            <div className="grid md:grid-cols-2 gap-12 items-center">
+              <div>
+                {activeTab === 'learner' ? (
+                  <p className={`text-lg leading-relaxed ${
+                    isDark ? 'text-gray-300' : 'text-black-700'
+                  }`}>
+                    Explore a new hobby, get guidance on that DIY project, and take your skills to the next level when you join our community of learners.
+                  </p>
+                ) : (
+                  <p className={`text-lg leading-relaxed ${
+                    isDark ? 'text-gray-300' : 'text-black-700'
+                  }`}>
+                    Share your passions, pass down your knowledge, and help others achieve their goals when you make their hobby dreams come true as a mentor.
+                  </p>
+                )}
+              </div>
+            </div>
+
+            {/* Pssst There's More */}
+            <div className="text-center mt-16">
+              <p className={`italic ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>*pssst*</p>
+              <p className={isDark ? 'text-gray-400' : 'text-gray-600'}>There's more</p>
+            </div>
           </div>
+        </ScrollSection>
 
-          {/* Content Area */}
-          <div className="grid md:grid-cols-2 gap-12 items-center">
-            <div>
-              {activeTab === 'learner' ? (
-                <p className={`text-lg leading-relaxed ${
+        {/* Hand-drawn border */}
+        <HandDrawnBorder isDark={isDark} />
+
+        {/* Get Involved Section */}
+        <ScrollSection 
+          id="get-involved" 
+          isDark={isDark}
+          className={isDark ? 'bg-gray-900' : 'bg-gray-50'}
+        >
+          <div className="max-w-6xl mx-auto px-6">
+            <h2 className="text-4xl md:text-5xl font-bold mb-4">
+              Get involved
+            </h2>
+            <p className={`text-lg mb-12 ${
+              isDark ? 'text-gray-300' : 'text-gray-700'
+            }`}>
+              Got a hobby or skill you're interested in? Join us!
+            </p>
+
+            <div className="flex gap-8 justify-center items-stretch">
+              {/* As a Learner Card */}
+              <button 
+              onClick={() => onNavigate('learner-signup')}
+              className={`group rounded-2xl p-8 text-left transition-all hover:scale-105 transform w-full max-w-md border-2 ${
+                isDark 
+                  ? 'bg-black border-gray-700 hover:border-white' 
+                  : 'bg-white border-gray-300 hover:border-black'
+              }`}>
+                <div className={`rounded-lg aspect-video mb-6 flex items-center justify-center ${
+                  isDark ? 'bg-gray-800' : 'bg-gray-200'
+                }`}>
+                  <span className={`text-sm ${isDark ? 'text-gray-500' : 'text-gray-400'}`}>
+                    Learner Image
+                  </span>
+                </div>
+                <h3 className="text-2xl font-bold mb-3">As a Learner</h3>
+                <p className={`leading-relaxed ${
                   isDark ? 'text-gray-300' : 'text-gray-700'
                 }`}>
                   Explore a new hobby, get guidance on that DIY project, and take your skills to the next level when you join our community of learners.
                 </p>
-              ) : (
-                <p className={`text-lg leading-relaxed ${
+              </button>
+
+              {/* As a Mentor Card */}
+              <button 
+              onClick={() => onNavigate('mentor-signup')}
+              className={`group rounded-2xl p-8 text-left transition-all hover:scale-105 transform w-full max-w-md border-2 ${
+                isDark 
+                  ? 'bg-black border-gray-700 hover:border-white' 
+                  : 'bg-white border-gray-300 hover:border-black'
+              }`}>
+                <div className={`rounded-lg aspect-video mb-6 flex items-center justify-center ${
+                  isDark ? 'bg-gray-800' : 'bg-gray-200'
+                }`}>
+                  <span className={`text-sm ${isDark ? 'text-gray-500' : 'text-gray-400'}`}>
+                    Mentor Image
+                  </span>
+                </div>
+                <h3 className="text-2xl font-bold mb-3">As a Mentor</h3>
+                <p className={`leading-relaxed ${
                   isDark ? 'text-gray-300' : 'text-gray-700'
                 }`}>
                   Share your passions, pass down your knowledge, and help others achieve their goals when you make their hobby dreams come true as a mentor.
                 </p>
-              )}
-            </div>
-
-            {/* Image Placeholder */}
-            <div className={`rounded-lg aspect-square flex items-center justify-center ${
-              isDark ? 'bg-gray-800' : 'bg-gray-200'
-            }`}>
-              <span className={`text-sm ${isDark ? 'text-gray-500' : 'text-gray-400'}`}>
-                {activeTab === 'learner' ? 'Learner Image' : 'Mentor Image'}
-              </span>
+              </button>
             </div>
           </div>
+        </ScrollSection>
 
-          {/* Pssst There's More */}
-          <div className="text-center mt-16">
-            <p className={`italic ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>*pssst*</p>
-            <p className={isDark ? 'text-gray-400' : 'text-gray-600'}>There's more</p>
-          </div>
-        </div>
-      </section>
+        {/* Hand-drawn border */}
+        <HandDrawnBorder isDark={isDark} />
 
-      {/* Get Involved Section */}
-      <section id="get-involved" className={`py-20 px-6 transition-colors ${
-        isDark ? 'bg-gray-900' : 'bg-gray-50'
-      }`}>
-        <div className="max-w-6xl mx-auto">
-          <h2 className="text-4xl md:text-5xl font-bold mb-4">
-            Get involved
-          </h2>
-          <p className={`text-lg mb-12 ${
-            isDark ? 'text-gray-300' : 'text-gray-700'
-          }`}>
-            Got a hobby or skill you're interested in? Join us!
-          </p>
+        {/* Contact Section */}
+        <ScrollSection 
+          id="contact" 
+          isDark={isDark}
+        >
+          <div className="max-w-2xl mx-auto px-6">
+            <h2 className="text-4xl md:text-5xl font-bold mb-12">
+              Contact us
+            </h2>
 
-          <div className="flex gap-8 justify-center items-stretch">
-            {/* As a Learner Card */}
-            <button 
-            onClick={() => onNavigate('learner-signup')}
-            className={`group rounded-2xl p-8 text-left transition-all hover:scale-105 transform w-full max-w-md border-2 ${
-              isDark 
-                ? 'bg-black border-gray-700 hover:border-white' 
-                : 'bg-white border-gray-300 hover:border-black'
-            }`}>
-              <div className={`rounded-lg aspect-video mb-6 flex items-center justify-center ${
-                isDark ? 'bg-gray-800' : 'bg-gray-200'
-              }`}>
-                <span className={`text-sm ${isDark ? 'text-gray-500' : 'text-gray-400'}`}>
-                  Learner Image
-                </span>
+            <div className="space-y-6">
+              <div className="grid md:grid-cols-2 gap-6">
+                <div>
+                  <label className={`block text-sm mb-2 ${
+                    isDark ? 'text-gray-300' : 'text-gray-700'
+                  }`}>
+                    First Name (required)
+                  </label>
+                  <input
+                    type="text"
+                    className={`w-full px-4 py-3 border rounded-lg focus:outline-none transition-colors ${
+                      isDark 
+                        ? 'bg-gray-900 border-gray-700 focus:border-white text-white' 
+                        : 'bg-white border-gray-300 focus:border-black text-black'
+                    }`}
+                  />
+                </div>
+                <div>
+                  <label className={`block text-sm mb-2 ${
+                    isDark ? 'text-gray-300' : 'text-gray-700'
+                  }`}>
+                    Last Name (required)
+                  </label>
+                  <input
+                    type="text"
+                    className={`w-full px-4 py-3 border rounded-lg focus:outline-none transition-colors ${
+                      isDark 
+                        ? 'bg-gray-900 border-gray-700 focus:border-white text-white' 
+                        : 'bg-white border-gray-300 focus:border-black text-black'
+                    }`}
+                  />
+                </div>
               </div>
-              <h3 className="text-2xl font-bold mb-3">As a Learner</h3>
-              <p className={`leading-relaxed ${
-                isDark ? 'text-gray-300' : 'text-gray-700'
-              }`}>
-                Explore a new hobby, get guidance on that DIY project, and take your skills to the next level when you join our community of learners.
-              </p>
-            </button>
 
-            {/* As a Mentor Card */}
-            <button 
-            onClick={() => onNavigate('mentor-signup')}
-            className={`group rounded-2xl p-8 text-left transition-all hover:scale-105 transform w-full max-w-md border-2 ${
-              isDark 
-                ? 'bg-black border-gray-700 hover:border-white' 
-                : 'bg-white border-gray-300 hover:border-black'
-            }`}>
-              <div className={`rounded-lg aspect-video mb-6 flex items-center justify-center ${
-                isDark ? 'bg-gray-800' : 'bg-gray-200'
-              }`}>
-                <span className={`text-sm ${isDark ? 'text-gray-500' : 'text-gray-400'}`}>
-                  Mentor Image
-                </span>
-              </div>
-              <h3 className="text-2xl font-bold mb-3">As a Mentor</h3>
-              <p className={`leading-relaxed ${
-                isDark ? 'text-gray-300' : 'text-gray-700'
-              }`}>
-                Share your passions, pass down your knowledge, and help others achieve their goals when you make their hobby dreams come true as a mentor.
-              </p>
-            </button>
-          </div>
-        </div>
-      </section>
-
-      {/* Contact Section */}
-      <section id="contact" className="py-20 px-6">
-        <div className="max-w-2xl mx-auto">
-          <h2 className="text-4xl md:text-5xl font-bold mb-12">
-            Contact us
-          </h2>
-
-          <div className="space-y-6">
-            <div className="grid md:grid-cols-2 gap-6">
               <div>
                 <label className={`block text-sm mb-2 ${
                   isDark ? 'text-gray-300' : 'text-gray-700'
                 }`}>
-                  First Name (required)
+                  Email (required)
                 </label>
                 <input
-                  type="text"
+                  type="email"
                   className={`w-full px-4 py-3 border rounded-lg focus:outline-none transition-colors ${
                     isDark 
                       ? 'bg-gray-900 border-gray-700 focus:border-white text-white' 
@@ -256,71 +293,39 @@ export default function HobskiLanding({ onNavigate, theme, setTheme }) {
                   }`}
                 />
               </div>
+
               <div>
                 <label className={`block text-sm mb-2 ${
                   isDark ? 'text-gray-300' : 'text-gray-700'
                 }`}>
-                  Last Name (required)
+                  Message
                 </label>
-                <input
-                  type="text"
-                  className={`w-full px-4 py-3 border rounded-lg focus:outline-none transition-colors ${
+                <textarea
+                  rows="6"
+                  className={`w-full px-4 py-3 border rounded-lg focus:outline-none transition-colors resize-none ${
                     isDark 
                       ? 'bg-gray-900 border-gray-700 focus:border-white text-white' 
                       : 'bg-white border-gray-300 focus:border-black text-black'
                   }`}
                 />
               </div>
-            </div>
 
-            <div>
-              <label className={`block text-sm mb-2 ${
-                isDark ? 'text-gray-300' : 'text-gray-700'
-              }`}>
-                Email (required)
-              </label>
-              <input
-                type="email"
-                className={`w-full px-4 py-3 border rounded-lg focus:outline-none transition-colors ${
+              <button
+                onClick={(e) => {
+                  e.preventDefault();
+                  // Handle form submission
+                }}
+                className={`w-full px-8 py-4 rounded-full font-medium transition-colors text-lg ${
                   isDark 
-                    ? 'bg-gray-900 border-gray-700 focus:border-white text-white' 
-                    : 'bg-white border-gray-300 focus:border-black text-black'
+                    ? 'bg-white text-black hover:bg-gray-200' 
+                    : 'bg-black text-white hover:bg-gray-800'
                 }`}
-              />
+              >
+                Send Message
+              </button>
             </div>
-
-            <div>
-              <label className={`block text-sm mb-2 ${
-                isDark ? 'text-gray-300' : 'text-gray-700'
-              }`}>
-                Message
-              </label>
-              <textarea
-                rows="6"
-                className={`w-full px-4 py-3 border rounded-lg focus:outline-none transition-colors resize-none ${
-                  isDark 
-                    ? 'bg-gray-900 border-gray-700 focus:border-white text-white' 
-                    : 'bg-white border-gray-300 focus:border-black text-black'
-                }`}
-              />
-            </div>
-
-            <button
-              onClick={(e) => {
-                e.preventDefault();
-                // Handle form submission
-              }}
-              className={`w-full px-8 py-4 rounded-full font-medium transition-colors text-lg ${
-                isDark 
-                  ? 'bg-white text-black hover:bg-gray-200' 
-                  : 'bg-black text-white hover:bg-gray-800'
-              }`}
-            >
-              Send Message
-            </button>
           </div>
-        </div>
-      </section>
+        </ScrollSection>
 
       {/* Footer */}
       <footer className={`py-8 px-6 border-t transition-colors ${
@@ -336,7 +341,76 @@ export default function HobskiLanding({ onNavigate, theme, setTheme }) {
   );
 }
 
-// GSAP Hero Section - Horizontal scroll through illustrations
+// Hand-drawn irregular border line component
+function HandDrawnBorder({ isDark, variant = 'default' }) {
+  // Different path patterns for variety
+  const paths = {
+    default: "M0,6 Q15,2 30,7 T60,5 Q75,9 90,4 T120,6 Q135,2 150,8 T180,5 Q195,9 210,3 T240,7 Q255,2 270,6 T300,4 Q315,9 330,5 T360,7 Q375,2 390,6 T420,5 Q435,9 450,4 T480,6 Q495,2 510,8 T540,5 Q555,9 570,3 T600,7 Q615,2 630,6 T660,4 Q675,9 690,5 T720,7 Q735,2 750,6 T780,5 Q795,9 810,4 T840,6 Q855,2 870,8 T900,5 Q915,9 930,3 T960,7 Q975,2 990,6 T1020,4 Q1035,9 1050,5 T1080,7 Q1095,2 1110,6 T1140,5 Q1155,9 1170,4 T1200,6",
+    hero: "M0,5 Q20,9 40,4 T80,6 Q100,2 120,8 T160,4 Q180,9 200,5 T240,7 Q260,2 280,6 T320,5 Q340,8 360,3 T400,7 Q420,2 440,8 T480,4 Q500,9 520,5 T560,6 Q580,2 600,7 T640,5 Q660,9 680,3 T720,7 Q740,2 760,6 T800,4 Q820,9 840,5 T880,7 Q900,2 920,6 T960,5 Q980,8 1000,4 T1040,6 Q1060,2 1080,8 T1120,4 Q1140,9 1160,5 T1200,7"
+  };
+
+  return (
+    <div className="w-full overflow-hidden py-6">
+      <svg 
+        width="100%" 
+        height="16" 
+        viewBox="0 0 1200 16" 
+        preserveAspectRatio="none"
+        className="w-full"
+      >
+        <path
+          d={paths[variant] || paths.default}
+          fill="none"
+          stroke={isDark ? '#ffffff' : '#000000'}
+          strokeWidth="3"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          opacity="0.8"
+        />
+      </svg>
+    </div>
+  );
+}
+
+// ScrollSection Component - Now with data attribute for magnetic scroll
+function ScrollSection({ id, children, isDark, className = '' }) {
+  const sectionRef = useRef(null);
+  
+  const { scrollYProgress } = useScroll({
+    target: sectionRef,
+    offset: ["start end", "end start"]
+  });
+
+  // Subtle slide-up effect as sections come into view
+  const y = useTransform(scrollYProgress, 
+    [0, 0.2, 0.8, 1], 
+    [60, 0, 0, -60]
+  );
+  
+  const opacity = useTransform(scrollYProgress, 
+    [0, 0.2, 0.8, 1], 
+    [0, 1, 1, 0.3]
+  );
+
+  return (
+    <motion.section
+      ref={sectionRef}
+      id={id}
+      data-scroll-section
+      className={`min-h-screen flex items-center justify-center ${className}`}
+      style={{ 
+        y, 
+        opacity
+      }}
+    >
+      <div className="w-full py-20">
+        {children}
+      </div>
+    </motion.section>
+  );
+}
+
+// GSAP Hero Section - COMPLETELY UNTOUCHED
 function GSAPHeroSection({ isDark, scrollToSection }) {
   const containerRef = useRef(null);
   const [progress, setProgress] = useState(0);
@@ -371,17 +445,11 @@ function GSAPHeroSection({ isDark, scrollToSection }) {
     });
 
     // Create timeline
-    // SCROLL DISTANCE ADJUSTMENT:
-    // Change the 'end' value to adjust how much scrolling is needed:
-    // - '+=200%' = faster transitions (2x viewport height)
-    // - '+=300%' = current speed (3x viewport height) 
-    // - '+=400%' = slower transitions (4x viewport height)
-    // - '+=500%' = very slow transitions (5x viewport height)
     const mainTimeline = gsap.timeline({
       scrollTrigger: {
         trigger: container,
         start: 'top top',
-        end: '+=300%', // <-- CHANGE THIS VALUE to adjust scroll distance
+        end: '+=300%',
         scrub: 1,
         pin: true,
         anticipatePin: 1,
@@ -392,24 +460,16 @@ function GSAPHeroSection({ isDark, scrollToSection }) {
     });
 
     // Add animations for each transition
-    // IMMEDIATE RESPONSIVENESS: Transitions start right at 0.0
-    // 0.0 - 0.35: Transition 1→2 (starts immediately)
-    // 0.35 - 0.40: Illustration 2 visible briefly
-    // 0.40 - 0.75: Transition 2→3
-    // 0.75 - 1.0: Illustration 3 visible
-    
     illustrations.forEach((_, index) => {
-      if (index === illustrations.length - 1) return; // Skip last (no transition after it)
+      if (index === illustrations.length - 1) return;
 
       const current = elements[index];
       const next = elements[index + 1];
       
       if (!current.text || !current.art || !next.text || !next.art) return;
 
-      // Transitions start immediately with no delay
-      const transitionDuration = 0.35; // Each transition takes 35% of timeline
-      const pauseDuration = 0.05; // Brief pause between transitions
-      
+      const transitionDuration = 0.35;
+      const pauseDuration = 0.05;
       const transitionStart = index * (transitionDuration + pauseDuration);
       
       // Current illustration exits left
@@ -429,27 +489,16 @@ function GSAPHeroSection({ isDark, scrollToSection }) {
       }, transitionStart);
 
       // Next illustration TEXT enters from right (slightly delayed for parallax)
-      // TEXT POSITION ADJUSTMENT:
-      // - For illustrations 1 & 2 (index 0, 1): text stops at 15% from left
-      // - For illustration 3 (index 2): text stops at -10% (slightly left of center)
-      // Adjust these multipliers to move text left/right:
-      //   Positive values = text stays right, Negative values = text goes left
       const textFinalX = index === 1 ? window.innerWidth * 0.02 : window.innerWidth * -0.32;
       
       mainTimeline.to(next.text, {
-        x: textFinalX, // Position based on which illustration
+        x: textFinalX,
         opacity: 1,
         ease: 'power2.inOut',
         duration: transitionDuration
-      }, transitionStart + 0.05); // Art enters first, then text follows
+      }, transitionStart + 0.05);
     });
 
-    // Add minimal dead-scroll buffer at the end (illustration 3 stays visible)
-    // This prevents abrupt transition to next section
-    // Adjust the duration value to change buffer length:
-    //   0.10 = very minimal buffer
-    //   0.15 = current setting (moderate buffer)
-    //   0.20 = more buffer
     mainTimeline.to({}, { duration: 0.15 });
 
     return () => {
@@ -462,15 +511,6 @@ function GSAPHeroSection({ isDark, scrollToSection }) {
       {/* Illustrations - all positioned absolutely */}
       {illustrations.map((illust, index) => (
         <div key={illust.id} className="absolute inset-0 flex items-center justify-center">
-          {/* Text layer 
-              SIZE ADJUSTMENT FOR TEXT:
-              Change max-w-[XXvw] and max-h-[XXvh] to resize
-              Examples:
-              - max-w-[60vw] max-h-[60vh] = smaller text
-              - max-w-[80vw] max-h-[80vh] = current size
-              - max-w-[90vw] max-h-[90vh] = larger text
-              vw = viewport width, vh = viewport height
-          */}
           <img
             id={`text-${index}`}
             src={illust.text}
@@ -478,19 +518,11 @@ function GSAPHeroSection({ isDark, scrollToSection }) {
             className="absolute max-w-[80vw] max-h-[80vh] object-contain z-10"
             style={{ 
               opacity: index === 0 ? 1 : 0,
-              maxWidth: index === 2 ? '90vw' : '80vw',  // Third illustration (index 2) is smaller
+              maxWidth: index === 2 ? '90vw' : '80vw',
               maxHeight: index === 2 ? '90vh' : '80vh'
             }}
           />
           
-          {/* Art layer 
-              SIZE ADJUSTMENT FOR ART:
-              Change max-w-[XXvw] and max-h-[XXvh] to resize
-              Examples:
-              - max-w-[70vw] max-h-[70vh] = smaller art
-              - max-w-[80vw] max-h-[80vh] = current size
-              - max-w-[95vw] max-h-[95vh] = larger art
-          */}
           <img
             id={`art-${index}`}
             src={illust.art}
@@ -537,7 +569,7 @@ function GSAPHeroSection({ isDark, scrollToSection }) {
   );
 }
 
-// Mobile Hero Section with Vertical Fade Animations
+// Mobile Hero Section - UNTOUCHED
 function MobileHeroSection({ isDark, scrollToSection }) {
   const illustrations = [
     { text: '/images/DreamIt.png', art: '/images/DreamItArt.png', id: 'dream' },
@@ -561,7 +593,6 @@ function MobileHeroSection({ isDark, scrollToSection }) {
           viewport={{ once: true, margin: "-100px" }}
         >
           <div className="relative w-full max-w-md">
-            {/* Text appears first */}
             <motion.img
               src={illust.text}
               alt={`${illust.id} text`}
@@ -575,7 +606,6 @@ function MobileHeroSection({ isDark, scrollToSection }) {
               viewport={{ once: true }}
             />
             
-            {/* Art appears 0.3s after */}
             <motion.img
               src={illust.art}
               alt={`${illust.id} art`}
@@ -593,7 +623,6 @@ function MobileHeroSection({ isDark, scrollToSection }) {
         </motion.div>
       ))}
 
-      {/* Keep scrolling button */}
       <div className="flex justify-center pb-10">
         <button 
           onClick={() => scrollToSection('how-it-works')}
