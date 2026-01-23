@@ -379,7 +379,7 @@ function HandDrawnBorder({ isDark, variant = 'default' }) {
           strokeWidth="2.5"
           strokeLinecap="round"
           strokeLinejoin="round"
-          opacity="0.4"
+          opacity="0.6"
         />
       </svg>
     </div>
