@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { ChevronDown, Sun, Moon } from 'lucide-react';
+import { ChevronDown, Sun, Moon, ChevronLeft, ChevronRight } from 'lucide-react';
 import { motion, useScroll, useTransform } from 'framer-motion';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
@@ -19,7 +19,17 @@ export default function HobskiLanding({ onNavigate, theme, setTheme }) {
   }, []);
 
   const scrollToSection = (id) => {
-    document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
+    const element = document.getElementById(id);
+    if (element) {
+      const headerOffset = 120; // Offset to position section lower in viewport
+      const elementPosition = element.getBoundingClientRect().top;
+      const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+
+      window.scrollTo({
+        top: offsetPosition,
+        behavior: 'smooth'
+      });
+    }
   };
 
   const isDark = theme === 'dark';
@@ -27,21 +37,25 @@ export default function HobskiLanding({ onNavigate, theme, setTheme }) {
   return (
     <div 
       className={`min-h-screen font-['Inter',sans-serif] transition-colors ${
-        isDark ? 'bg-black text-white' : 'bg-blue-300 text-black'
+        isDark ? 'bg-black text-white' : 'text-black'
       }`}
+      style={!isDark ? { backgroundColor: '#E6F6FF' } : {}}
     >
       {/* Header */}
-      <header className={`fixed top-0 left-0 right-0 z-50 backdrop-blur-sm border-b transition-colors ${
-        isDark ? 'bg-black/80 border-gray-800' : 'bg-white/80 border-gray-200'
-      }`}>
-        <nav className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+      <header 
+        className={`fixed top-0 left-0 right-0 z-50 transition-colors ${
+          isDark ? 'border-gray-800' : 'border-blue-80'
+        }`}
+        style={{ backgroundColor: isDark ? '#000000' : '#E6F6FF' }}
+      >
+        <nav className="max-w-7xl mx-auto px-3 sm:px-6 py-3 sm:py-4 flex items-center justify-between">
           <button 
             onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-            className="text-4xl font-bold hover:opacity-80 transition-opacity"
+            className="text-2xl sm:text-4xl font-bold hover:opacity-80 transition-opacity px-2 sm:px-6"
           >
             hobski
           </button>
-          <div className="flex gap-6 items-center">
+          <div className="flex gap-2 sm:gap-6 items-center">
             <button 
               onClick={() => setTheme(isDark ? 'light' : 'dark')}
               className={`p-2 rounded-full transition-colors ${
@@ -49,11 +63,11 @@ export default function HobskiLanding({ onNavigate, theme, setTheme }) {
               }`}
               aria-label="Toggle theme"
             >
-              {isDark ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
+              {isDark ? <Sun className="w-4 h-4 sm:w-5 sm:h-5" /> : <Moon className="w-4 h-4 sm:w-5 sm:h-5" />}
             </button>
             <button 
               onClick={() => scrollToSection('get-involved')}
-              className={`px-6 py-2 rounded-full font-medium transition-colors ${
+              className={`px-3 sm:px-6 py-1.5 sm:py-2 rounded-full text-sm sm:text-base font-medium transition-colors ${
                 isDark 
                   ? 'bg-white text-black hover:bg-gray-200' 
                   : 'bg-black text-white hover:bg-gray-800'
@@ -63,14 +77,14 @@ export default function HobskiLanding({ onNavigate, theme, setTheme }) {
             </button>
             <button 
               onClick={() => onNavigate('about')}
-              className={`px-6 py-2 transition-colors ${
+              className={`px-3 sm:px-6 py-1.5 sm:py-2 text-sm sm:text-base transition-colors ${
               isDark ? 'text-white hover:text-gray-300' : 'text-black hover:text-gray-600'
             }`}>
               About
             </button>
             <button 
               onClick={() => scrollToSection('contact')}
-              className={`px-6 py-2 transition-colors ${
+              className={`hidden md:block px-6 py-2 transition-colors ${
                 isDark ? 'text-white hover:text-gray-300' : 'text-black hover:text-gray-600'
               }`}
             >
@@ -80,7 +94,7 @@ export default function HobskiLanding({ onNavigate, theme, setTheme }) {
         </nav>
       </header>
 
-      {/* Hero Section with GSAP ScrollTrigger - UNTOUCHED */}
+      {/* Hero Section with GSAP ScrollTrigger */}
       {isMobile ? (
         <MobileHeroSection isDark={isDark} scrollToSection={scrollToSection} />
       ) : (
@@ -334,7 +348,7 @@ export default function HobskiLanding({ onNavigate, theme, setTheme }) {
         <div className={`max-w-7xl mx-auto text-center text-sm ${
           isDark ? 'text-gray-400' : 'text-gray-600'
         }`}>
-          © 2024 hobski. All rights reserved.
+          ℠ 2024 hobski. 
         </div>
       </footer>
     </div>
@@ -362,17 +376,17 @@ function HandDrawnBorder({ isDark, variant = 'default' }) {
           d={paths[variant] || paths.default}
           fill="none"
           stroke={isDark ? '#ffffff' : '#000000'}
-          strokeWidth="3"
+          strokeWidth="2.5"
           strokeLinecap="round"
           strokeLinejoin="round"
-          opacity="0.8"
+          opacity="0.4"
         />
       </svg>
     </div>
   );
 }
 
-// ScrollSection Component - Now with data attribute for magnetic scroll
+// ScrollSection Component
 function ScrollSection({ id, children, isDark, className = '' }) {
   const sectionRef = useRef(null);
   
@@ -410,16 +424,73 @@ function ScrollSection({ id, children, isDark, className = '' }) {
   );
 }
 
-// GSAP Hero Section - COMPLETELY UNTOUCHED
+// GSAP Hero Section with navigation arrows
 function GSAPHeroSection({ isDark, scrollToSection }) {
   const containerRef = useRef(null);
   const [progress, setProgress] = useState(0);
+  const [currentSlide, setCurrentSlide] = useState(0);
+  const timelineRef = useRef(null);
   
   const illustrations = [
     { text: '/images/DreamIt.png', art: '/images/DreamItArt.png', id: 'dream' },
     { text: '/images/LearnIt.png', art: '/images/LearnItArt.png', id: 'learn' },
     { text: '/images/DoIt.png', art: '/images/DoItArt.png', id: 'do' }
   ];
+
+  // Navigate to specific slide
+  const goToSlide = (index) => {
+    if (timelineRef.current && index >= 0 && index < illustrations.length) {
+      const targetProgress = index / (illustrations.length - 1);
+      
+      // Get the ScrollTrigger instance
+      const scrollTrigger = timelineRef.current.scrollTrigger;
+      
+      if (scrollTrigger) {
+        // Temporarily disable scrub to prevent conflict
+        const originalScrub = scrollTrigger.vars.scrub;
+        scrollTrigger.vars.scrub = false;
+        
+        // Animate the timeline
+        gsap.to(timelineRef.current, {
+          progress: targetProgress,
+          duration: 0.8,
+          ease: 'power2.inOut',
+          onUpdate: () => {
+            if (timelineRef.current) {
+              setProgress(timelineRef.current.progress());
+            }
+          },
+          onComplete: () => {
+            // Re-enable scrub and update scroll position to match
+            scrollTrigger.vars.scrub = originalScrub;
+            
+            // Sync scroll position to match the new timeline progress
+            const scrollStart = scrollTrigger.start;
+            const scrollEnd = scrollTrigger.end;
+            const targetScroll = scrollStart + (scrollEnd - scrollStart) * targetProgress;
+            
+            // Instantly update scroll position without animation
+            window.scrollTo(0, targetScroll);
+            scrollTrigger.update();
+          }
+        });
+      }
+      
+      setCurrentSlide(index);
+    }
+  };
+
+  const nextSlide = () => {
+    if (currentSlide < illustrations.length - 1) {
+      goToSlide(currentSlide + 1);
+    }
+  };
+
+  const prevSlide = () => {
+    if (currentSlide > 0) {
+      goToSlide(currentSlide - 1);
+    }
+  };
 
   useEffect(() => {
     const container = containerRef.current;
@@ -438,6 +509,10 @@ function GSAPHeroSection({ isDark, scrollToSection }) {
       if (index === 0) {
         // First illustration: visible in center
         gsap.set([el.text, el.art], { x: 0, opacity: 1 });
+      } else if (index === 1) {
+        // Second illustration: offscreen right, but text will be positioned left when visible
+        gsap.set(el.art, { x: window.innerWidth * 1.2, opacity: 0 });
+        gsap.set(el.text, { x: window.innerWidth * 1.2, opacity: 0 });
       } else {
         // Others: offscreen right
         gsap.set([el.text, el.art], { x: window.innerWidth * 1.2, opacity: 0 });
@@ -455,9 +530,14 @@ function GSAPHeroSection({ isDark, scrollToSection }) {
         anticipatePin: 1,
         onUpdate: (self) => {
           setProgress(self.progress);
+          // Update current slide based on scroll progress
+          const slideIndex = Math.round(self.progress * (illustrations.length - 1));
+          setCurrentSlide(slideIndex);
         }
       }
     });
+
+    timelineRef.current = mainTimeline;
 
     // Add animations for each transition
     illustrations.forEach((_, index) => {
@@ -472,13 +552,32 @@ function GSAPHeroSection({ isDark, scrollToSection }) {
       const pauseDuration = 0.05;
       const transitionStart = index * (transitionDuration + pauseDuration);
       
-      // Current illustration exits left
-      mainTimeline.to([current.text, current.art], {
-        x: -window.innerWidth,
-        opacity: 0,
-        ease: 'power2.inOut',
-        duration: transitionDuration
-      }, transitionStart);
+      // Special handling for first and second illustrations exit
+      if (index === 0 || index === 1) {
+        // Text exits FIRST (slightly earlier)
+        mainTimeline.to(current.text, {
+          x: -window.innerWidth,
+          opacity: 0,
+          ease: 'power2.inOut',
+          duration: transitionDuration
+        }, transitionStart);
+        
+        // Art exits slightly after text
+        mainTimeline.to(current.art, {
+          x: -window.innerWidth,
+          opacity: 0,
+          ease: 'power2.inOut',
+          duration: transitionDuration
+        }, transitionStart + 0.05);
+      } else {
+        // Other illustrations exit together
+        mainTimeline.to([current.text, current.art], {
+          x: -window.innerWidth,
+          opacity: 0,
+          ease: 'power2.inOut',
+          duration: transitionDuration
+        }, transitionStart);
+      }
 
       // Next illustration ART enters from right FIRST
       mainTimeline.to(next.art, {
@@ -489,7 +588,9 @@ function GSAPHeroSection({ isDark, scrollToSection }) {
       }, transitionStart);
 
       // Next illustration TEXT enters from right (slightly delayed for parallax)
-      const textFinalX = index === 1 ? window.innerWidth * 0.02 : window.innerWidth * -0.32;
+      // Second illustration needs left offset to avoid overlap with art
+      const nextIndex = index + 1;
+      const textFinalX = nextIndex === 1 ? window.innerWidth * -0.25 : 0;
       
       mainTimeline.to(next.text, {
         x: textFinalX,
@@ -499,7 +600,7 @@ function GSAPHeroSection({ isDark, scrollToSection }) {
       }, transitionStart + 0.05);
     });
 
-    mainTimeline.to({}, { duration: 0.15 });
+    mainTimeline.to({}, { duration: 0.04 });
 
     return () => {
       ScrollTrigger.getAll().forEach(trigger => trigger.kill());
@@ -533,6 +634,37 @@ function GSAPHeroSection({ isDark, scrollToSection }) {
         </div>
       ))}
 
+      {/* Navigation Arrows */}
+      <button
+        onClick={prevSlide}
+        disabled={currentSlide === 0}
+        className={`absolute left-8 top-1/2 -translate-y-1/2 z-50 p-2 rounded-full transition-all ${
+          currentSlide === 0
+            ? 'opacity-0 pointer-events-none'
+            : isDark
+              ? 'bg-white/10 hover:bg-white/20 text-white backdrop-blur-sm'
+              : 'bg-black/10 hover:bg-black/20 text-black backdrop-blur-sm'
+        }`}
+        aria-label="Previous illustration"
+      >
+        <ChevronLeft className="w-6 h-6" />
+      </button>
+
+      <button
+        onClick={nextSlide}
+        disabled={currentSlide === illustrations.length - 1}
+        className={`absolute right-8 top-1/2 -translate-y-1/2 z-50 p-2 rounded-full transition-all ${
+          currentSlide === illustrations.length - 1
+            ? 'opacity-0 pointer-events-none'
+            : isDark
+              ? 'bg-white/10 hover:bg-white/20 text-white backdrop-blur-sm'
+              : 'bg-black/10 hover:bg-black/20 text-black backdrop-blur-sm'
+        }`}
+        aria-label="Next illustration"
+      >
+        <ChevronRight className="w-6 h-6" />
+      </button>
+
       {/* Progress bar */}
       <div className="absolute bottom-8 left-1/2 -translate-x-1/2 z-50">
         <div className={`h-1 w-32 rounded-full ${
@@ -546,15 +678,12 @@ function GSAPHeroSection({ isDark, scrollToSection }) {
         <div className={`mt-2 text-xs font-medium text-center ${
           isDark ? 'text-gray-400' : 'text-gray-600'
         }`}>
-          {Math.min(Math.floor(progress * 3) + 1, 3)}/3
+          {currentSlide + 1}/{illustrations.length}
         </div>
       </div>
 
-      {/* Keep scrolling button */}
-      <div 
-        className="absolute bottom-20 left-1/2 -translate-x-1/2 z-50"
-        style={{ opacity: progress > 0.9 ? 1 : 0, transition: 'opacity 0.3s' }}
-      >
+      {/* Permanent scroll down button */}
+      <div className="absolute bottom-20 left-1/2 -translate-x-1/2 z-50">
         <button 
           onClick={() => scrollToSection('how-it-works')}
           className={`inline-flex items-center gap-2 transition-colors group ${
@@ -569,7 +698,7 @@ function GSAPHeroSection({ isDark, scrollToSection }) {
   );
 }
 
-// Mobile Hero Section - UNTOUCHED
+// Mobile Hero Section
 function MobileHeroSection({ isDark, scrollToSection }) {
   const illustrations = [
     { text: '/images/DreamIt.png', art: '/images/DreamItArt.png', id: 'dream' },
@@ -578,11 +707,11 @@ function MobileHeroSection({ isDark, scrollToSection }) {
   ];
 
   return (
-    <div className="pt-20 pb-10">
+    <div className="pt-20 pb-6">
       {illustrations.map((illust, index) => (
         <motion.div
           key={illust.id}
-          className="min-h-screen flex items-center justify-center px-6 relative"
+          className="min-h-[60vh] flex items-center justify-center px-6 relative py-8"
           initial={{ opacity: 0, y: 50 }}
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ 
@@ -623,7 +752,7 @@ function MobileHeroSection({ isDark, scrollToSection }) {
         </motion.div>
       ))}
 
-      <div className="flex justify-center pb-10">
+      <div className="flex justify-center pb-6">
         <button 
           onClick={() => scrollToSection('how-it-works')}
           className={`inline-flex items-center gap-2 transition-colors group ${

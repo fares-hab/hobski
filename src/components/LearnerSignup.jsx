@@ -49,7 +49,7 @@ export default function LearnerSignup({ onNavigate }) {
         <nav className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
           <button 
             onClick={() => onNavigate('landing')}
-            className="text-2xl font-bold hover:opacity-80 transition-opacity"
+            className="text-4xl font-bold hover:opacity-80 transition-opacity"
           >
             hobski
           </button>
