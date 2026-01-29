@@ -1,8 +1,7 @@
 import { useState } from 'react';
 import { Sun, Moon, ChevronLeft } from 'lucide-react';
 
-export default function MentorSignup({ onNavigate }) {
-  const [theme, setTheme] = useState('light');
+export default function MentorSignup({ onNavigate, theme, setTheme }) {
   const [currentPage, setCurrentPage] = useState(1);
   const [formData, setFormData] = useState({
     firstName: '',
@@ -40,42 +39,54 @@ export default function MentorSignup({ onNavigate }) {
 
   return (
     <div className={`min-h-screen font-['Inter',sans-serif] transition-colors ${
-      isDark ? 'bg-black text-white' : 'bg-white text-black'
-    }`}>
+      isDark ? 'text-white' : ''
+    }`}
+    style={isDark ? { backgroundColor: '#143269' } : { backgroundColor: 'white', color: '#143269' }}>
       {/* Header */}
-      <header className={`fixed top-0 left-0 right-0 z-50 backdrop-blur-sm border-b transition-colors ${
-        isDark ? 'bg-black/80 border-gray-800' : 'bg-white/80 border-gray-200'
-      }`}>
-        <nav className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+      <header 
+        className={`fixed top-0 left-0 right-0 z-50 ${
+          isDark ? 'border-gray-800' : 'border-blue-80'
+        }`}
+        style={{ 
+          backgroundColor: isDark ? 'rgba(20, 50, 105, 0.8)' : 'rgba(255, 255, 255, 0.8)',
+          backdropFilter: 'blur(12px)',
+          borderBottom: isDark ? '1px solid rgb(31, 41, 55)' : '1px solid rgb(229, 231, 235)'
+        }}
+      >
+        <nav className="max-w-7xl mx-auto px-3 sm:px-6 py-3 sm:py-4 flex items-center justify-between">
           <button 
             onClick={() => onNavigate('landing')}
-            className="text-4xl font-bold hover:opacity-80 transition-opacity"
+            className="text-2xl sm:text-4xl font-bold hover:opacity-80 px-2 sm:px-6"
+            style={{ transition: 'opacity 0.2s' }}
           >
             hobski
           </button>
-          <div className="flex gap-6 items-center">
+          <div className="flex gap-2 sm:gap-6 items-center">
             <button 
               onClick={() => setTheme(isDark ? 'light' : 'dark')}
-              className={`p-2 rounded-full transition-colors ${
+              className={`p-2 rounded-full ${
                 isDark ? 'hover:bg-gray-800' : 'hover:bg-gray-100'
               }`}
+              style={{ transition: 'background-color 0.2s' }}
               aria-label="Toggle theme"
             >
-              {isDark ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
+              {isDark ? <Sun className="w-4 h-4 sm:w-5 sm:h-5" /> : <Moon className="w-4 h-4 sm:w-5 sm:h-5" />}
             </button>
             <button 
             onClick={() => onNavigate('landing')}
-            className={`flex items-center gap-2 px-6 py-2 transition-colors ${
-              isDark ? 'text-white hover:text-gray-300' : 'text-black hover:text-gray-600'
-            }`}>
+            className={`flex items-center gap-2 px-3 sm:px-6 py-1.5 sm:py-2 text-sm sm:text-base transition-colors ${
+              isDark ? 'text-white hover:text-gray-300' : 'hover:text-gray-600'
+            }`}
+            style={!isDark ? { color: '#143269', transition: 'color 0.2s' } : { transition: 'color 0.2s' }}>
               <ChevronLeft className="w-4 h-4" />
               Home
             </button>
             <button 
-            
-            className={`px-6 py-2 transition-colors ${
-              isDark ? 'text-white hover:text-gray-300' : 'text-black hover:text-gray-600'
-            }`}>
+            onClick={() => onNavigate('about')}
+            className={`px-3 sm:px-6 py-1.5 sm:py-2 text-sm sm:text-base transition-colors ${
+              isDark ? 'text-white hover:text-gray-300' : 'hover:text-gray-600'
+            }`}
+            style={!isDark ? { color: '#143269', transition: 'color 0.2s' } : { transition: 'color 0.2s' }}>
               About
             </button>
           </div>
@@ -128,8 +139,9 @@ export default function MentorSignup({ onNavigate }) {
                       className={`w-full px-4 py-3 border rounded-lg focus:outline-none transition-colors ${
                         isDark 
                           ? 'bg-gray-900 border-gray-700 focus:border-white text-white' 
-                          : 'bg-white border-gray-300 focus:border-black text-black'
+                          : 'bg-white border-gray-300'
                       }`}
+                      style={!isDark ? { borderColor: '#143269', color: '#143269' } : {}}
                     />
                   </div>
                 </div>
@@ -148,8 +160,9 @@ export default function MentorSignup({ onNavigate }) {
                     className={`w-full px-4 py-3 border rounded-lg focus:outline-none transition-colors ${
                       isDark 
                         ? 'bg-gray-900 border-gray-700 focus:border-white text-white' 
-                        : 'bg-white border-gray-300 focus:border-black text-black'
+                        : 'bg-white border-gray-300'
                     }`}
+                    style={!isDark ? { borderColor: '#143269', color: '#143269' } : {}}
                   />
                 </div>
 
@@ -167,8 +180,9 @@ export default function MentorSignup({ onNavigate }) {
                     className={`w-full px-4 py-3 border rounded-lg focus:outline-none transition-colors ${
                       isDark 
                         ? 'bg-gray-900 border-gray-700 focus:border-white text-white' 
-                        : 'bg-white border-gray-300 focus:border-black text-black'
+                        : 'bg-white border-gray-300'
                     }`}
+                    style={!isDark ? { borderColor: '#143269', color: '#143269' } : {}}
                   />
                 </div>
 
@@ -209,8 +223,9 @@ export default function MentorSignup({ onNavigate }) {
                     className={`w-full px-4 py-3 border rounded-lg focus:outline-none transition-colors resize-none ${
                       isDark 
                         ? 'bg-gray-900 border-gray-700 focus:border-white text-white placeholder-gray-500' 
-                        : 'bg-white border-gray-300 focus:border-black text-black placeholder-gray-400'
+                        : 'bg-white border-gray-300 placeholder-gray-400'
                     }`}
+                    style={!isDark ? { borderColor: '#143269', color: '#143269' } : {}}
                   />
                 </div>
 
@@ -315,8 +330,9 @@ export default function MentorSignup({ onNavigate }) {
                         className={`w-full max-w-md ml-8 px-4 py-2 border rounded-lg focus:outline-none transition-colors ${
                           isDark 
                             ? 'bg-gray-900 border-gray-700 focus:border-white text-white' 
-                            : 'bg-white border-gray-300 focus:border-black text-black'
+                            : 'bg-white border-gray-300'
                         }`}
+                        style={!isDark ? { borderColor: '#143269', color: '#143269' } : {}}
                       />
                     )}
                   </div>
@@ -328,8 +344,9 @@ export default function MentorSignup({ onNavigate }) {
                     className={`px-8 py-3 rounded-full font-medium transition-colors ${
                       isDark 
                         ? 'bg-gray-800 text-white hover:bg-gray-700' 
-                        : 'bg-gray-200 text-black hover:bg-gray-300'
+                        : 'bg-gray-200 hover:bg-gray-300'
                     }`}
+                    style={!isDark ? { color: '#143269' } : {}}
                   >
                     Back
                   </button>
@@ -362,13 +379,13 @@ export default function MentorSignup({ onNavigate }) {
                 <p className="font-medium">You're making it happen!</p>
               </div>
 
-              {/* Character Placeholder */}
-              <div className={`mt-12 w-64 h-64 mx-auto rounded-lg flex items-center justify-center ${
-                isDark ? 'bg-gray-800' : 'bg-gray-200'
-              }`}>
-                <span className={`text-sm ${isDark ? 'text-gray-500' : 'text-gray-400'}`}>
-                  Character Image Here
-                </span>
+              {/* Character Image */}
+              <div className="mt-12 w-96 h-96 mx-auto flex items-center justify-center">
+                <img 
+                  src={`/images/${isDark ? 'Dark' : 'Light'}MentorForm.webp`}
+                  alt="Mentor character illustration"
+                  className="w-full h-full object-contain"
+                />
               </div>
             </div>
           )}

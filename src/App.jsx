@@ -31,10 +31,18 @@ function App() {
         />
       )}
       {currentPage === 'learner-signup' && (
-        <LearnerSignup onNavigate={handleNavigation} />
+        <LearnerSignup 
+          onNavigate={handleNavigation}
+          theme={theme}
+          setTheme={setTheme}
+        />
       )}
       {currentPage === 'mentor-signup' && (
-        <MentorSignup onNavigate={handleNavigation} />
+        <MentorSignup 
+          onNavigate={handleNavigation}
+          theme={theme}
+          setTheme={setTheme}
+        />
       )}
     </>
   );

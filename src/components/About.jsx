@@ -5,36 +5,47 @@ export default function About({ onNavigate, theme, setTheme }) {
 
   return (
     <div className={`min-h-screen font-['Inter',sans-serif] transition-colors ${
-      isDark ? 'bg-black text-white' : 'bg-white text-black'
-    }`}>
+      isDark ? 'text-white' : ''
+    }`}
+    style={isDark ? { backgroundColor: '#143269' } : { backgroundColor: 'white', color: '#143269' }}>
       {/* Header */}
-      <header className={`fixed top-0 left-0 right-0 z-50 backdrop-blur-sm border-b transition-colors ${
-        isDark ? 'bg-black/80 border-gray-800' : 'bg-white/80 border-gray-200'
-      }`}>
-        <nav className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+      <header 
+        className={`fixed top-0 left-0 right-0 z-50 ${
+          isDark ? 'border-gray-800' : 'border-blue-80'
+        }`}
+        style={{ 
+          backgroundColor: isDark ? 'rgba(20, 50, 105, 0.8)' : 'rgba(255, 255, 255, 0.8)',
+          backdropFilter: 'blur(12px)',
+          borderBottom: isDark ? '1px solid rgb(31, 41, 55)' : '1px solid rgb(229, 231, 235)'
+        }}
+      >
+        <nav className="max-w-7xl mx-auto px-3 sm:px-6 py-3 sm:py-4 flex items-center justify-between">
           <button 
             onClick={() => onNavigate('landing')}
-            className="text-4xl font-bold hover:opacity-80 transition-opacity"
+            className="text-2xl sm:text-4xl font-bold hover:opacity-80 px-2 sm:px-6"
+            style={{ transition: 'opacity 0.2s' }}
           >
             hobski
           </button>
-          <div className="flex gap-4 items-center">
+          <div className="flex gap-2 sm:gap-4 items-center">
             <button 
               onClick={() => setTheme(isDark ? 'light' : 'dark')}
-              className={`p-2 rounded-full transition-colors ${
+              className={`p-2 rounded-full ${
                 isDark ? 'hover:bg-gray-800' : 'hover:bg-gray-100'
               }`}
+              style={{ transition: 'background-color 0.2s' }}
               aria-label="Toggle theme"
             >
-              {isDark ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
+              {isDark ? <Sun className="w-4 h-4 sm:w-5 sm:h-5" /> : <Moon className="w-4 h-4 sm:w-5 sm:h-5" />}
             </button>
             <button 
               onClick={() => onNavigate('landing')}
-              className={`flex items-center gap-2 px-4 py-2 transition-colors ${
-                isDark ? 'text-white hover:text-gray-300' : 'text-black hover:text-gray-600'
+              className={`flex items-center gap-2 px-3 sm:px-4 py-1.5 sm:py-2 text-sm sm:text-base transition-colors ${
+                isDark ? 'text-white hover:text-gray-300' : 'hover:text-gray-600'
               }`}
+              style={!isDark ? { color: '#143269', transition: 'color 0.2s' } : { transition: 'color 0.2s' }}
             >
-              <ChevronLeft className="w-5 h-5" />
+              <ChevronLeft className="w-4 h-4 sm:w-5 sm:h-5" />
               Home
             </button>
           </div>
@@ -93,7 +104,7 @@ export default function About({ onNavigate, theme, setTheme }) {
         <div className={`max-w-7xl mx-auto text-center text-sm ${
           isDark ? 'text-gray-400' : 'text-gray-600'
         }`}>
-          © 2024 hobski. All rights reserved.
+          ℠ 2026 hobski.
         </div>
       </footer>
     </div>

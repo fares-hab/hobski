@@ -8,7 +8,13 @@ gsap.registerPlugin(ScrollTrigger);
 
 export default function HobskiLanding({ onNavigate, theme, setTheme }) {
   const [activeTab, setActiveTab] = useState('learner');
-  const [isMobile, setIsMobile] = useState(false);
+  const [isMobile, setIsMobile] = useState(() => {
+    // Initialize with correct value to prevent flash of wrong component
+    if (typeof window !== 'undefined') {
+      return window.innerWidth < 768;
+    }
+    return false;
+  });
   
   // Detect mobile viewport
   useEffect(() => {
@@ -37,56 +43,64 @@ export default function HobskiLanding({ onNavigate, theme, setTheme }) {
   return (
     <div 
       className={`min-h-screen font-['Inter',sans-serif] transition-colors ${
-        isDark ? 'bg-black text-white' : 'text-black'
+        isDark ? 'text-white' : ''
       }`}
-      style={!isDark ? { backgroundColor: '#E6F6FF' } : {}}
+      style={isDark ? { backgroundColor: '#143269', color: 'white' } : { backgroundColor: '#E6F6FF', color: '#143269' }}
     >
       {/* Header */}
       <header 
-        className={`fixed top-0 left-0 right-0 z-50 transition-colors ${
+        className={`fixed top-0 left-0 right-0 z-50 ${
           isDark ? 'border-gray-800' : 'border-blue-80'
         }`}
-        style={{ backgroundColor: isDark ? '#000000' : '#E6F6FF' }}
+        style={{ 
+          backgroundColor: isDark ? '#143269' : '#E6F6FF'
+        }}
       >
         <nav className="max-w-7xl mx-auto px-3 sm:px-6 py-3 sm:py-4 flex items-center justify-between">
           <button 
             onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-            className="text-2xl sm:text-4xl font-bold hover:opacity-80 transition-opacity px-2 sm:px-6"
+            className="text-2xl sm:text-4xl font-bold hover:opacity-80 px-2 sm:px-6"
+            style={{ transition: 'opacity 0.2s' }}
           >
             hobski
           </button>
           <div className="flex gap-2 sm:gap-6 items-center">
             <button 
               onClick={() => setTheme(isDark ? 'light' : 'dark')}
-              className={`p-2 rounded-full transition-colors ${
+              className={`p-2 rounded-full ${
                 isDark ? 'hover:bg-gray-800' : 'hover:bg-gray-100'
               }`}
+              style={{ transition: 'background-color 0.2s' }}
               aria-label="Toggle theme"
             >
               {isDark ? <Sun className="w-4 h-4 sm:w-5 sm:h-5" /> : <Moon className="w-4 h-4 sm:w-5 sm:h-5" />}
             </button>
             <button 
               onClick={() => scrollToSection('get-involved')}
-              className={`px-3 sm:px-6 py-1.5 sm:py-2 rounded-full text-sm sm:text-base font-medium transition-colors ${
+              className={`px-3 sm:px-6 py-1.5 sm:py-2 rounded-full text-sm sm:text-base font-medium ${
                 isDark 
-                  ? 'bg-white text-black hover:bg-gray-200' 
-                  : 'bg-black text-white hover:bg-gray-800'
+                  ? 'bg-white hover:bg-gray-200' 
+                  : 'bg-[#143269] text-white hover:opacity-80'
               }`}
+              style={{ transition: 'background-color 0.2s', color: isDark ? '#143269' : 'white' }}
             >
               Join
             </button>
             <button 
               onClick={() => onNavigate('about')}
-              className={`px-3 sm:px-6 py-1.5 sm:py-2 text-sm sm:text-base transition-colors ${
-              isDark ? 'text-white hover:text-gray-300' : 'text-black hover:text-gray-600'
-            }`}>
+              className={`px-3 sm:px-6 py-1.5 sm:py-2 text-sm sm:text-base ${
+              isDark ? 'text-white hover:text-gray-300' : 'hover:opacity-80'
+            }`}
+              style={{ transition: 'color 0.2s', color: isDark ? 'white' : '#143269' }}
+            >
               About
             </button>
             <button 
               onClick={() => scrollToSection('contact')}
-              className={`hidden md:block px-6 py-2 transition-colors ${
-                isDark ? 'text-white hover:text-gray-300' : 'text-black hover:text-gray-600'
+              className={`px-3 sm:px-6 py-1.5 sm:py-2 text-sm sm:text-base ${
+                isDark ? 'text-white hover:text-gray-300' : 'hover:opacity-80'
               }`}
+              style={{ transition: 'color 0.2s', color: isDark ? 'white' : '#143269' }}
             >
               Contact
             </button>
@@ -104,92 +118,378 @@ export default function HobskiLanding({ onNavigate, theme, setTheme }) {
         />
       )}
 
-      {/* Hand-drawn border after hero */}
-      <HandDrawnBorder isDark={isDark} variant="hero" />
+      {/* SVG definitions for wavy clip paths */}
+      <svg width="0" height="0" style={{ position: 'absolute' }}>
+        <defs>
+          <clipPath id="wavy-top-bottom" clipPathUnits="objectBoundingBox">
+            <path d="M 0,0.05 Q 0.05,0.02 0.1,0.05 T 0.2,0.05 Q 0.25,0.08 0.3,0.05 T 0.4,0.05 Q 0.45,0.02 0.5,0.05 T 0.6,0.05 Q 0.65,0.08 0.7,0.05 T 0.8,0.05 Q 0.85,0.02 0.9,0.05 T 1,0.05 L 1,0.95 Q 0.95,0.98 0.9,0.95 T 0.8,0.95 Q 0.75,0.92 0.7,0.95 T 0.6,0.95 Q 0.55,0.98 0.5,0.95 T 0.4,0.95 Q 0.35,0.92 0.3,0.95 T 0.2,0.95 Q 0.15,0.98 0.1,0.95 T 0,0.95 Z" />
+          </clipPath>
+          <clipPath id="wavy-top-bottom-mobile" clipPathUnits="objectBoundingBox">
+            <path d="M 0,0.02 Q 0.25,0.01 0.5,0.02 T 1,0.02 L 1,0.98 Q 0.75,0.99 0.5,0.98 T 0,0.98 Z" />
+          </clipPath>
+        </defs>
+      </svg>
 
       {/* How Does It Work Section */}
-      <ScrollSection 
-          id="how-it-works" 
-          isDark={isDark}
-        >
-          <div className="max-w-6xl mx-auto px-6">
-            <h2 className="text-5xl md:text-6xl font-bold mb-12">
+      <div style={{ 
+        backgroundColor: isDark ? '#3F60CF' : '#B7D0FF',
+        marginTop: '-1.5rem',
+        marginBottom: '-1.5rem',
+        paddingTop: '3rem',
+        paddingBottom: '3rem',
+        clipPath: isMobile ? 'url(#wavy-top-bottom-mobile)' : 'url(#wavy-top-bottom)'
+      }}>
+        <ScrollSection 
+            id="how-it-works" 
+            isDark={isDark}
+          >
+            <div className="max-w-7xl mx-auto px-5 sm:px-12">
+            <h2 className="text-4xl sm:text-5xl md:text-5xl lg:text-6xl font-bold mb-8">
               How does it work?
             </h2>
 
             {/* Tab Buttons */}
-            <div className="flex justify-center gap-6 mb-12">
-              <button
-                onClick={() => setActiveTab('learner')}
-                className={`px-12 py-4 rounded-full font-medium transition-all text-lg ${
-                  activeTab === 'learner'
-                    ? isDark 
-                      ? 'bg-white text-black' 
-                      : 'bg-black text-white'
-                    : isDark
-                      ? 'bg-transparent text-white border border-white hover:bg-white/10'
-                      : 'bg-transparent text-black border border-black hover:bg-black/10'
-                }`}
-              >
-                As a Learner
-              </button>
-              <button
-                onClick={() => setActiveTab('mentor')}
-                className={`px-12 py-4 rounded-full font-medium transition-all text-lg ${
-                  activeTab === 'mentor'
-                    ? isDark 
-                      ? 'bg-white text-black' 
-                      : 'bg-black text-white'
-                    : isDark
-                      ? 'bg-transparent text-white border border-white hover:bg-white/10'
-                      : 'bg-transparent text-black border border-black hover:bg-black/10'
-                }`}
-              >
-                As a Mentor
-              </button>
-            </div>
-
-            {/* Content Area */}
-            <div className="grid md:grid-cols-2 gap-12 items-center">
-              <div>
-                {activeTab === 'learner' ? (
-                  <p className={`text-lg leading-relaxed ${
-                    isDark ? 'text-gray-300' : 'text-black-700'
-                  }`}>
-                    Explore a new hobby, get guidance on that DIY project, and take your skills to the next level when you join our community of learners.
-                  </p>
-                ) : (
-                  <p className={`text-lg leading-relaxed ${
-                    isDark ? 'text-gray-300' : 'text-black-700'
-                  }`}>
-                    Share your passions, pass down your knowledge, and help others achieve their goals when you make their hobby dreams come true as a mentor.
-                  </p>
-                )}
+            <div className="max-w-7xl mx-auto mb-10">
+              <div className="flex gap-0">
+                <button
+                  onClick={() => setActiveTab('learner')}
+                  className={`flex-1 px-8 py-3 font-semibold transition-all text-xl ${
+                    activeTab === 'learner'
+                      ? 'text-white z-10'
+                      : isDark
+                        ? 'text-[#143269] hover:bg-white/10'
+                        : 'text-[#143269] hover:opacity-80'
+                  }`}
+                  style={{ 
+                    borderRadius: '9999px 0 0 9999px',
+                    backgroundColor: activeTab === 'learner' 
+                      ? '#0D2A5E'
+                      : (isDark ? 'white' : '#E6F6FF'),
+                    position: 'relative',
+                    transform: activeTab === 'learner' ? 'scaleX(1.05) scaleY(1.05)' : 'scale(1)',
+                    transformOrigin: 'right center'
+                  }}
+                >
+                  Learner
+                </button>
+                <button
+                  onClick={() => setActiveTab('mentor')}
+                  className={`flex-1 px-8 py-3 font-semibold transition-all text-xl ${
+                    activeTab === 'mentor'
+                      ? 'text-white z-10'
+                      : isDark
+                        ? 'text-[#143269] hover:bg-white/10'
+                        : 'text-[#143269] hover:opacity-80'
+                  }`}
+                  style={{ 
+                    borderRadius: '0 9999px 9999px 0',
+                    backgroundColor: activeTab === 'mentor' 
+                      ? '#0D2A5E'
+                      : (isDark ? 'white' : '#E6F6FF'),
+                    position: 'relative',
+                    transform: activeTab === 'mentor' ? 'scaleX(1.05) scaleY(1.05)' : 'scale(1)',
+                    transformOrigin: 'left center'
+                  }}
+                >
+                  Mentor
+                </button>
               </div>
             </div>
 
-            {/* Pssst There's More */}
-            <div className="text-center mt-16">
-              <p className={`italic ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>*pssst*</p>
-              <p className={isDark ? 'text-gray-400' : 'text-gray-600'}>There's more</p>
-            </div>
+            {/* 4-Step Process */}
+            {activeTab === 'learner' ? (
+              <>
+                {/* Desktop Grid View */}
+                <div className="hidden md:grid grid-cols-1 md:grid-cols-4 gap-8 mb-16">
+                {/* Step 1 */}
+                <div className="flex flex-col items-start relative">
+                  <h3 className="text-xl font-bold mb-6" style={{ color: isDark ? 'white' : '#143269' }}>
+                    1. Find your hobby
+                  </h3>
+                  
+                  {/* Image Placeholder */}
+                  <div className="w-full aspect-square rounded-lg mb-6 flex items-center justify-center">
+                    <img 
+                      src={`/images/${isDark ? 'Dark' : 'Light'}LearnerStep1.png`} 
+                      alt="Find your hobby illustration"
+                      className="w-full h-full object-cover rounded-lg"
+                      onError={(e) => {
+                        e.target.style.display = 'none';
+                        e.target.parentElement.innerHTML = '<span class="text-gray-600 text-sm">Image</span>';
+                      }}
+                    />
+                  </div>
+                  
+                  <p className="text-lg font-normal leading-relaxed" style={{ color: isDark ? 'rgba(255,255,255,0.9)' : '#143269' }}>
+                    Got a hobby or project in mind? Just type it into our search bar, or browse through our categories for inspiration!
+                  </p>
+                  
+                </div>
+
+                {/* Step 2 */}
+                <div className="flex flex-col items-start relative">
+                  <h3 className="text-xl font-bold mb-6" style={{ color: isDark ? 'white' : '#143269' }}>
+                    2. Browse mentors
+                  </h3>
+                  
+                  {/* Image Placeholder */}
+                  <div className="w-full aspect-square rounded-lg mb-6 flex items-center justify-center">
+                    <img 
+                      src={`/images/${isDark ? 'Dark' : 'Light'}LearnerStep2.png`} 
+                      alt="Browse mentors illustration"
+                      className="w-full h-full object-cover rounded-lg"
+                      onError={(e) => {
+                        e.target.style.display = 'none';
+                        e.target.parentElement.innerHTML = '<span class="text-gray-600 text-sm">Image</span>';
+                      }}
+                    />
+                  </div>
+                  
+                  <p className="text-lg font-normal leading-relaxed" style={{ color: isDark ? 'rgba(255,255,255,0.9)' : '#143269' }}>
+                    Take a look at available mentors and browse their portfolios, rates, schedules, resources, and reviews!
+                  </p>
+                  
+                </div>
+
+                {/* Step 3 */}
+                <div className="flex flex-col items-start relative">
+                  <h3 className="text-xl font-bold mb-6" style={{ color: isDark ? 'white' : '#143269' }}>
+                    3. Book a session
+                  </h3>
+                  
+                  {/* Image Placeholder */}
+                  <div className="w-full aspect-square rounded-lg mb-6 flex items-center justify-center">
+                    <img 
+                      src={`/images/${isDark ? 'Dark' : 'Light'}LearnerStep3.png`} 
+                      alt="Book a session illustration"
+                      className="w-full h-full object-cover rounded-lg"
+                      onError={(e) => {
+                        e.target.style.display = 'none';
+                        e.target.parentElement.innerHTML = '<span class="text-gray-600 text-sm">Image</span>';
+                      }}
+                    />
+                  </div>
+                  
+                  <p className="text-lg font-normal leading-relaxed" style={{ color: isDark ? 'rgba(255,255,255,0.9)' : '#143269' }}>
+                    Request a session with a mentor. Outline your goals, resources, session preferences, and chat with your mentor before confirming!
+                  </p>
+                  
+                </div>
+
+                {/* Step 4 */}
+                <div className="flex flex-col items-start">
+                  <h3 className="text-xl font-bold mb-6" style={{ color: isDark ? 'white' : '#143269' }}>
+                    4. Get learning!
+                  </h3>
+                  
+                  {/* Image Placeholder */}
+                  <div className="w-full aspect-square rounded-lg mb-6 flex items-center justify-center">
+                    <img 
+                      src={`/images/${isDark ? 'Dark' : 'Light'}BothStep4.png`} 
+                      alt="Get learning illustration"
+                      className="w-full h-full object-cover rounded-lg"
+                      onError={(e) => {
+                        e.target.style.display = 'none';
+                        e.target.parentElement.innerHTML = '<span class="text-gray-600 text-sm">Image</span>';
+                      }}
+                    />
+                  </div>
+                  
+                  <p className="text-lg font-normal leading-relaxed" style={{ color: isDark ? 'rgba(255,255,255,0.9)' : '#143269' }}>
+                    Meet in-person or virtually, depending on your preferences, and get learning!
+                  </p>
+                </div>
+              </div>
+
+              {/* Mobile Carousel View */}
+              <MobileStepCarousel 
+                isDark={isDark}
+                activeTab={activeTab}
+                steps={[
+                  {
+                    number: 1,
+                    title: 'Find your hobby',
+                    image: `/images/${isDark ? 'Dark' : 'Light'}LearnerStep1.png`,
+                    description: 'Got a hobby or project in mind? Just type it into our search bar, or browse through our categories for inspiration!'
+                  },
+                  {
+                    number: 2,
+                    title: 'Browse mentors',
+                    image: `/images/${isDark ? 'Dark' : 'Light'}LearnerStep2.png`,
+                    description: 'Take a look at available mentors and browse their portfolios, rates, schedules, resources, and reviews!'
+                  },
+                  {
+                    number: 3,
+                    title: 'Book a session',
+                    image: `/images/${isDark ? 'Dark' : 'Light'}LearnerStep3.png`,
+                    description: 'Request a session with a mentor. Outline your goals, resources, session preferences, and chat with your mentor before confirming!'
+                  },
+                  {
+                    number: 4,
+                    title: 'Get learning!',
+                    image: `/images/${isDark ? 'Dark' : 'Light'}BothStep4.png`,
+                    description: 'Meet in-person or virtually, depending on your preferences, and get learning!'
+                  }
+                ]}
+              />
+              </>
+            ) : (
+              <>
+              {/* Desktop Grid View */}
+              <div className="hidden md:grid grid-cols-1 md:grid-cols-4 gap-8 mb-16">
+                {/* Mentor Step 1 */}
+                <div className="flex flex-col items-start relative">
+                  <h3 className="text-xl font-bold mb-6" style={{ color: isDark ? 'white' : '#143269' }}>
+                    1. Find your skill OR Create one
+                  </h3>
+                  
+                  {/* Image Placeholder */}
+                  <div className="w-full aspect-square rounded-lg mb-6 flex items-center justify-center">
+                    <img 
+                      src={`/images/${isDark ? 'Dark' : 'Light'}MentorStep1.png`} 
+                      alt="Mentor step 1 illustration"
+                      className="w-full h-full object-cover rounded-lg"
+                      onError={(e) => {
+                        e.target.style.display = 'none';
+                        e.target.parentElement.innerHTML = '<span class="text-gray-600 text-sm">Image</span>';
+                      }}
+                    />
+                  </div>
+                  
+                  <p className="text-lg font-normal leading-relaxed" style={{ color: isDark ? 'rgba(255,255,255,0.9)' : '#143269'}}>
+                    Browse through our skill categories and choose yours. If you can’t find it, request to add a new one to our list!
+                  </p>
+                  
+                </div>
+
+                {/* Mentor Step 2 */}
+                <div className="flex flex-col items-start relative">
+                  <h3 className="text-xl font-bold mb-6" style={{ color: isDark ? 'white' : '#143269' }}>
+                    2. Set up your profile
+                  </h3>
+                  
+                  {/* Image Placeholder */}
+                  <div className="w-full aspect-square rounded-lg mb-6 flex items-center justify-center">
+                    <img 
+                      src={`/images/${isDark ? 'Dark' : 'Light'}MentorStep2.png`} 
+                      alt="Mentor step 2 illustration"
+                      className="w-full h-full object-cover rounded-lg"
+                      onError={(e) => {
+                        e.target.style.display = 'none';
+                        e.target.parentElement.innerHTML = '<span class="text-gray-600 text-sm">Image</span>';
+                      }}
+                    />
+                  </div>
+                  
+                  <p className="text-lg font-normal leading-relaxed" style={{ color: isDark ? 'rgba(255,255,255,0.9)' : '#143269' }}>
+                    Demonstrate your skill. Pick your skill level, rate, schedule, and outline your session preferences (resources offered, session size, and location).
+                  </p>
+                  
+                </div>
+
+                {/* Mentor Step 3 */}
+                <div className="flex flex-col items-start relative">
+                  <h3 className="text-xl font-bold mb-6" style={{ color: isDark ? 'white' : '#143269' }}>
+                    3. Chat with learners
+                  </h3>
+                  
+                  {/* Image Placeholder */}
+                  <div className="w-full aspect-square rounded-lg mb-6 flex items-center justify-center">
+                    <img 
+                      src={`/images/${isDark ? 'Dark' : 'Light'}MentorStep3.png`} 
+                      alt="Mentor step 3 illustration"
+                      className="w-full h-full object-cover rounded-lg"
+                      onError={(e) => {
+                        e.target.style.display = 'none';
+                        e.target.parentElement.innerHTML = '<span class="text-gray-600 text-sm">Image</span>';
+                      }}
+                    />
+                  </div>
+                  
+                  <p className="text-lg font-normal leading-relaxed" style={{ color: isDark ? 'rgba(255,255,255,0.9)' : '#143269'}}>
+                    Start a conversation with learners when they’ve requested a session and discuss goals and sessions details before confirming!
+                  </p>
+                  
+                </div>
+
+                {/* Mentor Step 4 */}
+                <div className="flex flex-col items-start">
+                  <h3 className="text-xl font-bold mb-6" style={{ color: isDark ? 'white' : '#143269' }}>
+                    4. Get mentoring!
+                  </h3>
+                  
+                  {/* Image Placeholder */}
+                  <div className="w-full aspect-square rounded-lg mb-6 flex items-center justify-center">
+                    <img 
+                      src={`/images/${isDark ? 'Dark' : 'Light'}BothStep4.png`} 
+                      alt="Mentor step 4 illustration"
+                      className="w-full h-full object-cover rounded-lg"
+                      onError={(e) => {
+                        e.target.style.display = 'none';
+                        e.target.parentElement.innerHTML = '<span class="text-gray-600 text-sm">Image</span>';
+                      }}
+                    />
+                  </div>
+                  
+                  <p className="text-lg font-normal leading-relaxed" style={{ color: isDark ? 'rgba(255,255,255,0.9)' : '#143269' }}>
+                    Meet your learners in-person or virtually, depending on your preferences, and get mentoring!
+                  </p>
+                </div>
+              </div>
+
+              {/* Mobile Carousel View */}
+              <MobileStepCarousel 
+                isDark={isDark}
+                activeTab={activeTab}
+                steps={[
+                  {
+                    number: 1,
+                    title: 'Find your skill OR Create one',
+                    image: `/images/${isDark ? 'Dark' : 'Light'}MentorStep1.png`,
+                    description: 'Browse through our skill categories and choose yours. If you can\'t find it, request to add a new one to our list!'
+                  },
+                  {
+                    number: 2,
+                    title: 'Set up your profile',
+                    image: `/images/${isDark ? 'Dark' : 'Light'}MentorStep2.png`,
+                    description: 'Demonstrate your skill. Pick your skill level, rate, schedule, and outline your session preferences (resources offered, session size, and location).'
+                  },
+                  {
+                    number: 3,
+                    title: 'Chat with learners',
+                    image: `/images/${isDark ? 'Dark' : 'Light'}MentorStep3.png`,
+                    description: 'Start a conversation with learners when they\'ve requested a session and discuss goals and sessions details before confirming!'
+                  },
+                  {
+                    number: 4,
+                    title: 'Get mentoring!',
+                    image: `/images/${isDark ? 'Dark' : 'Light'}BothStep4.png`,
+                    description: 'Meet your learners in-person or virtually, depending on your preferences, and get mentoring!'
+                  }
+                ]}
+              />
+              </>
+            )}
+
           </div>
         </ScrollSection>
-
-        {/* Hand-drawn border */}
-        <HandDrawnBorder isDark={isDark} />
+      </div>
 
         {/* Get Involved Section */}
-        <ScrollSection 
-          id="get-involved" 
-          isDark={isDark}
-          className={isDark ? 'bg-gray-900' : 'bg-gray-50'}
-        >
-          <div className="max-w-6xl mx-auto px-6">
+        <div style={{ 
+          backgroundColor: isDark ? '#0D2A5E' : '#E6F6FF',
+          marginTop: '-4rem',
+          paddingTop: '3rem'
+        }}>
+          <ScrollSection 
+            id="get-involved" 
+            isDark={isDark}
+          >
+            <div className="max-w-7xl mx-auto px-5 sm:px-12">
             <h2 className="text-4xl md:text-5xl font-bold mb-4">
               Get involved
             </h2>
-            <p className={`text-lg mb-12 ${
+            <p className={`text-2xl mb-12 ${
               isDark ? 'text-gray-300' : 'text-gray-700'
             }`}>
               Got a hobby or skill you're interested in? Join us!
@@ -201,15 +501,16 @@ export default function HobskiLanding({ onNavigate, theme, setTheme }) {
               onClick={() => onNavigate('learner-signup')}
               className={`group rounded-2xl p-8 text-left transition-all hover:scale-105 transform w-full max-w-md border-2 ${
                 isDark 
-                  ? 'bg-black border-gray-700 hover:border-white' 
-                  : 'bg-white border-gray-300 hover:border-black'
-              }`}>
-                <div className={`rounded-lg aspect-video mb-6 flex items-center justify-center ${
-                  isDark ? 'bg-gray-800' : 'bg-gray-200'
-                }`}>
-                  <span className={`text-sm ${isDark ? 'text-gray-500' : 'text-gray-400'}`}>
-                    Learner Image
-                  </span>
+                  ? 'border-gray-700 hover:border-white' 
+                  : 'bg-white border-gray-300'
+              }`}
+              style={isDark ? { backgroundColor: '#143269' } : { borderColor: '#143269' }}>
+                <div className="rounded-lg aspect-video mb-6 flex items-center justify-center overflow-hidden">
+                  <img 
+                    src={`/images/${isDark ? 'Dark' : 'Light'}LearnerCard.webp`}
+                    alt="Learner illustration"
+                    className="w-full h-full object-cover"
+                  />
                 </div>
                 <h3 className="text-2xl font-bold mb-3">As a Learner</h3>
                 <p className={`leading-relaxed ${
@@ -224,15 +525,16 @@ export default function HobskiLanding({ onNavigate, theme, setTheme }) {
               onClick={() => onNavigate('mentor-signup')}
               className={`group rounded-2xl p-8 text-left transition-all hover:scale-105 transform w-full max-w-md border-2 ${
                 isDark 
-                  ? 'bg-black border-gray-700 hover:border-white' 
-                  : 'bg-white border-gray-300 hover:border-black'
-              }`}>
-                <div className={`rounded-lg aspect-video mb-6 flex items-center justify-center ${
-                  isDark ? 'bg-gray-800' : 'bg-gray-200'
-                }`}>
-                  <span className={`text-sm ${isDark ? 'text-gray-500' : 'text-gray-400'}`}>
-                    Mentor Image
-                  </span>
+                  ? 'border-gray-700 hover:border-white' 
+                  : 'bg-white border-gray-300'
+              }`}
+              style={isDark ? { backgroundColor: '#143269' } : { borderColor: '#143269' }}>
+                <div className="rounded-lg aspect-video mb-6 flex items-center justify-center overflow-hidden">
+                  <img 
+                    src={`/images/${isDark ? 'Dark' : 'Light'}MentorCard.webp`}
+                    alt="Mentor illustration"
+                    className="w-full h-full object-cover"
+                  />
                 </div>
                 <h3 className="text-2xl font-bold mb-3">As a Mentor</h3>
                 <p className={`leading-relaxed ${
@@ -244,21 +546,19 @@ export default function HobskiLanding({ onNavigate, theme, setTheme }) {
             </div>
           </div>
         </ScrollSection>
-
-        {/* Hand-drawn border */}
-        <HandDrawnBorder isDark={isDark} />
+        </div>
 
         {/* Contact Section */}
         <ScrollSection 
           id="contact" 
           isDark={isDark}
         >
-          <div className="max-w-2xl mx-auto px-6">
+          <div className="max-w-7xl mx-auto px-5 sm:px-12">
             <h2 className="text-4xl md:text-5xl font-bold mb-12">
               Contact us
             </h2>
 
-            <div className="space-y-6">
+            <div className="max-w-2xl space-y-6">
               <div className="grid md:grid-cols-2 gap-6">
                 <div>
                   <label className={`block text-sm mb-2 ${
@@ -271,8 +571,9 @@ export default function HobskiLanding({ onNavigate, theme, setTheme }) {
                     className={`w-full px-4 py-3 border rounded-lg focus:outline-none transition-colors ${
                       isDark 
                         ? 'bg-gray-900 border-gray-700 focus:border-white text-white' 
-                        : 'bg-white border-gray-300 focus:border-black text-black'
+                        : 'bg-white border-gray-300'
                     }`}
+                    style={!isDark ? { borderColor: '#143269', color: '#143269' } : {}}
                   />
                 </div>
                 <div>
@@ -286,8 +587,9 @@ export default function HobskiLanding({ onNavigate, theme, setTheme }) {
                     className={`w-full px-4 py-3 border rounded-lg focus:outline-none transition-colors ${
                       isDark 
                         ? 'bg-gray-900 border-gray-700 focus:border-white text-white' 
-                        : 'bg-white border-gray-300 focus:border-black text-black'
+                        : 'bg-white border-gray-300'
                     }`}
+                    style={!isDark ? { borderColor: '#143269', color: '#143269' } : {}}
                   />
                 </div>
               </div>
@@ -331,9 +633,10 @@ export default function HobskiLanding({ onNavigate, theme, setTheme }) {
                 }}
                 className={`w-full px-8 py-4 rounded-full font-medium transition-colors text-lg ${
                   isDark 
-                    ? 'bg-white text-black hover:bg-gray-200' 
-                    : 'bg-black text-white hover:bg-gray-800'
+                    ? 'bg-white hover:bg-gray-200' 
+                    : 'bg-[#143269] text-white hover:opacity-80'
                 }`}
+                style={isDark ? { color: '#143269' } : {}}
               >
                 Send Message
               </button>
@@ -348,7 +651,7 @@ export default function HobskiLanding({ onNavigate, theme, setTheme }) {
         <div className={`max-w-7xl mx-auto text-center text-sm ${
           isDark ? 'text-gray-400' : 'text-gray-600'
         }`}>
-          ℠ 2024 hobski. 
+          ℠ 2026 hobski. 
         </div>
       </footer>
     </div>
@@ -356,36 +659,6 @@ export default function HobskiLanding({ onNavigate, theme, setTheme }) {
 }
 
 // Hand-drawn irregular border line component
-function HandDrawnBorder({ isDark, variant = 'default' }) {
-  // Different path patterns for variety
-  const paths = {
-    default: "M0,6 Q15,2 30,7 T60,5 Q75,9 90,4 T120,6 Q135,2 150,8 T180,5 Q195,9 210,3 T240,7 Q255,2 270,6 T300,4 Q315,9 330,5 T360,7 Q375,2 390,6 T420,5 Q435,9 450,4 T480,6 Q495,2 510,8 T540,5 Q555,9 570,3 T600,7 Q615,2 630,6 T660,4 Q675,9 690,5 T720,7 Q735,2 750,6 T780,5 Q795,9 810,4 T840,6 Q855,2 870,8 T900,5 Q915,9 930,3 T960,7 Q975,2 990,6 T1020,4 Q1035,9 1050,5 T1080,7 Q1095,2 1110,6 T1140,5 Q1155,9 1170,4 T1200,6",
-    hero: "M0,5 Q20,9 40,4 T80,6 Q100,2 120,8 T160,4 Q180,9 200,5 T240,7 Q260,2 280,6 T320,5 Q340,8 360,3 T400,7 Q420,2 440,8 T480,4 Q500,9 520,5 T560,6 Q580,2 600,7 T640,5 Q660,9 680,3 T720,7 Q740,2 760,6 T800,4 Q820,9 840,5 T880,7 Q900,2 920,6 T960,5 Q980,8 1000,4 T1040,6 Q1060,2 1080,8 T1120,4 Q1140,9 1160,5 T1200,7"
-  };
-
-  return (
-    <div className="w-full overflow-hidden py-6">
-      <svg 
-        width="100%" 
-        height="16" 
-        viewBox="0 0 1200 16" 
-        preserveAspectRatio="none"
-        className="w-full"
-      >
-        <path
-          d={paths[variant] || paths.default}
-          fill="none"
-          stroke={isDark ? '#ffffff' : '#000000'}
-          strokeWidth="2.5"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          opacity="0.6"
-        />
-      </svg>
-    </div>
-  );
-}
-
 // ScrollSection Component
 function ScrollSection({ id, children, isDark, className = '' }) {
   const sectionRef = useRef(null);
@@ -432,9 +705,9 @@ function GSAPHeroSection({ isDark, scrollToSection }) {
   const timelineRef = useRef(null);
   
   const illustrations = [
-    { text: '/images/DreamIt.png', art: '/images/DreamItArt.png', id: 'dream' },
-    { text: '/images/LearnIt.png', art: '/images/LearnItArt.png', id: 'learn' },
-    { text: '/images/DoIt.png', art: '/images/DoItArt.png', id: 'do' }
+    { text: 'Dream it', art: `/images/${isDark ? 'Dark' : 'Light'}DreamItArt.webp`, id: 'dream' },
+    { text: 'Learn it', art: `/images/${isDark ? 'Dark' : 'Light'}LearnItArt.webp`, id: 'learn' },
+    { text: 'Do it', art: `/images/${isDark ? 'Dark' : 'Light'}DoItArt.webp`, id: 'do' }
   ];
 
   // Navigate to specific slide
@@ -496,28 +769,53 @@ function GSAPHeroSection({ isDark, scrollToSection }) {
     const container = containerRef.current;
     if (!container) return;
 
-    // Get all elements
-    const elements = illustrations.map((_, index) => ({
-      text: container.querySelector(`#text-${index}`),
-      art: container.querySelector(`#art-${index}`)
-    }));
+    let initTimeout;
+    let resizeTimeout;
 
-    // Set ALL initial positions BEFORE creating timeline
-    elements.forEach((el, index) => {
-      if (!el.text || !el.art) return;
+    const initAnimation = () => {
+      // Kill any existing ScrollTriggers first to prevent conflicts
+      ScrollTrigger.getAll().forEach(trigger => {
+        if (trigger.trigger === container) {
+          trigger.kill();
+        }
+      });
 
-      if (index === 0) {
-        // First illustration: visible in center
-        gsap.set([el.text, el.art], { x: 0, opacity: 1 });
-      } else if (index === 1) {
-        // Second illustration: offscreen right, but text will be positioned left when visible
-        gsap.set(el.art, { x: window.innerWidth * 1.2, opacity: 0 });
-        gsap.set(el.text, { x: window.innerWidth * 1.2, opacity: 0 });
-      } else {
-        // Others: offscreen right
-        gsap.set([el.text, el.art], { x: window.innerWidth * 1.2, opacity: 0 });
-      }
-    });
+      // Small delay to ensure DOM is ready and dimensions are correct
+      initTimeout = setTimeout(() => {
+        // Get all elements
+        const elements = illustrations.map((_, index) => ({
+          text: container.querySelector(`#text-${index}`),
+          art: container.querySelector(`#art-${index}`)
+        }));
+
+        // Verify all elements exist
+        const allElementsExist = elements.every(el => el.text && el.art);
+        if (!allElementsExist) {
+          console.warn('Not all hero elements found, skipping animation setup');
+          return;
+        }
+
+        // Get viewport dimensions safely
+        const viewportWidth = window.innerWidth || document.documentElement.clientWidth;
+        const viewportHeight = window.innerHeight || document.documentElement.clientHeight;
+        const isMobile = viewportWidth < 768;
+
+        // Set ALL initial positions BEFORE creating timeline
+        elements.forEach((el, index) => {
+          if (!el.text || !el.art) return;
+
+          if (index === 0) {
+            // First illustration: visible in center
+            gsap.set([el.text, el.art], { x: 0, y: 0, opacity: 1 });
+          } else {
+            // Others: offscreen (right for desktop, bottom for mobile)
+            if (isMobile) {
+              gsap.set([el.text, el.art], { x: 0, y: viewportHeight * 1.2, opacity: 0 });
+            } else {
+              gsap.set([el.text, el.art], { x: viewportWidth * 1.2, y: 0, opacity: 0 });
+            }
+          }
+        });
 
     // Create timeline
     const mainTimeline = gsap.timeline({
@@ -556,7 +854,8 @@ function GSAPHeroSection({ isDark, scrollToSection }) {
       if (index === 0 || index === 1) {
         // Text exits FIRST (slightly earlier)
         mainTimeline.to(current.text, {
-          x: -window.innerWidth,
+          x: isMobile ? 0 : -viewportWidth,
+          y: isMobile ? -viewportHeight : 0,
           opacity: 0,
           ease: 'power2.inOut',
           duration: transitionDuration
@@ -564,7 +863,8 @@ function GSAPHeroSection({ isDark, scrollToSection }) {
         
         // Art exits slightly after text
         mainTimeline.to(current.art, {
-          x: -window.innerWidth,
+          x: isMobile ? 0 : -viewportWidth,
+          y: isMobile ? -viewportHeight : 0,
           opacity: 0,
           ease: 'power2.inOut',
           duration: transitionDuration
@@ -572,28 +872,27 @@ function GSAPHeroSection({ isDark, scrollToSection }) {
       } else {
         // Other illustrations exit together
         mainTimeline.to([current.text, current.art], {
-          x: -window.innerWidth,
+          x: isMobile ? 0 : -viewportWidth,
+          y: isMobile ? -viewportHeight : 0,
           opacity: 0,
           ease: 'power2.inOut',
           duration: transitionDuration
         }, transitionStart);
       }
 
-      // Next illustration ART enters from right FIRST
+      // Next illustration ART enters from bottom (mobile) or right (desktop) FIRST
       mainTimeline.to(next.art, {
         x: 0,
+        y: 0,
         opacity: 1,
         ease: 'power2.inOut',
         duration: transitionDuration
       }, transitionStart);
 
-      // Next illustration TEXT enters from right (slightly delayed for parallax)
-      // Second illustration needs left offset to avoid overlap with art
-      const nextIndex = index + 1;
-      const textFinalX = nextIndex === 1 ? window.innerWidth * -0.25 : 0;
-      
+      // Next illustration TEXT enters from bottom (mobile) or right (desktop) (slightly delayed for parallax)
       mainTimeline.to(next.text, {
-        x: textFinalX,
+        x: 0,
+        y: 0,
         opacity: 1,
         ease: 'power2.inOut',
         duration: transitionDuration
@@ -601,35 +900,59 @@ function GSAPHeroSection({ isDark, scrollToSection }) {
     });
 
     mainTimeline.to({}, { duration: 0.04 });
+      }, 100); // End of setTimeout
+    };
+
+    // Initialize on mount
+    initAnimation();
+
+    // Reinitialize on resize to handle desktop/mobile transitions
+    const handleResize = () => {
+      clearTimeout(resizeTimeout);
+      resizeTimeout = setTimeout(() => {
+        initAnimation();
+      }, 300);
+    };
+
+    window.addEventListener('resize', handleResize);
 
     return () => {
+      clearTimeout(initTimeout);
+      clearTimeout(resizeTimeout);
+      window.removeEventListener('resize', handleResize);
       ScrollTrigger.getAll().forEach(trigger => trigger.kill());
     };
   }, []);
 
   return (
-    <div ref={containerRef} className="relative h-screen overflow-hidden">
+    <div ref={containerRef} className="relative h-screen overflow-hidden pt-16 md:pt-0">
       {/* Illustrations - all positioned absolutely */}
       {illustrations.map((illust, index) => (
         <div key={illust.id} className="absolute inset-0 flex items-center justify-center">
-          <img
+          <h1
             id={`text-${index}`}
-            src={illust.text}
-            alt={`${illust.id} text`}
-            className="absolute max-w-[80vw] max-h-[80vh] object-contain z-10"
+            className="absolute z-10 font-['Inter',sans-serif] font-bold text-center leading-none"
             style={{ 
-              opacity: index === 0 ? 1 : 0,
-              maxWidth: index === 2 ? '90vw' : '80vw',
-              maxHeight: index === 2 ? '90vh' : '80vh'
+              fontSize: 'clamp(4rem, 9vw, 8rem)',
+              color: isDark ? '#ffffff' : '#143269',
+              left: index === 0 ? '35%' : index === 1 ? '30%' : '49%',
+              top: index === 0 ? '22%' : index === 1 ? '22%' : '22%',
+              transform: 'translate(-50%, -50%)',
+              opacity: 0
             }}
-          />
-          
+          >
+            {illust.text}
+          </h1>
+          {/* Comment this code later */}
           <img
             id={`art-${index}`}
             src={illust.art}
             alt={`${illust.id} art`}
             className="absolute max-w-[80vw] max-h-[80vh] object-contain"
-            style={{ opacity: index === 0 ? 1 : 0 }}
+            style={{ 
+              opacity: 0,
+              ...(index === 1 ? { left: '30%', transform: 'translate(-50%, -50%)' } : {})
+            }}
           />
         </div>
       ))}
@@ -638,59 +961,65 @@ function GSAPHeroSection({ isDark, scrollToSection }) {
       <button
         onClick={prevSlide}
         disabled={currentSlide === 0}
-        className={`absolute left-8 top-1/2 -translate-y-1/2 z-50 p-2 rounded-full transition-all ${
+        className={`absolute left-1/2 -translate-x-1/2 top-20 md:left-8 md:top-1/2 md:-translate-y-1/2 md:translate-x-0 z-50 p-2 rounded-full transition-all backdrop-blur-sm ${
           currentSlide === 0
             ? 'opacity-0 pointer-events-none'
             : isDark
-              ? 'bg-white/10 hover:bg-white/20 text-white backdrop-blur-sm'
-              : 'bg-black/10 hover:bg-black/20 text-black backdrop-blur-sm'
+              ? 'bg-white/10 hover:bg-white/20 text-white'
+              : 'hover:opacity-80'
         }`}
+        style={!isDark && currentSlide !== 0 ? { backgroundColor: 'rgba(20, 50, 105, 0.1)', color: '#143269' } : {}}
         aria-label="Previous illustration"
       >
-        <ChevronLeft className="w-6 h-6" />
+        <ChevronLeft className="w-6 h-6 md:block hidden" />
+        <ChevronDown className="w-6 h-6 md:hidden rotate-180" />
       </button>
 
       <button
         onClick={nextSlide}
         disabled={currentSlide === illustrations.length - 1}
-        className={`absolute right-8 top-1/2 -translate-y-1/2 z-50 p-2 rounded-full transition-all ${
+        className={`absolute left-1/2 -translate-x-1/2 bottom-32 md:right-8 md:left-auto md:top-1/2 md:-translate-y-1/2 md:translate-x-0 md:bottom-auto z-50 p-2 rounded-full transition-all backdrop-blur-sm ${
           currentSlide === illustrations.length - 1
             ? 'opacity-0 pointer-events-none'
             : isDark
-              ? 'bg-white/10 hover:bg-white/20 text-white backdrop-blur-sm'
-              : 'bg-black/10 hover:bg-black/20 text-black backdrop-blur-sm'
+              ? 'bg-white/10 hover:bg-white/20 text-white'
+              : 'hover:opacity-80'
         }`}
+        style={!isDark && currentSlide !== illustrations.length - 1 ? { backgroundColor: 'rgba(20, 50, 105, 0.1)', color: '#143269' } : {}}
         aria-label="Next illustration"
       >
-        <ChevronRight className="w-6 h-6" />
+        <ChevronRight className="w-6 h-6 md:block hidden" />
+        <ChevronDown className="w-6 h-6 md:hidden" />
       </button>
 
-      {/* Progress bar */}
-      <div className="absolute bottom-8 left-1/2 -translate-x-1/2 z-50">
-        <div className={`h-1 w-32 rounded-full ${
-          isDark ? 'bg-gray-800' : 'bg-gray-200'
-        } overflow-hidden`}>
-          <div
-            className={`h-full transition-all duration-300 ${isDark ? 'bg-white' : 'bg-black'}`}
-            style={{ width: `${progress * 100}%` }}
-          />
-        </div>
-        <div className={`mt-2 text-xs font-medium text-center ${
-          isDark ? 'text-gray-400' : 'text-gray-600'
-        }`}>
-          {currentSlide + 1}/{illustrations.length}
+      {/* Progress indicator */}
+      <div className="absolute bottom-28 left-1/2 -translate-x-1/2 z-50">
+        <div className="flex gap-2 items-center">
+          {illustrations.map((_, index) => (
+            <div
+              key={index}
+              className="rounded-full transition-all duration-300"
+              style={{
+                width: index === currentSlide ? '12px' : '8px',
+                height: index === currentSlide ? '12px' : '8px',
+                backgroundColor: index === currentSlide ? '#377BD9' : '#95a8c5'
+              }}
+            />
+          ))}
         </div>
       </div>
 
       {/* Permanent scroll down button */}
-      <div className="absolute bottom-20 left-1/2 -translate-x-1/2 z-50">
+      <div className="absolute bottom-8 left-1/2 -translate-x-1/2 z-50">
         <button 
           onClick={() => scrollToSection('how-it-works')}
-          className={`inline-flex items-center gap-2 transition-colors group ${
-            isDark ? 'text-gray-400 hover:text-white' : 'text-gray-600 hover:text-black'
+          className={`inline-flex items-center gap-2 px-6 py-3 rounded-full border-2 transition-all group ${
+            isDark 
+              ? 'text-white border-white hover:bg-white hover:text-[#143269]' 
+              : 'text-[#143269] border-[#143269] hover:bg-[#143269] hover:text-white'
           }`}
         >
-          Keep scrolling
+          Pssst there's more
           <ChevronDown className="w-5 h-5 group-hover:translate-y-1 transition-transform" />
         </button>
       </div>
@@ -698,68 +1027,285 @@ function GSAPHeroSection({ isDark, scrollToSection }) {
   );
 }
 
-// Mobile Hero Section
-function MobileHeroSection({ isDark, scrollToSection }) {
-  const illustrations = [
-    { text: '/images/DreamIt.png', art: '/images/DreamItArt.png', id: 'dream' },
-    { text: '/images/LearnIt.png', art: '/images/LearnItArt.png', id: 'learn' },
-    { text: '/images/DoIt.png', art: '/images/DoItArt.png', id: 'do' }
-  ];
+// Mobile Step Carousel Component
+function MobileStepCarousel({ isDark, steps, activeTab }) {
+  const [currentStep, setCurrentStep] = useState(0);
+
+  // Reset to first step when tab changes
+  useEffect(() => {
+    setCurrentStep(0);
+  }, [activeTab]);
+
+  const nextStep = () => {
+    setCurrentStep((prev) => (prev + 1) % steps.length);
+  };
+
+  const prevStep = () => {
+    setCurrentStep((prev) => (prev - 1 + steps.length) % steps.length);
+  };
+
+  const goToStep = (index) => {
+    setCurrentStep(index);
+  };
 
   return (
-    <div className="pt-20 pb-6">
-      {illustrations.map((illust, index) => (
-        <motion.div
-          key={illust.id}
-          className="min-h-[60vh] flex items-center justify-center px-6 relative py-8"
-          initial={{ opacity: 0, y: 50 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          transition={{ 
-            duration: 0.8,
-            ease: "easeOut",
-            delay: 0.2
-          }}
-          viewport={{ once: true, margin: "-100px" }}
-        >
-          <div className="relative w-full max-w-md">
-            <motion.img
-              src={illust.text}
-              alt={`${illust.id} text`}
-              className="w-full relative z-10"
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ 
-                duration: 0.6,
-                ease: "easeOut"
+    <div className="md:hidden mb-16 relative">
+      {/* Step Card */}
+      <div className="px-6">
+        <div className="transition-opacity duration-300 min-h-[550px]">
+          {/* Step Title */}
+          <h3 className="text-xl font-bold mb-4" style={{ color: isDark ? 'white' : '#143269' }}>
+            {steps[currentStep].number}. {steps[currentStep].title}
+          </h3>
+          
+          {/* Step Image */}
+          <div className="w-full aspect-square rounded-lg mb-1 flex items-center justify-center relative">
+            <img 
+              src={steps[currentStep].image}
+              alt={`${steps[currentStep].title} illustration`}
+              className="w-full h-full object-cover rounded-lg"
+              onError={(e) => {
+                e.target.style.display = 'none';
+                e.target.parentElement.innerHTML = '<span class="text-gray-600 text-sm">Image</span>';
               }}
-              viewport={{ once: true }}
             />
             
-            <motion.img
-              src={illust.art}
-              alt={`${illust.id} art`}
-              className="w-full absolute top-0 left-0"
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ 
-                duration: 0.6,
-                ease: "easeOut",
-                delay: 0.3
-              }}
-              viewport={{ once: true }}
-            />
-          </div>
-        </motion.div>
-      ))}
+            {/* Navigation Arrows */}
+            <button
+              onClick={prevStep}
+              disabled={currentStep === 0}
+              className={`absolute -left-6 top-1/2 -translate-y-1/2 z-10 p-2 rounded-full transition-all ${
+                currentStep === 0
+                  ? 'opacity-0 pointer-events-none'
+                  : isDark
+                    ? 'bg-white/10 hover:bg-white/20 text-white'
+                    : 'bg-[#143269]/10 hover:bg-[#143269]/20 text-[#143269]'
+              }`}
+              aria-label="Previous step"
+            >
+              <ChevronLeft className="w-6 h-6" />
+            </button>
 
+            <button
+              onClick={nextStep}
+              disabled={currentStep === steps.length - 1}
+              className={`absolute -right-6 top-1/2 -translate-y-1/2 z-10 p-2 rounded-full transition-all ${
+                currentStep === steps.length - 1
+                  ? 'opacity-0 pointer-events-none'
+                  : isDark
+                    ? 'bg-white/10 hover:bg-white/20 text-white'
+                    : 'bg-[#143269]/10 hover:bg-[#143269]/20 text-[#143269]'
+              }`}
+              aria-label="Next step"
+            >
+              <ChevronRight className="w-6 h-6" />
+            </button>
+          </div>
+          
+          {/* Step Description */}
+          <p className="text-lg font-normal leading-relaxed" style={{ color: isDark ? 'rgba(255,255,255,0.9)' : '#143269' }}>
+            {steps[currentStep].description}
+          </p>
+        </div>
+
+      </div>
+
+      {/* Progress Indicators */}
+      <div className="flex justify-center gap-2 mt-8">
+        {steps.map((_, index) => (
+          <button
+            key={index}
+            onClick={() => goToStep(index)}
+            className="rounded-full transition-all duration-300"
+            style={{
+              width: index === currentStep ? '12px' : '8px',
+              height: index === currentStep ? '12px' : '8px',
+              backgroundColor: index === currentStep ? '#377BD9' : '#95a8c5'
+            }}
+            aria-label={`Go to step ${index + 1}`}
+          />
+        ))}
+      </div>
+    </div>
+  );
+}
+
+// Mobile Hero Section - Static vertical layout
+function MobileHeroSection({ isDark, scrollToSection }) {
+  const [currentSlide, setCurrentSlide] = useState(0);
+  const [autoScrollEnabled, setAutoScrollEnabled] = useState(true);
+  const touchStartX = useRef(0);
+  const touchEndX = useRef(0);
+  const carouselRef = useRef(null);
+
+  const illustrations = [
+    { text: 'Dream it', art: `/images/${isDark ? 'Dark' : 'Light'}DreamItArt.webp`, id: 'dream' },
+    { text: 'Learn it', art: `/images/${isDark ? 'Dark' : 'Light'}LearnItArt.webp`, id: 'learn' },
+    { text: 'Do it', art: `/images/${isDark ? 'Dark' : 'Light'}DoItArt.webp`, id: 'do' }
+  ];
+
+  // Auto-scroll functionality
+  useEffect(() => {
+    if (!autoScrollEnabled) return;
+
+    const interval = setInterval(() => {
+      setCurrentSlide((prev) => (prev + 1) % illustrations.length);
+    }, 3000); // Change slide every 3 seconds
+
+    return () => clearInterval(interval);
+  }, [autoScrollEnabled, illustrations.length]);
+
+  // Handle touch events for swiping
+  const handleTouchStart = (e) => {
+    touchStartX.current = e.touches[0].clientX;
+  };
+
+  const handleTouchMove = (e) => {
+    touchEndX.current = e.touches[0].clientX;
+  };
+
+  const handleTouchEnd = () => {
+    const swipeThreshold = 50;
+    const diff = touchStartX.current - touchEndX.current;
+
+    if (Math.abs(diff) > swipeThreshold) {
+      setAutoScrollEnabled(false); // Disable auto-scroll on user interaction
+      
+      if (diff > 0) {
+        // Swiped left - go to next slide
+        setCurrentSlide((prev) => (prev + 1) % illustrations.length);
+      } else {
+        // Swiped right - go to previous slide
+        setCurrentSlide((prev) => (prev - 1 + illustrations.length) % illustrations.length);
+      }
+    }
+  };
+
+  const goToSlide = (index) => {
+    setAutoScrollEnabled(false);
+    setCurrentSlide(index);
+  };
+
+  const nextSlide = () => {
+    setAutoScrollEnabled(false);
+    setCurrentSlide((prev) => (prev + 1) % illustrations.length);
+  };
+
+  const prevSlide = () => {
+    setAutoScrollEnabled(false);
+    setCurrentSlide((prev) => (prev - 1 + illustrations.length) % illustrations.length);
+  };
+
+  return (
+    <div className="pt-16 pb-6 min-h-screen flex flex-col justify-center relative">
+      {/* Carousel container */}
+      <div 
+        ref={carouselRef}
+        className="relative w-full overflow-hidden px-6"
+        onTouchStart={handleTouchStart}
+        onTouchMove={handleTouchMove}
+        onTouchEnd={handleTouchEnd}
+      >
+        {/* Text centered above illustration */}
+        <h1 
+          className="text-center transition-opacity duration-500"
+          style={{ 
+            fontSize: 'clamp(4rem, 20vw, 7rem)',
+            color: isDark ? '#ffffff' : '#143269',
+            fontWeight: '900',
+            transform: 'translateY(50px)',
+            position: 'relative',
+            zIndex: 10
+          }}
+        >
+          {illustrations[currentSlide].text}
+        </h1>
+
+        {/* Illustrations */}
+        <div className="relative h-[350px] flex items-center justify-center -my-4">
+          {illustrations.map((illust, index) => (
+            <div
+              key={illust.id}
+              className="absolute w-full h-full transition-all duration-500 ease-in-out"
+              style={{
+                transform: `translateX(${(index - currentSlide) * 100}%)`,
+                opacity: index === currentSlide ? 1 : 0,
+                pointerEvents: index === currentSlide ? 'auto' : 'none'
+              }}
+            >
+              <img 
+                src={illust.art}
+                alt={`${illust.id} art`}
+                className="w-full h-full object-contain"
+                style={{ 
+                  transform: 'scale(1.2)',
+                  clipPath: 'inset(8% 0 8% 0)'
+                }}
+              />
+            </div>
+          ))}
+        </div>
+
+        {/* Navigation arrows */}
+        <button
+          onClick={prevSlide}
+          disabled={currentSlide === 0}
+          className={`absolute left-2 bottom-4 z-10 p-2 rounded-full transition-all ${
+            currentSlide === 0
+              ? 'opacity-0 pointer-events-none'
+              : isDark
+                ? 'bg-white/10 hover:bg-white/20 text-white'
+                : 'bg-[#143269]/10 hover:bg-[#143269]/20 text-[#143269]'
+          }`}
+          aria-label="Previous slide"
+        >
+          <ChevronLeft className="w-6 h-6" />
+        </button>
+
+        <button
+          onClick={nextSlide}
+          disabled={currentSlide === illustrations.length - 1}
+          className={`absolute right-2 bottom-4 z-10 p-2 rounded-full transition-all ${
+            currentSlide === illustrations.length - 1
+              ? 'opacity-0 pointer-events-none'
+              : isDark
+                ? 'bg-white/10 hover:bg-white/20 text-white'
+                : 'bg-[#143269]/10 hover:bg-[#143269]/20 text-[#143269]'
+          }`}
+          aria-label="Next slide"
+        >
+          <ChevronRight className="w-6 h-6" />
+        </button>
+      </div>
+
+      {/* Progress indicators */}
+      <div className="flex justify-center gap-2 mt-8 mb-6">
+        {illustrations.map((_, index) => (
+          <button
+            key={index}
+            onClick={() => goToSlide(index)}
+            className="rounded-full transition-all duration-300"
+            style={{
+              width: index === currentSlide ? '12px' : '8px',
+              height: index === currentSlide ? '12px' : '8px',
+              backgroundColor: index === currentSlide ? '#377BD9' : '#95a8c5'
+            }}
+            aria-label={`Go to slide ${index + 1}`}
+          />
+        ))}
+      </div>
+
+      {/* Pssst there's more button */}
       <div className="flex justify-center pb-6">
         <button 
           onClick={() => scrollToSection('how-it-works')}
-          className={`inline-flex items-center gap-2 transition-colors group ${
-            isDark ? 'text-gray-400 hover:text-white' : 'text-gray-600 hover:text-black'
-          }`}
+          className="inline-flex items-center gap-2 px-6 py-3 rounded-full border-2 transition-all group"
+          style={{
+            color: '#143269',
+            borderColor: '#143269'
+          }}
         >
-          Keep scrolling
+          Pssst there's more
           <ChevronDown className="w-5 h-5 group-hover:translate-y-1 transition-transform" />
         </button>
       </div>
