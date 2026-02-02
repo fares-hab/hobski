@@ -14,9 +14,7 @@ export default function About({ onNavigate, theme, setTheme }) {
           isDark ? 'border-gray-800' : 'border-blue-80'
         }`}
         style={{ 
-          backgroundColor: isDark ? 'rgba(20, 50, 105, 0.8)' : 'rgba(255, 255, 255, 0.8)',
-          backdropFilter: 'blur(12px)',
-          borderBottom: isDark ? '1px solid rgb(31, 41, 55)' : '1px solid rgb(229, 231, 235)'
+          backgroundColor: isDark ? '#143269' : '#E6F6FF'
         }}
       >
         <nav className="max-w-7xl mx-auto px-3 sm:px-6 py-3 sm:py-4 flex items-center justify-between">
@@ -86,13 +84,15 @@ export default function About({ onNavigate, theme, setTheme }) {
             </p>
           </div>
 
-          {/* Image Placeholder */}
-          <div className={`rounded-full aspect-square flex items-center justify-center ${
-            isDark ? 'bg-gray-800' : 'bg-gray-200'
-          }`}>
-            <span className={`text-sm ${isDark ? 'text-gray-500' : 'text-gray-400'}`}>
-              Image
-            </span>
+          {/* Founders Image */}
+          <div className="flex items-center justify-center ml-8">
+            <img 
+              src="/images/AboutImage.webp"
+              alt="Fares and Tala Habbab, founders of hobski"
+              loading="eager"
+              fetchpriority="high"
+              className="w-full h-auto object-contain scale-125"
+            />
           </div>
         </div>
       </main>

@@ -1,5 +1,6 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Sun, Moon, ChevronLeft } from 'lucide-react';
+import { supabase } from '../lib/supabase';
 
 export default function LearnerSignup({ onNavigate, theme, setTheme }) {
   const [currentPage, setCurrentPage] = useState(1);
@@ -14,8 +15,24 @@ export default function LearnerSignup({ onNavigate, theme, setTheme }) {
     howHeard: '',
     otherSource: ''
   });
+  const [errors, setErrors] = useState({});
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState('');
 
   const isDark = theme === 'dark';
+
+  // Preload form images for both themes
+  useEffect(() => {
+    const imagesToPreload = [
+      '/images/DarkLearnerForm.webp',
+      '/images/LightLearnerForm.webp'
+    ];
+
+    imagesToPreload.forEach(src => {
+      const img = new Image();
+      img.src = src;
+    });
+  }, []);
 
   const handleInputChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -23,18 +40,160 @@ export default function LearnerSignup({ onNavigate, theme, setTheme }) {
       ...prev,
       [name]: type === 'checkbox' ? checked : value
     }));
+    // Clear error for this field when user starts typing
+    if (errors[name]) {
+      setErrors(prev => ({ ...prev, [name]: '' }));
+    }
   };
 
-  const handleNext = () => {
-    setCurrentPage(2);
+  // Check for common email typos
+  const checkEmailTypo = (email) => {
+    const commonDomains = {
+      'gmail.com': ['gmai.com', 'gmial.com', 'gmal.com', 'gmil.com', 'gmaii.com', 'gmaill.com'],
+      'hotmail.com': ['hotmai.com', 'hotmial.com', 'hotmil.com', 'hotmaii.com', 'hotmaill.com'],
+      'yahoo.com': ['yaho.com', 'yahooo.com', 'yhoo.com', 'yaoo.com'],
+      'outlook.com': ['outlok.com', 'outloo.com', 'outloook.com'],
+      'icloud.com': ['iclod.com', 'iclou.com', 'icoud.com'],
+      'aol.com': ['ao.com', 'aoll.com']
+    };
+
+    const domain = email.split('@')[1]?.toLowerCase();
+    if (!domain) return null;
+
+    for (const [correct, typos] of Object.entries(commonDomains)) {
+      if (typos.includes(domain)) {
+        return correct;
+      }
+    }
+    return null;
+  };
+
+  const validatePage1 = () => {
+    const newErrors = {};
+    
+    if (!formData.firstName.trim()) {
+      newErrors.firstName = 'First name is required';
+    }
+    
+    if (!formData.lastName.trim()) {
+      newErrors.lastName = 'Last name is required';
+    }
+    
+    if (!formData.email.trim()) {
+      newErrors.email = 'Email is required';
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
+      newErrors.email = 'Please enter a valid email';
+    } else {
+      // Check for typos
+      const suggestedDomain = checkEmailTypo(formData.email);
+      if (suggestedDomain) {
+        const username = formData.email.split('@')[0];
+        newErrors.email = `Did you mean ${username}@${suggestedDomain}?`;
+      }
+    }
+    
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const validatePage2 = () => {
+    const newErrors = {};
+    
+    if (!formData.hobbies.trim()) {
+      newErrors.hobbies = 'Please list at least one hobby or skill';
+    }
+    
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const handleNext = async () => {
+    if (!validatePage1()) {
+      return;
+    }
+
+    // Check for duplicate email before moving to page 2
+    setIsSubmitting(true);
+    setSubmitError('');
+
+    try {
+      const emailToCheck = formData.email.trim().toLowerCase();
+      const { data: existingUsers, error: checkError } = await supabase
+        .from('learners')
+        .select('email')
+        .eq('email', emailToCheck)
+        .limit(1);
+
+      if (checkError) {
+        console.error('Error checking duplicate email:', checkError);
+        setSubmitError('An error occurred. Please try again.');
+        setIsSubmitting(false);
+        return;
+      }
+
+      if (existingUsers && existingUsers.length > 0) {
+        setErrors({ email: 'This email is already registered as a learner' });
+        setSubmitError('This email is already registered. Please use a different email or contact us if you need help.');
+        setIsSubmitting(false);
+        return;
+      }
+
+      // Email is unique, proceed to page 2
+      setIsSubmitting(false);
+      setCurrentPage(2);
+    } catch (err) {
+      console.error('Error during duplicate check:', err);
+      setSubmitError('An error occurred. Please try again.');
+      setIsSubmitting(false);
+    }
   };
 
   const handleBack = () => {
     setCurrentPage(1);
+    setErrors({});
   };
 
-  const handleSubmit = () => {
-    setCurrentPage(3);
+  const handleSubmit = async () => {
+    if (!validatePage2()) {
+      return;
+    }
+
+    setIsSubmitting(true);
+    setSubmitError('');
+
+    try {
+      // Proceed with insertion
+      const { data, error } = await supabase
+        .from('learners')
+        .insert([
+          {
+            first_name: formData.firstName.trim(),
+            last_name: formData.lastName.trim(),
+            email: formData.email.trim().toLowerCase(),
+            phone: formData.phone.trim() || null,
+            hobbies: formData.hobbies.trim(),
+            participate_research: formData.participateResearch,
+            notify_launch: formData.notifyLaunch,
+            how_heard: formData.howHeard || null,
+            other_source: formData.otherSource.trim() || null
+          }
+        ])
+        .select();
+
+      if (error) {
+        console.error('Supabase error:', error);
+        setSubmitError('There was an error submitting your form. Please try again.');
+        return;
+      }
+
+      // Success - move to thank you page
+      setCurrentPage(3);
+    } catch (err) {
+      console.error('Submission error:', err);
+      setSubmitError('An unexpected error occurred. Please try again.');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -48,9 +207,7 @@ export default function LearnerSignup({ onNavigate, theme, setTheme }) {
           isDark ? 'border-gray-800' : 'border-blue-80'
         }`}
         style={{ 
-          backgroundColor: isDark ? 'rgba(20, 50, 105, 0.8)' : 'rgba(255, 255, 255, 0.8)',
-          backdropFilter: 'blur(12px)',
-          borderBottom: isDark ? '1px solid rgb(31, 41, 55)' : '1px solid rgb(229, 231, 235)'
+          backgroundColor: isDark ? '#143269' : '#E6F6FF'
         }}
       >
         <nav className="max-w-7xl mx-auto px-3 sm:px-6 py-3 sm:py-4 flex items-center justify-between">
@@ -119,11 +276,16 @@ export default function LearnerSignup({ onNavigate, theme, setTheme }) {
                       value={formData.firstName}
                       onChange={handleInputChange}
                       className={`w-full px-4 py-3 border rounded-lg focus:outline-none transition-colors ${
-                        isDark 
-                          ? 'bg-gray-900 border-gray-700 focus:border-white text-white' 
-                          : 'bg-white border-gray-300 focus:border-black text-black'
+                        errors.firstName
+                          ? 'border-red-500 focus:border-red-500'
+                          : isDark 
+                            ? 'bg-gray-900 border-gray-700 focus:border-white text-white' 
+                            : 'bg-white border-gray-300 focus:border-black text-black'
                       }`}
                     />
+                    {errors.firstName && (
+                      <p className="text-red-500 text-sm mt-1">{errors.firstName}</p>
+                    )}
                   </div>
                   <div>
                     <label className={`block mb-2 ${
@@ -137,12 +299,17 @@ export default function LearnerSignup({ onNavigate, theme, setTheme }) {
                       value={formData.lastName}
                       onChange={handleInputChange}
                       className={`w-full px-4 py-3 border rounded-lg focus:outline-none transition-colors ${
-                        isDark 
-                          ? 'bg-gray-900 border-gray-700 focus:border-white text-white' 
-                          : 'bg-white border-gray-300'
+                        errors.lastName
+                          ? 'border-red-500 focus:border-red-500'
+                          : isDark 
+                            ? 'bg-gray-900 border-gray-700 focus:border-white text-white' 
+                            : 'bg-white border-gray-300'
                       }`}
-                      style={!isDark ? { borderColor: '#143269', color: '#143269' } : {}}
+                      style={!isDark && !errors.lastName ? { borderColor: '#143269', color: '#143269' } : {}}
                     />
+                    {errors.lastName && (
+                      <p className="text-red-500 text-sm mt-1">{errors.lastName}</p>
+                    )}
                   </div>
                 </div>
 
@@ -158,12 +325,17 @@ export default function LearnerSignup({ onNavigate, theme, setTheme }) {
                     value={formData.email}
                     onChange={handleInputChange}
                     className={`w-full px-4 py-3 border rounded-lg focus:outline-none transition-colors ${
-                      isDark 
-                        ? 'bg-gray-900 border-gray-700 focus:border-white text-white' 
-                        : 'bg-white border-gray-300'
+                      errors.email
+                        ? 'border-red-500 focus:border-red-500'
+                        : isDark 
+                          ? 'bg-gray-900 border-gray-700 focus:border-white text-white' 
+                          : 'bg-white border-gray-300'
                     }`}
-                    style={!isDark ? { borderColor: '#143269', color: '#143269' } : {}}
+                    style={!isDark && !errors.email ? { borderColor: '#143269', color: '#143269' } : {}}
                   />
+                  {errors.email && (
+                    <p className="text-red-500 text-sm mt-1">{errors.email}</p>
+                  )}
                 </div>
 
                 <div>
@@ -186,17 +358,27 @@ export default function LearnerSignup({ onNavigate, theme, setTheme }) {
                   />
                 </div>
 
-                <button
-                  onClick={handleNext}
-                  className={`px-8 py-3 rounded-full font-medium transition-colors ${
-                    isDark 
-                      ? 'bg-white hover:bg-gray-200' 
-                      : 'bg-[#143269] text-white hover:opacity-80'
-                  }`}
-                  style={isDark ? { color: '#143269' } : {}}
-                >
-                  Next
-                </button>
+                {submitError && (
+                  <div className="p-4 rounded-lg bg-red-100 border border-red-300 text-red-700">
+                    {submitError}
+                  </div>
+                )}
+
+                <div className="flex justify-end">
+                  <button
+                    onClick={handleNext}
+                    disabled={isSubmitting}
+                    className={`px-8 py-3 rounded-full font-medium transition-colors ${
+                      isSubmitting
+                        ? 'opacity-50 cursor-not-allowed'
+                        : isDark 
+                          ? 'bg-white text-black hover:bg-gray-200' 
+                          : 'bg-black text-white hover:bg-gray-800'
+                    }`}
+                  >
+                    {isSubmitting ? 'Checking...' : 'Next'}
+                  </button>
+                </div>
               </div>
             </div>
           )}
@@ -220,12 +402,17 @@ export default function LearnerSignup({ onNavigate, theme, setTheme }) {
                     placeholder="(e.g, Guitar, Muay-Thai, Sewing, DIY home projects)"
                     rows="6"
                     className={`w-full px-4 py-3 border rounded-lg focus:outline-none transition-colors resize-none ${
-                      isDark 
-                        ? 'bg-gray-900 border-gray-700 focus:border-white text-white placeholder-gray-500' 
-                        : 'bg-white border-gray-300 placeholder-gray-400'
+                      errors.hobbies
+                        ? 'border-red-500 focus:border-red-500'
+                        : isDark 
+                          ? 'bg-gray-900 border-gray-700 focus:border-white text-white placeholder-gray-500' 
+                          : 'bg-white border-gray-300 placeholder-gray-400'
                     }`}
-                    style={!isDark ? { borderColor: '#143269', color: '#143269' } : {}}
+                    style={!isDark && !errors.hobbies ? { borderColor: '#143269', color: '#143269' } : {}}
                   />
+                  {errors.hobbies && (
+                    <p className="text-red-500 text-sm mt-1">{errors.hobbies}</p>
+                  )}
                 </div>
 
                 <div>
@@ -262,7 +449,7 @@ export default function LearnerSignup({ onNavigate, theme, setTheme }) {
                   <label className={`block mb-3 ${
                     isDark ? 'text-gray-300' : 'text-gray-700'
                   }`}>
-                    Optional: How did you hear about us?
+                    How did you hear about us?
                   </label>
                   <div className="space-y-3">
                     <label className="flex items-center gap-3 cursor-pointer">
@@ -337,13 +524,22 @@ export default function LearnerSignup({ onNavigate, theme, setTheme }) {
                   </div>
                 </div>
 
-                <div className="flex gap-4 pt-4">
+                {submitError && (
+                  <div className="p-4 rounded-lg bg-red-100 border border-red-300 text-red-700">
+                    {submitError}
+                  </div>
+                )}
+
+                <div className="flex justify-between pt-4">
                   <button
                     onClick={handleBack}
+                    disabled={isSubmitting}
                     className={`px-8 py-3 rounded-full font-medium transition-colors ${
-                      isDark 
-                        ? 'bg-gray-800 text-white hover:bg-gray-700' 
-                        : 'bg-gray-200 hover:bg-gray-300'
+                      isSubmitting
+                        ? 'opacity-50 cursor-not-allowed'
+                        : isDark 
+                          ? 'bg-gray-800 text-white hover:bg-gray-700' 
+                          : 'bg-gray-200 hover:bg-gray-300'
                     }`}
                     style={!isDark ? { color: '#143269' } : {}}
                   >
@@ -351,13 +547,16 @@ export default function LearnerSignup({ onNavigate, theme, setTheme }) {
                   </button>
                   <button
                     onClick={handleSubmit}
+                    disabled={isSubmitting}
                     className={`px-8 py-3 rounded-full font-medium transition-colors ${
-                      isDark 
-                        ? 'bg-white text-black hover:bg-gray-200' 
-                        : 'bg-black text-white hover:bg-gray-800'
+                      isSubmitting
+                        ? 'opacity-50 cursor-not-allowed'
+                        : isDark 
+                          ? 'bg-white text-black hover:bg-gray-200' 
+                          : 'bg-black text-white hover:bg-gray-800'
                     }`}
                   >
-                    Submit
+                    {isSubmitting ? 'Submitting...' : 'Submit'}
                   </button>
                 </div>
               </div>
@@ -383,6 +582,8 @@ export default function LearnerSignup({ onNavigate, theme, setTheme }) {
                 <img 
                   src={`/images/${isDark ? 'Dark' : 'Light'}LearnerForm.webp`}
                   alt="Learner character illustration"
+                  loading="eager"
+                  fetchpriority="high"
                   className="w-full h-full object-contain"
                 />
               </div>

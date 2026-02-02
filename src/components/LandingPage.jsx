@@ -15,6 +15,88 @@ export default function HobskiLanding({ onNavigate, theme, setTheme }) {
     }
     return false;
   });
+  const [imagesLoaded, setImagesLoaded] = useState(false);
+  const [themeChangeAllowed, setThemeChangeAllowed] = useState(true);
+
+  // Preload all images for both themes with proper loading tracking
+  useEffect(() => {
+    const imagesToPreload = [
+      // Hero section images (critical for theme switching)
+      '/images/DarkDreamItArt.webp',
+      '/images/LightDreamItArt.webp',
+      '/images/DarkLearnItArt.webp',
+      '/images/LightLearnItArt.webp',
+      '/images/DarkDoItArt.webp',
+      '/images/LightDoItArt.webp',
+      // Learner step images
+      '/images/DarkLearnerStep1.png',
+      '/images/LightLearnerStep1.png',
+      '/images/DarkLearnerStep2.png',
+      '/images/LightLearnerStep2.png',
+      '/images/DarkLearnerStep3.png',
+      '/images/LightLearnerStep3.png',
+      // Mentor step images
+      '/images/DarkMentorStep1.png',
+      '/images/LightMentorStep1.png',
+      '/images/DarkMentorStep2.png',
+      '/images/LightMentorStep2.png',
+      '/images/DarkMentorStep3.png',
+      '/images/LightMentorStep3.png',
+      // Shared step 4 image
+      '/images/DarkBothStep4.png',
+      '/images/LightBothStep4.png',
+      // Card images
+      '/images/DarkLearnerCard.webp',
+      '/images/LightLearnerCard.webp',
+      '/images/DarkMentorCard.webp',
+      '/images/LightMentorCard.webp'
+    ];
+
+    // Create promises for each image load
+    const imagePromises = imagesToPreload.map(src => {
+      return new Promise((resolve, reject) => {
+        const img = new Image();
+        img.onload = () => resolve(src);
+        img.onerror = () => {
+          console.warn(`Failed to preload image: ${src}`);
+          resolve(src); // Resolve anyway to not block the app
+        };
+        img.src = src;
+      });
+    });
+
+    // Wait for all images to load
+    Promise.all(imagePromises).then(() => {
+      setImagesLoaded(true);
+    });
+  }, []); // Run once on mount
+
+  // Enhanced theme setter that ensures images are loaded first
+  const handleThemeChange = (newTheme) => {
+    if (!themeChangeAllowed) return;
+    
+    // If switching themes and images aren't loaded yet, wait for them
+    if (!imagesLoaded && theme !== newTheme) {
+      setThemeChangeAllowed(false);
+      // Wait a bit for images to load
+      const checkInterval = setInterval(() => {
+        if (imagesLoaded) {
+          clearInterval(checkInterval);
+          setTheme(newTheme);
+          setThemeChangeAllowed(true);
+        }
+      }, 100);
+      
+      // Timeout after 3 seconds
+      setTimeout(() => {
+        clearInterval(checkInterval);
+        setTheme(newTheme);
+        setThemeChangeAllowed(true);
+      }, 3000);
+    } else {
+      setTheme(newTheme);
+    }
+  };
   
   // Detect mobile viewport
   useEffect(() => {
@@ -27,9 +109,16 @@ export default function HobskiLanding({ onNavigate, theme, setTheme }) {
   const scrollToSection = (id) => {
     const element = document.getElementById(id);
     if (element) {
-      const headerOffset = 120; // Offset to position section lower in viewport
-      const elementPosition = element.getBoundingClientRect().top;
-      const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+      // Get the actual header height dynamically
+      const header = document.querySelector('header');
+      const headerHeight = header ? header.offsetHeight : 0;
+      
+      // Add a small buffer (16px) for visual spacing
+      const offset = headerHeight + 16;
+      
+      // Get the absolute position of the element
+      const elementPosition = element.getBoundingClientRect().top + window.scrollY;
+      const offsetPosition = elementPosition - offset;
 
       window.scrollTo({
         top: offsetPosition,
@@ -66,12 +155,13 @@ export default function HobskiLanding({ onNavigate, theme, setTheme }) {
           </button>
           <div className="flex gap-2 sm:gap-6 items-center">
             <button 
-              onClick={() => setTheme(isDark ? 'light' : 'dark')}
+              onClick={() => handleThemeChange(isDark ? 'light' : 'dark')}
               className={`p-2 rounded-full ${
                 isDark ? 'hover:bg-gray-800' : 'hover:bg-gray-100'
-              }`}
+              } ${!themeChangeAllowed ? 'opacity-50 cursor-wait' : ''}`}
               style={{ transition: 'background-color 0.2s' }}
               aria-label="Toggle theme"
+              disabled={!themeChangeAllowed}
             >
               {isDark ? <Sun className="w-4 h-4 sm:w-5 sm:h-5" /> : <Moon className="w-4 h-4 sm:w-5 sm:h-5" />}
             </button>
@@ -144,16 +234,16 @@ export default function HobskiLanding({ onNavigate, theme, setTheme }) {
             isDark={isDark}
           >
             <div className="max-w-7xl mx-auto px-5 sm:px-12">
-            <h2 className="text-4xl sm:text-5xl md:text-5xl lg:text-6xl font-bold mb-8">
+            <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-6 md:mb-8">
               How does it work?
             </h2>
 
             {/* Tab Buttons */}
-            <div className="max-w-7xl mx-auto mb-10">
+            <div className="max-w-7xl mx-auto mb-8 md:mb-10">
               <div className="flex gap-0">
                 <button
                   onClick={() => setActiveTab('learner')}
-                  className={`flex-1 px-8 py-3 font-semibold transition-all text-xl ${
+                  className={`flex-1 px-4 py-2 md:px-8 md:py-3 font-semibold transition-all text-lg md:text-xl ${
                     activeTab === 'learner'
                       ? 'text-white z-10'
                       : isDark
@@ -174,7 +264,7 @@ export default function HobskiLanding({ onNavigate, theme, setTheme }) {
                 </button>
                 <button
                   onClick={() => setActiveTab('mentor')}
-                  className={`flex-1 px-8 py-3 font-semibold transition-all text-xl ${
+                  className={`flex-1 px-4 py-2 md:px-8 md:py-3 font-semibold transition-all text-lg md:text-xl ${
                     activeTab === 'mentor'
                       ? 'text-white z-10'
                       : isDark
@@ -200,18 +290,20 @@ export default function HobskiLanding({ onNavigate, theme, setTheme }) {
             {activeTab === 'learner' ? (
               <>
                 {/* Desktop Grid View */}
-                <div className="hidden md:grid grid-cols-1 md:grid-cols-4 gap-8 mb-16">
+                <div className="hidden md:grid grid-cols-1 md:grid-cols-4 gap-3 md:gap-4 mb-12 max-w-6xl mx-auto">
                 {/* Step 1 */}
                 <div className="flex flex-col items-start relative">
-                  <h3 className="text-xl font-bold mb-6" style={{ color: isDark ? 'white' : '#143269' }}>
+                  <h3 className="text-base md:text-lg font-bold mb-3 md:mb-4" style={{ color: isDark ? 'white' : '#143269' }}>
                     1. Find your hobby
                   </h3>
                   
                   {/* Image Placeholder */}
-                  <div className="w-full aspect-square rounded-lg mb-6 flex items-center justify-center">
+                  <div className="w-full aspect-square rounded-lg mb-3 md:mb-4 flex items-center justify-center">
                     <img 
                       src={`/images/${isDark ? 'Dark' : 'Light'}LearnerStep1.png`} 
                       alt="Find your hobby illustration"
+                      loading="eager"
+                      fetchpriority="high"
                       className="w-full h-full object-cover rounded-lg"
                       onError={(e) => {
                         e.target.style.display = 'none';
@@ -220,7 +312,7 @@ export default function HobskiLanding({ onNavigate, theme, setTheme }) {
                     />
                   </div>
                   
-                  <p className="text-lg font-normal leading-relaxed" style={{ color: isDark ? 'rgba(255,255,255,0.9)' : '#143269' }}>
+                  <p className="text-sm md:text-base font-normal leading-relaxed" style={{ color: isDark ? 'rgba(255,255,255,0.9)' : '#143269' }}>
                     Got a hobby or project in mind? Just type it into our search bar, or browse through our categories for inspiration!
                   </p>
                   
@@ -228,15 +320,17 @@ export default function HobskiLanding({ onNavigate, theme, setTheme }) {
 
                 {/* Step 2 */}
                 <div className="flex flex-col items-start relative">
-                  <h3 className="text-xl font-bold mb-6" style={{ color: isDark ? 'white' : '#143269' }}>
+                  <h3 className="text-base md:text-lg font-bold mb-3 md:mb-4" style={{ color: isDark ? 'white' : '#143269' }}>
                     2. Browse mentors
                   </h3>
                   
                   {/* Image Placeholder */}
-                  <div className="w-full aspect-square rounded-lg mb-6 flex items-center justify-center">
+                  <div className="w-full aspect-square rounded-lg mb-3 md:mb-4 flex items-center justify-center">
                     <img 
                       src={`/images/${isDark ? 'Dark' : 'Light'}LearnerStep2.png`} 
                       alt="Browse mentors illustration"
+                      loading="eager"
+                      fetchpriority="high"
                       className="w-full h-full object-cover rounded-lg"
                       onError={(e) => {
                         e.target.style.display = 'none';
@@ -245,7 +339,7 @@ export default function HobskiLanding({ onNavigate, theme, setTheme }) {
                     />
                   </div>
                   
-                  <p className="text-lg font-normal leading-relaxed" style={{ color: isDark ? 'rgba(255,255,255,0.9)' : '#143269' }}>
+                  <p className="text-sm md:text-base font-normal leading-relaxed" style={{ color: isDark ? 'rgba(255,255,255,0.9)' : '#143269' }}>
                     Take a look at available mentors and browse their portfolios, rates, schedules, resources, and reviews!
                   </p>
                   
@@ -253,15 +347,17 @@ export default function HobskiLanding({ onNavigate, theme, setTheme }) {
 
                 {/* Step 3 */}
                 <div className="flex flex-col items-start relative">
-                  <h3 className="text-xl font-bold mb-6" style={{ color: isDark ? 'white' : '#143269' }}>
+                  <h3 className="text-base md:text-lg font-bold mb-3 md:mb-4" style={{ color: isDark ? 'white' : '#143269' }}>
                     3. Book a session
                   </h3>
                   
                   {/* Image Placeholder */}
-                  <div className="w-full aspect-square rounded-lg mb-6 flex items-center justify-center">
+                  <div className="w-full aspect-square rounded-lg mb-3 md:mb-4 flex items-center justify-center">
                     <img 
                       src={`/images/${isDark ? 'Dark' : 'Light'}LearnerStep3.png`} 
                       alt="Book a session illustration"
+                      loading="eager"
+                      fetchpriority="high"
                       className="w-full h-full object-cover rounded-lg"
                       onError={(e) => {
                         e.target.style.display = 'none';
@@ -270,7 +366,7 @@ export default function HobskiLanding({ onNavigate, theme, setTheme }) {
                     />
                   </div>
                   
-                  <p className="text-lg font-normal leading-relaxed" style={{ color: isDark ? 'rgba(255,255,255,0.9)' : '#143269' }}>
+                  <p className="text-sm md:text-base font-normal leading-relaxed" style={{ color: isDark ? 'rgba(255,255,255,0.9)' : '#143269' }}>
                     Request a session with a mentor. Outline your goals, resources, session preferences, and chat with your mentor before confirming!
                   </p>
                   
@@ -278,15 +374,17 @@ export default function HobskiLanding({ onNavigate, theme, setTheme }) {
 
                 {/* Step 4 */}
                 <div className="flex flex-col items-start">
-                  <h3 className="text-xl font-bold mb-6" style={{ color: isDark ? 'white' : '#143269' }}>
+                  <h3 className="text-base md:text-lg font-bold mb-3 md:mb-4" style={{ color: isDark ? 'white' : '#143269' }}>
                     4. Get learning!
                   </h3>
                   
                   {/* Image Placeholder */}
-                  <div className="w-full aspect-square rounded-lg mb-6 flex items-center justify-center">
+                  <div className="w-full aspect-square rounded-lg mb-3 md:mb-4 flex items-center justify-center">
                     <img 
                       src={`/images/${isDark ? 'Dark' : 'Light'}BothStep4.png`} 
                       alt="Get learning illustration"
+                      loading="eager"
+                      fetchpriority="high"
                       className="w-full h-full object-cover rounded-lg"
                       onError={(e) => {
                         e.target.style.display = 'none';
@@ -295,7 +393,7 @@ export default function HobskiLanding({ onNavigate, theme, setTheme }) {
                     />
                   </div>
                   
-                  <p className="text-lg font-normal leading-relaxed" style={{ color: isDark ? 'rgba(255,255,255,0.9)' : '#143269' }}>
+                  <p className="text-sm md:text-base font-normal leading-relaxed" style={{ color: isDark ? 'rgba(255,255,255,0.9)' : '#143269' }}>
                     Meet in-person or virtually, depending on your preferences, and get learning!
                   </p>
                 </div>
@@ -336,18 +434,20 @@ export default function HobskiLanding({ onNavigate, theme, setTheme }) {
             ) : (
               <>
               {/* Desktop Grid View */}
-              <div className="hidden md:grid grid-cols-1 md:grid-cols-4 gap-8 mb-16">
+              <div className="hidden md:grid grid-cols-1 md:grid-cols-4 gap-3 md:gap-4 mb-12 max-w-6xl mx-auto">
                 {/* Mentor Step 1 */}
                 <div className="flex flex-col items-start relative">
-                  <h3 className="text-xl font-bold mb-6" style={{ color: isDark ? 'white' : '#143269' }}>
+                  <h3 className="text-base md:text-lg font-bold mb-3 md:mb-4" style={{ color: isDark ? 'white' : '#143269' }}>
                     1. Find your skill OR Create one
                   </h3>
                   
                   {/* Image Placeholder */}
-                  <div className="w-full aspect-square rounded-lg mb-6 flex items-center justify-center">
+                  <div className="w-full aspect-square rounded-lg mb-3 md:mb-4 flex items-center justify-center">
                     <img 
                       src={`/images/${isDark ? 'Dark' : 'Light'}MentorStep1.png`} 
                       alt="Mentor step 1 illustration"
+                      loading="eager"
+                      fetchpriority="high"
                       className="w-full h-full object-cover rounded-lg"
                       onError={(e) => {
                         e.target.style.display = 'none';
@@ -356,7 +456,7 @@ export default function HobskiLanding({ onNavigate, theme, setTheme }) {
                     />
                   </div>
                   
-                  <p className="text-lg font-normal leading-relaxed" style={{ color: isDark ? 'rgba(255,255,255,0.9)' : '#143269'}}>
+                  <p className="text-sm md:text-base font-normal leading-relaxed" style={{ color: isDark ? 'rgba(255,255,255,0.9)' : '#143269'}}>
                     Browse through our skill categories and choose yours. If you can’t find it, request to add a new one to our list!
                   </p>
                   
@@ -364,15 +464,17 @@ export default function HobskiLanding({ onNavigate, theme, setTheme }) {
 
                 {/* Mentor Step 2 */}
                 <div className="flex flex-col items-start relative">
-                  <h3 className="text-xl font-bold mb-6" style={{ color: isDark ? 'white' : '#143269' }}>
+                  <h3 className="text-base md:text-lg font-bold mb-3 md:mb-4" style={{ color: isDark ? 'white' : '#143269' }}>
                     2. Set up your profile
                   </h3>
                   
                   {/* Image Placeholder */}
-                  <div className="w-full aspect-square rounded-lg mb-6 flex items-center justify-center">
+                  <div className="w-full aspect-square rounded-lg mb-3 md:mb-4 flex items-center justify-center">
                     <img 
                       src={`/images/${isDark ? 'Dark' : 'Light'}MentorStep2.png`} 
                       alt="Mentor step 2 illustration"
+                      loading="eager"
+                      fetchpriority="high"
                       className="w-full h-full object-cover rounded-lg"
                       onError={(e) => {
                         e.target.style.display = 'none';
@@ -381,7 +483,7 @@ export default function HobskiLanding({ onNavigate, theme, setTheme }) {
                     />
                   </div>
                   
-                  <p className="text-lg font-normal leading-relaxed" style={{ color: isDark ? 'rgba(255,255,255,0.9)' : '#143269' }}>
+                  <p className="text-sm md:text-base font-normal leading-relaxed" style={{ color: isDark ? 'rgba(255,255,255,0.9)' : '#143269' }}>
                     Demonstrate your skill. Pick your skill level, rate, schedule, and outline your session preferences (resources offered, session size, and location).
                   </p>
                   
@@ -389,15 +491,17 @@ export default function HobskiLanding({ onNavigate, theme, setTheme }) {
 
                 {/* Mentor Step 3 */}
                 <div className="flex flex-col items-start relative">
-                  <h3 className="text-xl font-bold mb-6" style={{ color: isDark ? 'white' : '#143269' }}>
+                  <h3 className="text-base md:text-lg font-bold mb-3 md:mb-4" style={{ color: isDark ? 'white' : '#143269' }}>
                     3. Chat with learners
                   </h3>
                   
                   {/* Image Placeholder */}
-                  <div className="w-full aspect-square rounded-lg mb-6 flex items-center justify-center">
+                  <div className="w-full aspect-square rounded-lg mb-3 md:mb-4 flex items-center justify-center">
                     <img 
                       src={`/images/${isDark ? 'Dark' : 'Light'}MentorStep3.png`} 
                       alt="Mentor step 3 illustration"
+                      loading="eager"
+                      fetchpriority="high"
                       className="w-full h-full object-cover rounded-lg"
                       onError={(e) => {
                         e.target.style.display = 'none';
@@ -406,7 +510,7 @@ export default function HobskiLanding({ onNavigate, theme, setTheme }) {
                     />
                   </div>
                   
-                  <p className="text-lg font-normal leading-relaxed" style={{ color: isDark ? 'rgba(255,255,255,0.9)' : '#143269'}}>
+                  <p className="text-sm md:text-base font-normal leading-relaxed" style={{ color: isDark ? 'rgba(255,255,255,0.9)' : '#143269'}}>
                     Start a conversation with learners when they’ve requested a session and discuss goals and sessions details before confirming!
                   </p>
                   
@@ -414,15 +518,17 @@ export default function HobskiLanding({ onNavigate, theme, setTheme }) {
 
                 {/* Mentor Step 4 */}
                 <div className="flex flex-col items-start">
-                  <h3 className="text-xl font-bold mb-6" style={{ color: isDark ? 'white' : '#143269' }}>
+                  <h3 className="text-base md:text-lg font-bold mb-3 md:mb-4" style={{ color: isDark ? 'white' : '#143269' }}>
                     4. Get mentoring!
                   </h3>
                   
                   {/* Image Placeholder */}
-                  <div className="w-full aspect-square rounded-lg mb-6 flex items-center justify-center">
+                  <div className="w-full aspect-square rounded-lg mb-3 md:mb-4 flex items-center justify-center">
                     <img 
                       src={`/images/${isDark ? 'Dark' : 'Light'}BothStep4.png`} 
                       alt="Mentor step 4 illustration"
+                      loading="eager"
+                      fetchpriority="high"
                       className="w-full h-full object-cover rounded-lg"
                       onError={(e) => {
                         e.target.style.display = 'none';
@@ -431,7 +537,7 @@ export default function HobskiLanding({ onNavigate, theme, setTheme }) {
                     />
                   </div>
                   
-                  <p className="text-lg font-normal leading-relaxed" style={{ color: isDark ? 'rgba(255,255,255,0.9)' : '#143269' }}>
+                  <p className="text-sm md:text-base font-normal leading-relaxed" style={{ color: isDark ? 'rgba(255,255,255,0.9)' : '#143269' }}>
                     Meet your learners in-person or virtually, depending on your preferences, and get mentoring!
                   </p>
                 </div>
@@ -489,60 +595,82 @@ export default function HobskiLanding({ onNavigate, theme, setTheme }) {
             <h2 className="text-4xl md:text-5xl font-bold mb-4">
               Get involved
             </h2>
-            <p className={`text-2xl mb-12 ${
+            <p className={`text-2xl mb-48 ${
               isDark ? 'text-gray-300' : 'text-gray-700'
             }`}>
               Got a hobby or skill you're interested in? Join us!
             </p>
 
             <div className="flex gap-8 justify-center items-stretch">
-              {/* As a Learner Card */}
-              <button 
-              onClick={() => onNavigate('learner-signup')}
-              className={`group rounded-2xl p-8 text-left transition-all hover:scale-105 transform w-full max-w-md border-2 ${
-                isDark 
-                  ? 'border-gray-700 hover:border-white' 
-                  : 'bg-white border-gray-300'
-              }`}
-              style={isDark ? { backgroundColor: '#143269' } : { borderColor: '#143269' }}>
-                <div className="rounded-lg aspect-video mb-6 flex items-center justify-center overflow-hidden">
+              {/* As a Learner Card with Illustration */}
+              <div className="relative w-full max-w-md group transition-transform hover:scale-110">
+                {/* Card */}
+                <button 
+                  onClick={() => onNavigate('learner-signup')}
+                  className={`relative z-0 rounded-2xl p-8 text-left w-full ${
+                    isDark 
+                      ? 'group-hover:border-white' 
+                      : ''
+                  }`}
+                  style={isDark ? { backgroundColor: '#143269' } : { backgroundColor: '#a1c1fc' }}>
+                  <h3 className="text-2xl font-bold mb-3">As a Learner</h3>
+                  <p className={`leading-relaxed ${
+                    isDark ? 'text-gray-300' : 'text-gray-700'
+                  }`}>
+                    Explore a new hobby, get guidance on that DIY project, and take your skills to the next level when you join our community of learners.
+                  </p>
+                </button>
+                
+                {/* Character Illustration - Over Card */}
+                <div className="absolute inset-0 pointer-events-none overflow-visible z-10">
                   <img 
-                    src={`/images/${isDark ? 'Dark' : 'Light'}LearnerCard.webp`}
-                    alt="Learner illustration"
-                    className="w-full h-full object-cover"
+                    src={`/images/${isDark ? 'Dark' : 'Light'}LearnerJoin.webp`}
+                    alt=""
+                    loading="eager"
+                    fetchpriority="high"
+                    className="absolute w-[120%] h-auto object-contain"
+                    style={{
+                      top: '-116.5%',
+                      left: '-4%', 
+                    }}
                   />
                 </div>
-                <h3 className="text-2xl font-bold mb-3">As a Learner</h3>
-                <p className={`leading-relaxed ${
-                  isDark ? 'text-gray-300' : 'text-gray-700'
-                }`}>
-                  Explore a new hobby, get guidance on that DIY project, and take your skills to the next level when you join our community of learners.
-                </p>
-              </button>
+              </div>
 
-              {/* As a Mentor Card */}
-              <button 
-              onClick={() => onNavigate('mentor-signup')}
-              className={`group rounded-2xl p-8 text-left transition-all hover:scale-105 transform w-full max-w-md border-2 ${
-                isDark 
-                  ? 'border-gray-700 hover:border-white' 
-                  : 'bg-white border-gray-300'
-              }`}
-              style={isDark ? { backgroundColor: '#143269' } : { borderColor: '#143269' }}>
-                <div className="rounded-lg aspect-video mb-6 flex items-center justify-center overflow-hidden">
+              {/* As a Mentor Card with Illustration */}
+              <div className="relative w-full max-w-md group transition-transform hover:scale-110">
+                {/* Card */}
+                <button 
+                  onClick={() => onNavigate('mentor-signup')}
+                  className={`relative z-0 rounded-2xl p-8 text-left w-full ${
+                    isDark 
+                      ? 'group-hover:border-white' 
+                      : ''
+                  }`}
+                  style={isDark ? { backgroundColor: '#143269' } : { backgroundColor: '#a1c1fc' }}>
+                  <h3 className="text-2xl font-bold mb-3">As a Mentor</h3>
+                  <p className={`leading-relaxed ${
+                    isDark ? 'text-gray-300' : 'text-gray-700'
+                  }`}>
+                    Share your passions, pass down your knowledge, and help others achieve their goals when you make their hobby dreams come true as a mentor.
+                  </p>
+                </button>
+                
+                {/* Character Illustration - Over Card */}
+                <div className="absolute inset-0 pointer-events-none overflow-visible z-10">
                   <img 
-                    src={`/images/${isDark ? 'Dark' : 'Light'}MentorCard.webp`}
-                    alt="Mentor illustration"
-                    className="w-full h-full object-cover"
+                    src={`/images/${isDark ? 'Dark' : 'Light'}MentorJoin.webp`}
+                    alt=""
+                    loading="eager"
+                    fetchpriority="high"
+                    className="absolute w-[120%] h-auto object-contain"
+                    style={{
+                      top: '-114.6%',
+                      left: '19.7%',
+                    }}
                   />
                 </div>
-                <h3 className="text-2xl font-bold mb-3">As a Mentor</h3>
-                <p className={`leading-relaxed ${
-                  isDark ? 'text-gray-300' : 'text-gray-700'
-                }`}>
-                  Share your passions, pass down your knowledge, and help others achieve their goals when you make their hobby dreams come true as a mentor.
-                </p>
-              </button>
+              </div>
             </div>
           </div>
         </ScrollSection>
@@ -710,6 +838,19 @@ function GSAPHeroSection({ isDark, scrollToSection }) {
     { text: 'Do it', art: `/images/${isDark ? 'Dark' : 'Light'}DoItArt.webp`, id: 'do' }
   ];
 
+  // Aggressively preload hero images on theme change
+  useEffect(() => {
+    const heroImages = illustrations.map(illust => illust.art);
+    
+    heroImages.forEach(src => {
+      const img = new Image();
+      // Force high priority loading
+      img.loading = 'eager';
+      img.fetchPriority = 'high';
+      img.src = src;
+    });
+  }, [isDark]); // Re-run when theme changes
+
   // Navigate to specific slide
   const goToSlide = (index) => {
     if (timelineRef.current && index >= 0 && index < illustrations.length) {
@@ -805,8 +946,12 @@ function GSAPHeroSection({ isDark, scrollToSection }) {
           if (!el.text || !el.art) return;
 
           if (index === 0) {
-            // First illustration: visible in center
-            gsap.set([el.text, el.art], { x: 0, y: 0, opacity: 1 });
+            // First illustration: starts offscreen right, will animate in
+            if (isMobile) {
+              gsap.set([el.text, el.art], { x: 0, y: viewportHeight * 1.2, opacity: 0 });
+            } else {
+              gsap.set([el.text, el.art], { x: viewportWidth * 1.2, y: 0, opacity: 0 });
+            }
           } else {
             // Others: offscreen (right for desktop, bottom for mobile)
             if (isMobile) {
@@ -817,15 +962,41 @@ function GSAPHeroSection({ isDark, scrollToSection }) {
           }
         });
 
-    // Create timeline
-    const mainTimeline = gsap.timeline({
-      scrollTrigger: {
-        trigger: container,
-        start: 'top top',
-        end: '+=300%',
-        scrub: 1,
-        pin: true,
-        anticipatePin: 1,
+        // Create entry animation timeline (plays first, before ScrollTrigger)
+        const entryTimeline = gsap.timeline({
+          delay: 0.3
+        });
+
+        // Animate Dream it (first illustration) entering from right
+        // Art enters first
+        entryTimeline.to(elements[0].art, {
+          x: 0,
+          y: 0,
+          opacity: 1,
+          duration: 1.75,
+          ease: 'power2.out'
+        }, 0);
+
+        // Text enters slightly after
+        entryTimeline.to(elements[0].text, {
+          x: 0,
+          y: 0,
+          opacity: 1,
+          duration: 1.75,
+          ease: 'power2.out'
+        }, 0.15);
+
+        // Wait for entry animation to complete before creating scroll timeline
+        entryTimeline.eventCallback('onComplete', () => {
+          // Create timeline AFTER entry animation finishes
+          const mainTimeline = gsap.timeline({
+            scrollTrigger: {
+              trigger: container,
+              start: 'top top',
+              end: '+=300%',
+              scrub: 1,
+              pin: true,
+              anticipatePin: 1,
         onUpdate: (self) => {
           setProgress(self.progress);
           // Update current slide based on scroll progress
@@ -852,23 +1023,49 @@ function GSAPHeroSection({ isDark, scrollToSection }) {
       
       // Special handling for first and second illustrations exit
       if (index === 0 || index === 1) {
-        // Text exits FIRST (slightly earlier)
-        mainTimeline.to(current.text, {
-          x: isMobile ? 0 : -viewportWidth,
-          y: isMobile ? -viewportHeight : 0,
-          opacity: 0,
-          ease: 'power2.inOut',
-          duration: transitionDuration
-        }, transitionStart);
-        
-        // Art exits slightly after text
-        mainTimeline.to(current.art, {
-          x: isMobile ? 0 : -viewportWidth,
-          y: isMobile ? -viewportHeight : 0,
-          opacity: 0,
-          ease: 'power2.inOut',
-          duration: transitionDuration
-        }, transitionStart + 0.05);
+        // For Dream it (index 0), use fromTo to ensure it starts from center after entry animation
+        if (index === 0) {
+          // Text exits FIRST (slightly earlier)
+          mainTimeline.fromTo(current.text, 
+            { x: 0, y: 0, opacity: 1 },
+            {
+              x: isMobile ? 0 : -viewportWidth,
+              y: isMobile ? -viewportHeight : 0,
+              opacity: 1,
+              ease: 'power2.inOut',
+              duration: transitionDuration
+            }, transitionStart);
+          
+          // Art exits slightly after text
+          mainTimeline.fromTo(current.art,
+            { x: 0, y: 0, opacity: 1 },
+            {
+              x: isMobile ? 0 : -viewportWidth,
+              y: isMobile ? -viewportHeight : 0,
+              opacity: 1,
+              ease: 'power2.inOut',
+              duration: transitionDuration
+            }, transitionStart + 0.05);
+        } else {
+          // Learn it (index 1) - regular animation
+          // Text exits FIRST (slightly earlier)
+          mainTimeline.to(current.text, {
+            x: isMobile ? 0 : -viewportWidth,
+            y: isMobile ? -viewportHeight : 0,
+            opacity: 0,
+            ease: 'power2.inOut',
+            duration: transitionDuration
+          }, transitionStart);
+          
+          // Art exits slightly after text
+          mainTimeline.to(current.art, {
+            x: isMobile ? 0 : -viewportWidth,
+            y: isMobile ? -viewportHeight : 0,
+            opacity: 0,
+            ease: 'power2.inOut',
+            duration: transitionDuration
+          }, transitionStart + 0.05);
+        }
       } else {
         // Other illustrations exit together
         mainTimeline.to([current.text, current.art], {
@@ -900,6 +1097,7 @@ function GSAPHeroSection({ isDark, scrollToSection }) {
     });
 
     mainTimeline.to({}, { duration: 0.04 });
+        }); // End of onComplete callback
       }, 100); // End of setTimeout
     };
 
@@ -935,7 +1133,7 @@ function GSAPHeroSection({ isDark, scrollToSection }) {
             style={{ 
               fontSize: 'clamp(4rem, 9vw, 8rem)',
               color: isDark ? '#ffffff' : '#143269',
-              left: index === 0 ? '35%' : index === 1 ? '30%' : '49%',
+              left: index === 0 ? '38%' : index === 1 ? '38%' : '49%',
               top: index === 0 ? '22%' : index === 1 ? '22%' : '22%',
               transform: 'translate(-50%, -50%)',
               opacity: 0
@@ -943,15 +1141,16 @@ function GSAPHeroSection({ isDark, scrollToSection }) {
           >
             {illust.text}
           </h1>
-          {/* Comment this code later */}
           <img
             id={`art-${index}`}
             src={illust.art}
             alt={`${illust.id} art`}
+            loading="eager"
+            fetchpriority="high"
             className="absolute max-w-[80vw] max-h-[80vh] object-contain"
             style={{ 
               opacity: 0,
-              ...(index === 1 ? { left: '30%', transform: 'translate(-50%, -50%)' } : {})
+              ...(index === 1 ? { transform: 'translateX(20%)' } : {})
             }}
           />
         </div>
@@ -1063,6 +1262,8 @@ function MobileStepCarousel({ isDark, steps, activeTab }) {
             <img 
               src={steps[currentStep].image}
               alt={`${steps[currentStep].title} illustration`}
+              loading="eager"
+              fetchpriority="high"
               className="w-full h-full object-cover rounded-lg"
               onError={(e) => {
                 e.target.style.display = 'none';
@@ -1103,7 +1304,7 @@ function MobileStepCarousel({ isDark, steps, activeTab }) {
           </div>
           
           {/* Step Description */}
-          <p className="text-lg font-normal leading-relaxed" style={{ color: isDark ? 'rgba(255,255,255,0.9)' : '#143269' }}>
+          <p className="text-sm md:text-base font-normal leading-relaxed" style={{ color: isDark ? 'rgba(255,255,255,0.9)' : '#143269' }}>
             {steps[currentStep].description}
           </p>
         </div>
@@ -1143,6 +1344,18 @@ function MobileHeroSection({ isDark, scrollToSection }) {
     { text: 'Learn it', art: `/images/${isDark ? 'Dark' : 'Light'}LearnItArt.webp`, id: 'learn' },
     { text: 'Do it', art: `/images/${isDark ? 'Dark' : 'Light'}DoItArt.webp`, id: 'do' }
   ];
+
+  // Aggressively preload mobile hero images on theme change
+  useEffect(() => {
+    const heroImages = illustrations.map(illust => illust.art);
+    
+    heroImages.forEach(src => {
+      const img = new Image();
+      img.loading = 'eager';
+      img.fetchPriority = 'high';
+      img.src = src;
+    });
+  }, [isDark]); // Re-run when theme changes
 
   // Auto-scroll functionality
   useEffect(() => {
@@ -1236,6 +1449,8 @@ function MobileHeroSection({ isDark, scrollToSection }) {
               <img 
                 src={illust.art}
                 alt={`${illust.id} art`}
+                loading="eager"
+                fetchpriority="high"
                 className="w-full h-full object-contain"
                 style={{ 
                   transform: 'scale(1.2)',
