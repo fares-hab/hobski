@@ -305,9 +305,9 @@ export default function LearnerSignup({ onNavigate, theme, setTheme }) {
                           ? 'border-red-500 focus:border-red-500'
                           : isDark 
                             ? 'bg-gray-900 border-gray-700' 
-                            : 'bg-white border-gray-300'
+                            : 'bg-white border-transparent'
                       }`}
-                      style={isDark && !errors.lastName ? { borderColor: '#C7DBFF', color: '#C7DBFF' } : (!isDark && !errors.lastName ? { borderColor: '#143269', color: '#143269' } : {})}
+                      style={isDark && !errors.lastName ? { borderColor: '#C7DBFF', color: '#C7DBFF' } : {}}
                     />
                     {errors.lastName && (
                       <p className="text-red-500 text-sm mt-1">{errors.lastName}</p>
@@ -331,9 +331,9 @@ export default function LearnerSignup({ onNavigate, theme, setTheme }) {
                         ? 'border-red-500 focus:border-red-500'
                         : isDark 
                           ? 'bg-gray-900 border-gray-700' 
-                          : 'bg-white border-gray-300'
+                          : 'bg-white border-transparent'
                     }`}
-                    style={isDark && !errors.email ? { borderColor: '#C7DBFF', color: '#C7DBFF' } : (!isDark && !errors.email ? { borderColor: '#143269', color: '#143269' } : {})}
+                    style={isDark && !errors.email ? { borderColor: '#C7DBFF', color: '#C7DBFF' } : {}}
                   />
                   {errors.email && (
                     <p className="text-red-500 text-sm mt-1">{errors.email}</p>

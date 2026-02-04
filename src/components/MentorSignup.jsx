@@ -354,9 +354,9 @@ export default function MentorSignup({ onNavigate, theme, setTheme }) {
                     className={`w-full px-4 py-3 border rounded-lg focus:outline-none transition-colors ${
                       isDark 
                         ? 'bg-gray-900 border-gray-700' 
-                        : 'bg-white border-gray-300'
+                        : 'bg-white border-transparent'
                     }`}
-                    style={isDark ? { borderColor: '#C7DBFF', color: '#C7DBFF' } : { borderColor: '#143269', color: '#143269' }}
+                    style={isDark ? { borderColor: '#C7DBFF', color: '#C7DBFF' } : {}}
                   />
                 </div>
 
