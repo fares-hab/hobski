@@ -749,10 +749,10 @@ export default function HobskiLanding({ onNavigate, theme, setTheme }) {
         {/* Contact Section */}
         <div style={{ 
           backgroundColor: isDark ? '#3F60CF' : '#B7D0FF',
-          marginTop: '-1.5rem',
-          marginBottom: '-1.5rem',
-          paddingTop: '3rem',
-          paddingBottom: '3rem',
+          marginTop: '-4.5rem',
+          marginBottom: '-4.0rem',
+          paddingTop: '1rem',
+          paddingBottom: '1rem',
           clipPath: isMobile ? 'url(#wavy-top-bottom-mobile)' : 'url(#wavy-top-bottom)'
         }}>
         <ScrollSection 
@@ -777,9 +777,9 @@ export default function HobskiLanding({ onNavigate, theme, setTheme }) {
                     className={`w-full px-4 py-3 border rounded-lg focus:outline-none transition-colors ${
                       isDark 
                         ? 'bg-gray-900 border-gray-700 focus:border-white text-white' 
-                        : 'bg-white border-gray-300'
+                        : 'border-transparent'
                     }`}
-                    style={!isDark ? { borderColor: '#143269', color: '#143269' } : {}}
+                    style={!isDark ? { backgroundColor: '#E6F6FF', color: '#143269' } : {}}
                   />
                 </div>
                 <div>
@@ -809,8 +809,9 @@ export default function HobskiLanding({ onNavigate, theme, setTheme }) {
                     className={`w-full px-4 py-3 border rounded-lg focus:outline-none transition-colors ${
                       isDark 
                         ? 'bg-gray-900 border-gray-700 focus:border-white text-white' 
-                        : 'bg-white border-gray-300 focus:border-black text-black'
+                        : 'border-transparent'
                     }`}
+                    style={!isDark ? { backgroundColor: '#E6F6FF', color: '#143269' } : {}}
                   />
                 </div>
               </div>
@@ -826,8 +827,9 @@ export default function HobskiLanding({ onNavigate, theme, setTheme }) {
                   className={`w-full px-4 py-3 border rounded-lg focus:outline-none transition-colors resize-none ${
                     isDark 
                       ? 'bg-gray-900 border-gray-700 focus:border-white text-white' 
-                      : 'bg-white border-gray-300 focus:border-black text-black'
+                      : 'border-transparent'
                   }`}
+                  style={!isDark ? { backgroundColor: '#E6F6FF', color: '#143269' } : {}}
                 />
               </div>
 

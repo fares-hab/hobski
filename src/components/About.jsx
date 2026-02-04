@@ -52,6 +52,17 @@ export default function About({ onNavigate, theme, setTheme }) {
 
       {/* Main Content */}
       <main className="max-w-6xl mx-auto px-6 py-16 pt-32">
+        {/* Founders Image - Shows first on mobile, second on desktop */}
+        <div className="flex items-center justify-center md:hidden mb-8">
+          <img 
+            src="/images/AboutImage.webp"
+            alt="Fares and Tala Habbab, founders of hobski"
+            loading="eager"
+            fetchpriority="high"
+            className="w-full h-auto object-contain scale-125"
+          />
+        </div>
+
         <h1 className="text-5xl md:text-6xl font-bold mb-12">
           Who are we?
         </h1>
@@ -84,8 +95,8 @@ export default function About({ onNavigate, theme, setTheme }) {
             </p>
           </div>
 
-          {/* Founders Image */}
-          <div className="flex items-center justify-center ml-8">
+          {/* Founders Image - Hidden on mobile, shown on desktop */}
+          <div className="hidden md:flex items-center justify-center ml-8">
             <img 
               src="/images/AboutImage.webp"
               alt="Fares and Tala Habbab, founders of hobski"
