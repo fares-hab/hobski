@@ -200,7 +200,7 @@ export default function LearnerSignup({ onNavigate, theme, setTheme }) {
     <div className={`min-h-screen font-['Inter',sans-serif] transition-colors ${
       isDark ? 'text-white' : ''
     }`}
-    style={isDark ? { backgroundColor: '#143269' } : { backgroundColor: 'white', color: '#143269' }}>
+    style={isDark ? { backgroundColor: '#143269', color: 'white' } : { backgroundColor: '#E6F6FF', color: '#143269' }}>
       {/* Header */}
       <header 
         className={`fixed top-0 left-0 right-0 z-50 ${
