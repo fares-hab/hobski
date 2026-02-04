@@ -10,6 +10,7 @@ gsap.registerPlugin(ScrollTrigger);
 
 export default function HobskiLanding({ onNavigate, theme, setTheme }) {
   const [activeTab, setActiveTab] = useState('learner');
+  const [showNotice, setShowNotice] = useState(true);
   const [isMobile, setIsMobile] = useState(() => {
     // Initialize with correct value to prevent flash of wrong component
     if (typeof window !== 'undefined') {
@@ -155,7 +156,7 @@ export default function HobskiLanding({ onNavigate, theme, setTheme }) {
       className={`min-h-screen font-['Inter',sans-serif] transition-colors ${
         isDark ? 'text-white' : ''
       }`}
-      style={isDark ? { backgroundColor: '#143269', color: 'white' } : { backgroundColor: '#E6F6FF', color: '#143269' }}
+      style={isDark ? { backgroundColor: '#143269', color: '#C7DBFF' } : { backgroundColor: '#E6F6FF', color: '#143269' }}
     >
       {/* Header */}
       <header 
@@ -190,28 +191,28 @@ export default function HobskiLanding({ onNavigate, theme, setTheme }) {
               onClick={() => scrollToSection('get-involved')}
               className={`px-3 sm:px-6 py-1.5 sm:py-2 rounded-full text-sm sm:text-base font-medium ${
                 isDark 
-                  ? 'bg-white hover:bg-gray-200' 
+                  ? 'hover:opacity-80' 
                   : 'bg-[#143269] text-white hover:opacity-80'
               }`}
-              style={{ transition: 'background-color 0.2s', color: isDark ? '#143269' : 'white' }}
+              style={isDark ? { backgroundColor: '#C7DBFF', color: '#143269', transition: 'opacity 0.2s' } : { transition: 'background-color 0.2s', color: 'white' }}
             >
               Join
             </button>
             <button 
               onClick={() => onNavigate('about')}
               className={`px-3 sm:px-6 py-1.5 sm:py-2 text-sm sm:text-base ${
-              isDark ? 'text-white hover:text-gray-300' : 'hover:opacity-80'
+              isDark ? 'hover:opacity-80' : 'hover:opacity-80'
             }`}
-              style={{ transition: 'color 0.2s', color: isDark ? 'white' : '#143269' }}
+              style={{ transition: 'color 0.2s', color: isDark ? '#C7DBFF' : '#143269' }}
             >
               About
             </button>
             <button 
               onClick={() => scrollToSection('contact')}
               className={`px-3 sm:px-6 py-1.5 sm:py-2 text-sm sm:text-base ${
-                isDark ? 'text-white hover:text-gray-300' : 'hover:opacity-80'
+                isDark ? 'hover:opacity-80' : 'hover:opacity-80'
               }`}
-              style={{ transition: 'color 0.2s', color: isDark ? 'white' : '#143269' }}
+              style={{ transition: 'color 0.2s', color: isDark ? '#C7DBFF' : '#143269' }}
             >
               Contact
             </button>
@@ -340,11 +341,11 @@ export default function HobskiLanding({ onNavigate, theme, setTheme }) {
                     />
                   </div>
                   
-                  <h3 className="text-base md:text-lg font-bold mb-3 md:mb-4" style={{ color: isDark ? 'white' : '#143269' }}>
+                  <h3 className="text-base md:text-lg font-bold mb-3 md:mb-4" style={{ color: isDark ? '#C7DBFF' : '#143269' }}>
                     1. Find your hobby
                   </h3>
                   
-                  <p className="text-base md:text-lg font-normal leading-relaxed" style={{ color: isDark ? 'rgba(255,255,255,0.9)' : '#143269' }}>
+                  <p className="text-base md:text-lg font-normal leading-relaxed" style={{ color: isDark ? '#C7DBFF' : '#143269' }}>
                     Got a hobby or project in mind? Just type it into our search bar, or browse through our categories for inspiration!
                   </p>
                   
@@ -371,11 +372,11 @@ export default function HobskiLanding({ onNavigate, theme, setTheme }) {
                     />
                   </div>
                   
-                  <h3 className="text-base md:text-lg font-bold mb-3 md:mb-4" style={{ color: isDark ? 'white' : '#143269' }}>
+                  <h3 className="text-base md:text-lg font-bold mb-3 md:mb-4" style={{ color: isDark ? '#C7DBFF' : '#143269' }}>
                     2. Browse mentors
                   </h3>
                   
-                  <p className="text-base md:text-lg font-normal leading-relaxed" style={{ color: isDark ? 'rgba(255,255,255,0.9)' : '#143269' }}>
+                  <p className="text-base md:text-lg font-normal leading-relaxed" style={{ color: isDark ? '#C7DBFF' : '#143269' }}>
                     Take a look at available mentors and browse their portfolios, rates, schedules, resources, and reviews!
                   </p>
                   
@@ -402,11 +403,11 @@ export default function HobskiLanding({ onNavigate, theme, setTheme }) {
                     />
                   </div>
                   
-                  <h3 className="text-base md:text-lg font-bold mb-3 md:mb-4" style={{ color: isDark ? 'white' : '#143269' }}>
+                  <h3 className="text-base md:text-lg font-bold mb-3 md:mb-4" style={{ color: isDark ? '#C7DBFF' : '#143269' }}>
                     3. Book a session
                   </h3>
                   
-                  <p className="text-base md:text-lg font-normal leading-relaxed" style={{ color: isDark ? 'rgba(255,255,255,0.9)' : '#143269' }}>
+                  <p className="text-base md:text-lg font-normal leading-relaxed" style={{ color: isDark ? '#C7DBFF' : '#143269' }}>
                     Request a session with a mentor. Outline your goals, resources, session preferences, and chat with your mentor before confirming!
                   </p>
                   
@@ -433,11 +434,11 @@ export default function HobskiLanding({ onNavigate, theme, setTheme }) {
                     />
                   </div>
                   
-                  <h3 className="text-base md:text-lg font-bold mb-3 md:mb-4" style={{ color: isDark ? 'white' : '#143269' }}>
+                  <h3 className="text-base md:text-lg font-bold mb-3 md:mb-4" style={{ color: isDark ? '#C7DBFF' : '#143269' }}>
                     4. Get learning!
                   </h3>
                   
-                  <p className="text-base md:text-lg font-normal leading-relaxed" style={{ color: isDark ? 'rgba(255,255,255,0.9)' : '#143269' }}>
+                  <p className="text-base md:text-lg font-normal leading-relaxed" style={{ color: isDark ? '#C7DBFF' : '#143269' }}>
                     Meet in-person or virtually, depending on your preferences, and get learning!
                   </p>
                 </div>
@@ -500,11 +501,11 @@ export default function HobskiLanding({ onNavigate, theme, setTheme }) {
                     />
                   </div>
                   
-                  <h3 className="text-base md:text-lg font-bold mb-3 md:mb-4" style={{ color: isDark ? 'white' : '#143269' }}>
+                  <h3 className="text-base md:text-lg font-bold mb-3 md:mb-4" style={{ color: isDark ? '#C7DBFF' : '#143269' }}>
                     1. Find your skill OR Create one
                   </h3>
                   
-                  <p className="text-base md:text-lg font-normal leading-relaxed" style={{ color: isDark ? 'rgba(255,255,255,0.9)' : '#143269'}}>
+                  <p className="text-base md:text-lg font-normal leading-relaxed" style={{ color: isDark ? '#C7DBFF' : '#143269'}}>
                     Browse through our skill categories and choose yours. If you can’t find it, request to add a new one to our list!
                   </p>
                   
@@ -531,11 +532,11 @@ export default function HobskiLanding({ onNavigate, theme, setTheme }) {
                     />
                   </div>
                   
-                  <h3 className="text-base md:text-lg font-bold mb-3 md:mb-4" style={{ color: isDark ? 'white' : '#143269' }}>
+                  <h3 className="text-base md:text-lg font-bold mb-3 md:mb-4" style={{ color: isDark ? '#C7DBFF' : '#143269' }}>
                     2. Set up your profile
                   </h3>
                   
-                  <p className="text-base md:text-lg font-normal leading-relaxed" style={{ color: isDark ? 'rgba(255,255,255,0.9)' : '#143269' }}>
+                  <p className="text-base md:text-lg font-normal leading-relaxed" style={{ color: isDark ? '#C7DBFF' : '#143269' }}>
                     Demonstrate your skill. Pick your skill level, rate, schedule, and outline your session preferences (resources offered, session size, and location).
                   </p>
                   
@@ -562,11 +563,11 @@ export default function HobskiLanding({ onNavigate, theme, setTheme }) {
                     />
                   </div>
                   
-                  <h3 className="text-base md:text-lg font-bold mb-3 md:mb-4" style={{ color: isDark ? 'white' : '#143269' }}>
+                  <h3 className="text-base md:text-lg font-bold mb-3 md:mb-4" style={{ color: isDark ? '#C7DBFF' : '#143269' }}>
                     3. Chat with learners
                   </h3>
                   
-                  <p className="text-base md:text-lg font-normal leading-relaxed" style={{ color: isDark ? 'rgba(255,255,255,0.9)' : '#143269'}}>
+                  <p className="text-base md:text-lg font-normal leading-relaxed" style={{ color: isDark ? '#C7DBFF' : '#143269'}}>
                     Start a conversation with learners when they’ve requested a session and discuss goals and sessions details before confirming!
                   </p>
                   
@@ -593,11 +594,11 @@ export default function HobskiLanding({ onNavigate, theme, setTheme }) {
                     />
                   </div>
                   
-                  <h3 className="text-base md:text-lg font-bold mb-3 md:mb-4" style={{ color: isDark ? 'white' : '#143269' }}>
+                  <h3 className="text-base md:text-lg font-bold mb-3 md:mb-4" style={{ color: isDark ? '#C7DBFF' : '#143269' }}>
                     4. Get mentoring!
                   </h3>
                   
-                  <p className="text-base md:text-lg font-normal leading-relaxed" style={{ color: isDark ? 'rgba(255,255,255,0.9)' : '#143269' }}>
+                  <p className="text-base md:text-lg font-normal leading-relaxed" style={{ color: isDark ? '#C7DBFF' : '#143269' }}>
                     Meet your learners in-person or virtually, depending on your preferences, and get mentoring!
                   </p>
                 </div>
@@ -776,10 +777,10 @@ export default function HobskiLanding({ onNavigate, theme, setTheme }) {
                     type="text"
                     className={`w-full px-4 py-3 border rounded-lg focus:outline-none transition-colors ${
                       isDark 
-                        ? 'bg-gray-900 border-gray-700 focus:border-white text-white' 
+                        ? 'bg-gray-900 border-gray-700' 
                         : 'border-transparent'
                     }`}
-                    style={!isDark ? { backgroundColor: '#E6F6FF', color: '#143269' } : {}}
+                    style={isDark ? { borderColor: '#C7DBFF', color: '#C7DBFF' } : { backgroundColor: '#E6F6FF', color: '#143269' }}
                   />
                 </div>
                 <div>
@@ -792,10 +793,10 @@ export default function HobskiLanding({ onNavigate, theme, setTheme }) {
                     type="text"
                     className={`w-full px-4 py-3 border rounded-lg focus:outline-none transition-colors ${
                       isDark 
-                        ? 'bg-gray-900 border-gray-700 focus:border-white text-white' 
+                        ? 'bg-gray-900 border-gray-700' 
                         : 'bg-white border-gray-300'
                     }`}
-                    style={!isDark ? { borderColor: '#143269', color: '#143269' } : {}}
+                    style={isDark ? { borderColor: '#C7DBFF', color: '#C7DBFF' } : { borderColor: '#143269', color: '#143269' }}
                   />
                 </div>
                 <div>
@@ -808,10 +809,10 @@ export default function HobskiLanding({ onNavigate, theme, setTheme }) {
                     type="email"
                     className={`w-full px-4 py-3 border rounded-lg focus:outline-none transition-colors ${
                       isDark 
-                        ? 'bg-gray-900 border-gray-700 focus:border-white text-white' 
+                        ? 'bg-gray-900 border-gray-700' 
                         : 'border-transparent'
                     }`}
-                    style={!isDark ? { backgroundColor: '#E6F6FF', color: '#143269' } : {}}
+                    style={isDark ? { borderColor: '#C7DBFF', color: '#C7DBFF' } : { backgroundColor: '#E6F6FF', color: '#143269' }}
                   />
                 </div>
               </div>
@@ -826,10 +827,10 @@ export default function HobskiLanding({ onNavigate, theme, setTheme }) {
                   rows="6"
                   className={`w-full px-4 py-3 border rounded-lg focus:outline-none transition-colors resize-none ${
                     isDark 
-                      ? 'bg-gray-900 border-gray-700 focus:border-white text-white' 
+                      ? 'bg-gray-900 border-gray-700' 
                       : 'border-transparent'
                   }`}
-                  style={!isDark ? { backgroundColor: '#E6F6FF', color: '#143269' } : {}}
+                  style={isDark ? { borderColor: '#C7DBFF', color: '#C7DBFF' } : { backgroundColor: '#E6F6FF', color: '#143269' }}
                 />
               </div>
 
@@ -840,10 +841,10 @@ export default function HobskiLanding({ onNavigate, theme, setTheme }) {
                 }}
                 className={`w-full px-8 py-4 rounded-full font-medium transition-colors text-lg ${
                   isDark 
-                    ? 'bg-white hover:bg-gray-200' 
+                    ? 'hover:opacity-80' 
                     : 'bg-[#143269] text-white hover:opacity-80'
                 }`}
-                style={isDark ? { color: '#143269' } : {}}
+                style={isDark ? { backgroundColor: '#C7DBFF', color: '#143269' } : {}}
               >
                 Send Message
               </button>
@@ -862,6 +863,59 @@ export default function HobskiLanding({ onNavigate, theme, setTheme }) {
           ℠ 2026 hobski. 
         </div>
       </footer>
+
+      {/* Construction Notice Bubble */}
+      {showNotice && (
+        <div 
+          className={`fixed bottom-6 left-6 z-50 max-w-sm rounded-2xl shadow-2xl border-2 transition-all ${
+            isDark ? 'bg-gray-800 border-gray-600' : 'bg-white border-gray-200'
+          }`}
+          style={{
+            animation: 'slideIn 0.5s ease-out'
+          }}
+        >
+          <style>{`
+            @keyframes slideIn {
+              from {
+                transform: translateX(-100%);
+                opacity: 0;
+              }
+              to {
+                transform: translateX(0);
+                opacity: 1;
+              }
+            }
+          `}</style>
+          <div className="p-4 pr-12 relative">
+            <button
+              onClick={() => setShowNotice(false)}
+              className={`absolute top-2 right-2 p-1 rounded-full transition-colors ${
+                isDark ? 'hover:bg-gray-700' : 'hover:bg-gray-100'
+              }`}
+              aria-label="Close notice"
+            >
+              <svg 
+                className={`w-5 h-5 ${
+                  isDark ? 'text-gray-400' : 'text-gray-500'
+                }`}
+                fill="none" 
+                strokeLinecap="round" 
+                strokeLinejoin="round" 
+                strokeWidth="2" 
+                viewBox="0 0 24 24" 
+                stroke="currentColor"
+              >
+                <path d="M6 18L18 6M6 6l12 12"></path>
+              </svg>
+            </button>
+            <p className={`text-sm font-medium leading-relaxed ${
+              isDark ? 'text-gray-200' : 'text-gray-800'
+            }`}>
+              🚧 We are still under construction but feel free to look around!
+            </p>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
@@ -1275,10 +1329,10 @@ function GSAPHeroSection({ isDark, scrollToSection, imagesLoaded }) {
           currentSlide === 0
             ? 'opacity-0 pointer-events-none'
             : isDark
-              ? 'bg-white/10 hover:bg-white/20 text-white'
+              ? 'bg-white/10 hover:bg-white/20'
               : 'hover:opacity-80'
         }`}
-        style={!isDark && currentSlide !== 0 ? { backgroundColor: 'rgba(20, 50, 105, 0.1)', color: '#143269' } : {}}
+        style={isDark && currentSlide !== 0 ? { color: '#C7DBFF' } : (!isDark && currentSlide !== 0 ? { backgroundColor: 'rgba(20, 50, 105, 0.1)', color: '#143269' } : {})}
         aria-label="Previous illustration"
       >
         <ChevronLeft className="w-6 h-6 md:block hidden" />
@@ -1292,10 +1346,10 @@ function GSAPHeroSection({ isDark, scrollToSection, imagesLoaded }) {
           currentSlide === illustrations.length - 1
             ? 'opacity-0 pointer-events-none'
             : isDark
-              ? 'bg-white/10 hover:bg-white/20 text-white'
+              ? 'bg-white/10 hover:bg-white/20'
               : 'hover:opacity-80'
         }`}
-        style={!isDark && currentSlide !== illustrations.length - 1 ? { backgroundColor: 'rgba(20, 50, 105, 0.1)', color: '#143269' } : {}}
+        style={isDark && currentSlide !== illustrations.length - 1 ? { color: '#C7DBFF' } : (!isDark && currentSlide !== illustrations.length - 1 ? { backgroundColor: 'rgba(20, 50, 105, 0.1)', color: '#143269' } : {})}
         aria-label="Next illustration"
       >
         <ChevronRight className="w-6 h-6 md:block hidden" />
@@ -1325,9 +1379,10 @@ function GSAPHeroSection({ isDark, scrollToSection, imagesLoaded }) {
           onClick={() => scrollToSection('how-it-works')}
           className={`inline-flex items-center gap-2 px-6 py-3 rounded-full border-2 transition-all group ${
             isDark 
-              ? 'text-white border-white hover:bg-white hover:text-[#143269]' 
+              ? 'hover:bg-white hover:text-[#143269]' 
               : 'text-[#143269] border-[#143269] hover:bg-[#143269] hover:text-white'
           }`}
+          style={isDark ? { color: '#C7DBFF', borderColor: '#C7DBFF' } : {}}
         >
           Pssst there's more
           <ChevronDown className="w-5 h-5 group-hover:translate-y-1 transition-transform" />
@@ -1391,7 +1446,7 @@ function MobileStepCarousel({ isDark, steps, activeTab }) {
           </h3>
           
           {/* Step Description */}
-          <p className="text-base md:text-lg font-normal leading-relaxed" style={{ color: isDark ? 'rgba(255,255,255,0.9)' : '#143269' }}>
+          <p className="text-base md:text-lg font-normal leading-relaxed" style={{ color: isDark ? '#C7DBFF' : '#143269' }}>
             {steps[currentStep].description}
           </p>
         </div>
@@ -1404,9 +1459,10 @@ function MobileStepCarousel({ isDark, steps, activeTab }) {
             currentStep === 0
               ? 'opacity-0 pointer-events-none'
               : isDark
-                ? 'bg-white/10 hover:bg-white/20 text-white'
+                ? 'bg-white/10 hover:bg-white/20'
                 : 'bg-[#143269]/10 hover:bg-[#143269]/20 text-[#143269]'
           }`}
+          style={isDark && currentStep !== 0 ? { color: '#C7DBFF' } : {}}
           aria-label="Previous step"
         >
           <ChevronLeft className="w-6 h-6" />
@@ -1419,9 +1475,10 @@ function MobileStepCarousel({ isDark, steps, activeTab }) {
             currentStep === steps.length - 1
               ? 'opacity-0 pointer-events-none'
               : isDark
-                ? 'bg-white/10 hover:bg-white/20 text-white'
+                ? 'bg-white/10 hover:bg-white/20'
                 : 'bg-[#143269]/10 hover:bg-[#143269]/20 text-[#143269]'
           }`}
+          style={isDark && currentStep !== steps.length - 1 ? { color: '#C7DBFF' } : {}}
           aria-label="Next step"
         >
           <ChevronRight className="w-6 h-6" />
@@ -1606,9 +1663,10 @@ function MobileHeroSection({ isDark, scrollToSection, imagesLoaded }) {
             currentSlide === 0
               ? 'opacity-0 pointer-events-none'
               : isDark
-                ? 'bg-white/10 hover:bg-white/20 text-white'
+                ? 'bg-white/10 hover:bg-white/20'
                 : 'bg-[#143269]/10 hover:bg-[#143269]/20 text-[#143269]'
           }`}
+          style={isDark && currentSlide !== 0 ? { color: '#C7DBFF' } : {}}
           aria-label="Previous slide"
         >
           <ChevronLeft className="w-6 h-6" />
@@ -1621,9 +1679,10 @@ function MobileHeroSection({ isDark, scrollToSection, imagesLoaded }) {
             currentSlide === illustrations.length - 1
               ? 'opacity-0 pointer-events-none'
               : isDark
-                ? 'bg-white/10 hover:bg-white/20 text-white'
+                ? 'bg-white/10 hover:bg-white/20'
                 : 'bg-[#143269]/10 hover:bg-[#143269]/20 text-[#143269]'
           }`}
+          style={isDark && currentSlide !== illustrations.length - 1 ? { color: '#C7DBFF' } : {}}
           aria-label="Next slide"
         >
           <ChevronRight className="w-6 h-6" />

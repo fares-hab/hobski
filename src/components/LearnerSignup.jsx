@@ -232,9 +232,10 @@ export default function LearnerSignup({ onNavigate, theme, setTheme }) {
             <button 
             onClick={() => onNavigate('landing')}
             className={`flex items-center gap-2 px-3 sm:px-6 py-1.5 sm:py-2 text-sm sm:text-base transition-colors ${
-              isDark ? 'text-white hover:text-gray-300' : 'hover:text-gray-600'
-            }`}
-            style={!isDark ? { color: '#143269', transition: 'color 0.2s' } : { transition: 'color 0.2s' }}>
+                isDark ? 'hover:opacity-80' : 'hover:text-gray-600'
+              }`}
+              style={isDark ? { color: '#C7DBFF', transition: 'color 0.2s' } : { color: '#143269', transition: 'color 0.2s' }}
+            >
               <ChevronLeft className="w-4 h-4" />
               Home
             </button>
@@ -279,9 +280,10 @@ export default function LearnerSignup({ onNavigate, theme, setTheme }) {
                         errors.firstName
                           ? 'border-red-500 focus:border-red-500'
                           : isDark 
-                            ? 'bg-gray-900 border-gray-700 focus:border-white text-white' 
+                            ? 'bg-gray-900 border-gray-700' 
                             : 'bg-white border-gray-300 focus:border-black text-black'
                       }`}
+                      style={isDark && !errors.firstName ? { borderColor: '#C7DBFF', color: '#C7DBFF' } : {}}
                     />
                     {errors.firstName && (
                       <p className="text-red-500 text-sm mt-1">{errors.firstName}</p>
@@ -302,10 +304,10 @@ export default function LearnerSignup({ onNavigate, theme, setTheme }) {
                         errors.lastName
                           ? 'border-red-500 focus:border-red-500'
                           : isDark 
-                            ? 'bg-gray-900 border-gray-700 focus:border-white text-white' 
+                            ? 'bg-gray-900 border-gray-700' 
                             : 'bg-white border-gray-300'
                       }`}
-                      style={!isDark && !errors.lastName ? { borderColor: '#143269', color: '#143269' } : {}}
+                      style={isDark && !errors.lastName ? { borderColor: '#C7DBFF', color: '#C7DBFF' } : (!isDark && !errors.lastName ? { borderColor: '#143269', color: '#143269' } : {})}
                     />
                     {errors.lastName && (
                       <p className="text-red-500 text-sm mt-1">{errors.lastName}</p>
@@ -328,10 +330,10 @@ export default function LearnerSignup({ onNavigate, theme, setTheme }) {
                       errors.email
                         ? 'border-red-500 focus:border-red-500'
                         : isDark 
-                          ? 'bg-gray-900 border-gray-700 focus:border-white text-white' 
+                          ? 'bg-gray-900 border-gray-700' 
                           : 'bg-white border-gray-300'
                     }`}
-                    style={!isDark && !errors.email ? { borderColor: '#143269', color: '#143269' } : {}}
+                    style={isDark && !errors.email ? { borderColor: '#C7DBFF', color: '#C7DBFF' } : (!isDark && !errors.email ? { borderColor: '#143269', color: '#143269' } : {})}
                   />
                   {errors.email && (
                     <p className="text-red-500 text-sm mt-1">{errors.email}</p>
@@ -351,10 +353,10 @@ export default function LearnerSignup({ onNavigate, theme, setTheme }) {
                     onChange={handleInputChange}
                     className={`w-full px-4 py-3 border rounded-lg focus:outline-none transition-colors ${
                       isDark 
-                        ? 'bg-gray-900 border-gray-700 focus:border-white text-white' 
+                        ? 'bg-gray-900 border-gray-700' 
                         : 'bg-white border-gray-300'
                     }`}
-                    style={!isDark ? { borderColor: '#143269', color: '#143269' } : {}}
+                    style={isDark ? { borderColor: '#C7DBFF', color: '#C7DBFF' } : {}}
                   />
                 </div>
 
@@ -372,9 +374,11 @@ export default function LearnerSignup({ onNavigate, theme, setTheme }) {
                       isSubmitting
                         ? 'opacity-50 cursor-not-allowed'
                         : isDark 
-                          ? 'bg-white text-black hover:bg-gray-200' 
+                          ? 'hover:opacity-80' 
                           : 'bg-black text-white hover:bg-gray-800'
                     }`}
+                    style={isDark && !isSubmitting ? { backgroundColor: '#C7DBFF', color: '#143269' } : {}}
+
                   >
                     {isSubmitting ? 'Checking...' : 'Next'}
                   </button>
@@ -405,10 +409,10 @@ export default function LearnerSignup({ onNavigate, theme, setTheme }) {
                       errors.hobbies
                         ? 'border-red-500 focus:border-red-500'
                         : isDark 
-                          ? 'bg-gray-900 border-gray-700 focus:border-white text-white placeholder-gray-500' 
+                          ? 'bg-gray-900 border-gray-700 placeholder-gray-500' 
                           : 'bg-white border-gray-300 placeholder-gray-400'
                     }`}
-                    style={!isDark && !errors.hobbies ? { borderColor: '#143269', color: '#143269' } : {}}
+                    style={isDark && !errors.hobbies ? { borderColor: '#C7DBFF', color: '#C7DBFF' } : {}}
                   />
                   {errors.hobbies && (
                     <p className="text-red-500 text-sm mt-1">{errors.hobbies}</p>
@@ -515,10 +519,10 @@ export default function LearnerSignup({ onNavigate, theme, setTheme }) {
                         onChange={handleInputChange}
                         className={`w-full max-w-md ml-8 px-4 py-2 border rounded-lg focus:outline-none transition-colors ${
                           isDark 
-                            ? 'bg-gray-900 border-gray-700 focus:border-white text-white' 
+                            ? 'bg-gray-900 border-gray-700' 
                             : 'bg-white border-gray-300'
                         }`}
-                        style={!isDark ? { borderColor: '#143269', color: '#143269' } : {}}
+                        style={isDark ? { borderColor: '#C7DBFF', color: '#C7DBFF' } : {}}
                       />
                     )}
                   </div>
@@ -538,10 +542,10 @@ export default function LearnerSignup({ onNavigate, theme, setTheme }) {
                       isSubmitting
                         ? 'opacity-50 cursor-not-allowed'
                         : isDark 
-                          ? 'bg-gray-800 text-white hover:bg-gray-700' 
+                          ? 'bg-gray-800 hover:bg-gray-700' 
                           : 'bg-gray-200 hover:bg-gray-300'
                     }`}
-                    style={!isDark ? { color: '#143269' } : {}}
+                    style={isDark && !isSubmitting ? { color: '#C7DBFF' } : (!isDark ? { color: '#143269' } : {})}
                   >
                     Back
                   </button>
@@ -552,9 +556,10 @@ export default function LearnerSignup({ onNavigate, theme, setTheme }) {
                       isSubmitting
                         ? 'opacity-50 cursor-not-allowed'
                         : isDark 
-                          ? 'bg-white text-black hover:bg-gray-200' 
+                          ? 'hover:opacity-80' 
                           : 'bg-black text-white hover:bg-gray-800'
                     }`}
+                    style={isDark && !isSubmitting ? { backgroundColor: '#C7DBFF', color: '#143269' } : {}}
                   >
                     {isSubmitting ? 'Submitting...' : 'Submit'}
                   </button>

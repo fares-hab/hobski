@@ -7,7 +7,7 @@ export default function About({ onNavigate, theme, setTheme }) {
     <div className={`min-h-screen font-['Inter',sans-serif] transition-colors ${
       isDark ? 'text-white' : ''
     }`}
-    style={isDark ? { backgroundColor: '#143269', color: 'white' } : { backgroundColor: '#E6F6FF', color: '#143269' }}>
+    style={isDark ? { backgroundColor: '#143269', color: '#C7DBFF' } : { backgroundColor: '#E6F6FF', color: '#143269' }}>
       {/* Header */}
       <header 
         className={`fixed top-0 left-0 right-0 z-50 ${
@@ -39,9 +39,9 @@ export default function About({ onNavigate, theme, setTheme }) {
             <button 
               onClick={() => onNavigate('landing')}
               className={`flex items-center gap-2 px-3 sm:px-4 py-1.5 sm:py-2 text-sm sm:text-base transition-colors ${
-                isDark ? 'text-white hover:text-gray-300' : 'hover:text-gray-600'
+                isDark ? 'hover:opacity-80' : 'hover:text-gray-600'
               }`}
-              style={!isDark ? { color: '#143269', transition: 'color 0.2s' } : { transition: 'color 0.2s' }}
+              style={isDark ? { color: '#C7DBFF', transition: 'color 0.2s' } : { color: '#143269', transition: 'color 0.2s' }}
             >
               <ChevronLeft className="w-4 h-4 sm:w-5 sm:h-5" />
               Home
