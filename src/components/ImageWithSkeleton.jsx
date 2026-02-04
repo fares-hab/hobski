@@ -10,7 +10,7 @@ export default function ImageWithSkeleton({
   className = '',
   skeletonClassName = '',
   loading = 'lazy',
-  fetchpriority = 'auto',
+  fetchPriority = 'auto',
   onLoad,
   onError,
   showErrorMessage = true,
@@ -65,7 +65,7 @@ export default function ImageWithSkeleton({
             isLoaded ? 'opacity-100' : 'opacity-0'
           } ${className}`}
           loading={loading}
-          fetchpriority={fetchpriority}
+          fetchPriority={fetchPriority}
           onLoad={handleLoad}
           onError={handleError}
           {...props}
