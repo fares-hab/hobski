@@ -1,12 +1,9 @@
-import { useState, useEffect, useRef, useCallback } from 'react';
+import { useState, useEffect, useRef, useCallback, memo } from 'react';
 import { ChevronDown, Sun, Moon, ChevronLeft, ChevronRight } from 'lucide-react';
 import { motion, useScroll, useTransform } from 'framer-motion';
 import gsap from 'gsap';
-import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { useImagePreloader, useThemeImagePreloader } from '../hooks/useImagePreloader';
 import ImageWithSkeleton from './ImageWithSkeleton';
-
-gsap.registerPlugin(ScrollTrigger);
 
 export default function HobskiLanding({ onNavigate, theme, setTheme }) {
   const [activeTab, setActiveTab] = useState('learner');
@@ -48,11 +45,11 @@ export default function HobskiLanding({ onNavigate, theme, setTheme }) {
     true
   );
 
-  // Preload step images for active tab
+  // Preload step images for active tab - only after hero is loaded
   const { loaded: stepImagesLoaded } = useImagePreloader(
-    getStepImages(theme, activeTab),
-    'high',
-    true
+    heroImagesLoaded ? getStepImages(theme, activeTab) : [],
+    'low',
+    false
   );
 
   // Smart theme preloader for smooth theme switching
@@ -78,9 +75,9 @@ export default function HobskiLanding({ onNavigate, theme, setTheme }) {
     });
   }, [theme, isPreloading, preloadTheme, setTheme]);
 
-  // OPTIMIZATION: Preload opposite theme during idle time
+  // OPTIMIZATION: Preload opposite theme during idle time - only after critical content loads
   useEffect(() => {
-    if (heroImagesLoaded) {
+    if (heroImagesLoaded && stepImagesLoaded) {
       const oppositeTheme = theme === 'dark' ? 'light' : 'dark';
       
       const schedulePreload = () => {
@@ -89,27 +86,16 @@ export default function HobskiLanding({ onNavigate, theme, setTheme }) {
 
       if ('requestIdleCallback' in window) {
         const idleCallback = window.requestIdleCallback(schedulePreload, {
-          timeout: 2000
+          timeout: 5000 // Increased timeout to avoid interfering with critical rendering
         });
         return () => window.cancelIdleCallback(idleCallback);
       } else {
-        const timeout = setTimeout(schedulePreload, 1000);
+        const timeout = setTimeout(schedulePreload, 2000);
         return () => clearTimeout(timeout);
       }
     }
-  }, [heroImagesLoaded, theme, preloadTheme]);
+  }, [heroImagesLoaded, stepImagesLoaded, theme, preloadTheme]);
 
-  // OPTIMIZATION: Preload inactive tab images on hover
-  const handleTabHover = useCallback((tab) => {
-    if (tab !== activeTab) {
-      const images = getStepImages(theme, tab);
-      images.forEach(src => {
-        const img = new Image();
-        img.src = src;
-      });
-    }
-  }, [activeTab, theme, getStepImages]);
-  
   // Detect mobile viewport with debounce for better performance
   useEffect(() => {
     const checkMobile = () => setIsMobile(window.innerWidth < 768);
@@ -118,10 +104,10 @@ export default function HobskiLanding({ onNavigate, theme, setTheme }) {
     let timeoutId;
     const debouncedCheck = () => {
       clearTimeout(timeoutId);
-      timeoutId = setTimeout(checkMobile, 150);
+      timeoutId = setTimeout(checkMobile, 200); // Optimized debounce timing
     };
     
-    window.addEventListener('resize', debouncedCheck);
+    window.addEventListener('resize', debouncedCheck, { passive: true });
     return () => {
       clearTimeout(timeoutId);
       window.removeEventListener('resize', debouncedCheck);
@@ -270,7 +256,6 @@ export default function HobskiLanding({ onNavigate, theme, setTheme }) {
               <div className="flex gap-0">
                 <button
                   onClick={() => setActiveTab('learner')}
-                  onMouseEnter={() => handleTabHover('learner')}
                   className={`flex-1 px-4 py-2 md:px-8 md:py-3 font-semibold transition-all text-lg md:text-xl ${
                     activeTab === 'learner'
                       ? 'text-white z-10'
@@ -292,7 +277,6 @@ export default function HobskiLanding({ onNavigate, theme, setTheme }) {
                 </button>
                 <button
                   onClick={() => setActiveTab('mentor')}
-                  onMouseEnter={() => handleTabHover('mentor')}
                   className={`flex-1 px-4 py-2 md:px-8 md:py-3 font-semibold transition-all text-lg md:text-xl ${
                     activeTab === 'mentor'
                       ? 'text-white z-10'
@@ -646,7 +630,7 @@ export default function HobskiLanding({ onNavigate, theme, setTheme }) {
         <div style={{ 
           backgroundColor: isDark ? '#0D2A5E' : '#E6F6FF',
           marginTop: '-4rem',
-          paddingTop: '3rem'
+          paddingTop: '2rem'
         }}>
           <ScrollSection 
             id="get-involved" 
@@ -656,7 +640,7 @@ export default function HobskiLanding({ onNavigate, theme, setTheme }) {
             <h2 className="text-4xl md:text-5xl font-bold mb-4">
               Get involved
             </h2>
-            <p className={`text-2xl mb-8 md:mb-48 ${
+            <p className={`text-2xl mb-8 md:mb-60 ${
               isDark ? 'text-gray-300' : 'text-gray-700'
             }`}>
               Got a hobby or skill you're interested in? Join us!
@@ -921,8 +905,8 @@ export default function HobskiLanding({ onNavigate, theme, setTheme }) {
 }
 
 // Hand-drawn irregular border line component
-// ScrollSection Component
-function ScrollSection({ id, children, isDark, className = '' }) {
+// ScrollSection Component - Memoized to prevent unnecessary re-renders
+const ScrollSection = memo(function ScrollSection({ id, children, isDark, className = '' }) {
   const sectionRef = useRef(null);
   
   const { scrollYProgress } = useScroll({
@@ -957,14 +941,13 @@ function ScrollSection({ id, children, isDark, className = '' }) {
       </div>
     </motion.section>
   );
-}
+});
 
-// GSAP Hero Section with navigation arrows
-function GSAPHeroSection({ isDark, scrollToSection, imagesLoaded }) {
+// GSAP Hero Section with navigation arrows - Memoized for performance
+const GSAPHeroSection = memo(function GSAPHeroSection({ isDark, scrollToSection, imagesLoaded }) {
   const containerRef = useRef(null);
-  const [progress, setProgress] = useState(0);
   const [currentSlide, setCurrentSlide] = useState(0);
-  const timelineRef = useRef(null);
+  const [isAnimating, setIsAnimating] = useState(false);
   
   const illustrations = [
     { text: 'Dream it', art: `/images/${isDark ? 'Dark' : 'Light'}DreamItArt.webp`, id: 'dream' },
@@ -972,320 +955,182 @@ function GSAPHeroSection({ isDark, scrollToSection, imagesLoaded }) {
     { text: 'Do it', art: `/images/${isDark ? 'Dark' : 'Light'}DoItArt.webp`, id: 'do' }
   ];
 
-  // Navigate to specific slide
-  const goToSlide = (index) => {
-    if (!timelineRef.current || index < 0 || index >= illustrations.length) return;
+  const goToSlide = (index, direction = 'next') => {
+    if (isAnimating || index < 0 || index >= illustrations.length || index === currentSlide) return;
     
-    const targetProgress = index / (illustrations.length - 1);
-    
-    // Get the ScrollTrigger instance
-    const scrollTrigger = timelineRef.current.scrollTrigger;
-    
-    if (!scrollTrigger || !scrollTrigger.isActive) {
-      // If ScrollTrigger isn't active yet, just update the slide
-      setCurrentSlide(index);
+    setIsAnimating(true);
+    const container = containerRef.current;
+    if (!container) {
+      setIsAnimating(false);
       return;
     }
+
+    const currentElements = {
+      text: container.querySelector(`#text-${currentSlide}`),
+      art: container.querySelector(`#art-${currentSlide}`)
+    };
     
-    // Temporarily disable scrub to prevent conflict
-    const originalScrub = scrollTrigger.vars.scrub;
-    scrollTrigger.vars.scrub = false;
+    const nextElements = {
+      text: container.querySelector(`#text-${index}`),
+      art: container.querySelector(`#art-${index}`)
+    };
+
+    if (!nextElements.art) {
+      setIsAnimating(false);
+      return;
+    }
+
+    const isMobile = window.innerWidth < 768;
+    const viewportWidth = window.innerWidth;
+    const viewportHeight = window.innerHeight;
     
-    // Animate the timeline
-    gsap.to(timelineRef.current, {
-      progress: targetProgress,
-      duration: 0.8,
-      ease: 'power2.inOut',
-      onUpdate: () => {
-        if (timelineRef.current) {
-          setProgress(timelineRef.current.progress());
+    // Determine animation direction
+    const isGoingForward = direction === 'next';
+    const exitMultiplier = isGoingForward ? -1 : 1;
+    const enterMultiplier = isGoingForward ? 1 : -1;
+
+    // Ensure the next image is fully loaded before animating
+    const nextImage = nextElements.art;
+    
+    const performTransition = () => {
+      // Animate out current slide - direction depends on navigation
+      gsap.to([currentElements.text, currentElements.art], {
+        x: isMobile ? 0 : exitMultiplier * viewportWidth,
+        y: isMobile ? (isGoingForward ? -viewportHeight : viewportHeight) : 0,
+        opacity: 0,
+        duration: 0.6,
+        ease: 'power2.inOut'
+      });
+
+      // Animate in next slide - enters from opposite side
+      gsap.fromTo([nextElements.text, nextElements.art],
+        {
+          x: isMobile ? 0 : enterMultiplier * viewportWidth,
+          y: isMobile ? (isGoingForward ? viewportHeight : -viewportHeight) : 0,
+          opacity: 0
+        },
+        {
+          x: 0,
+          y: 0,
+          opacity: 1,
+          duration: 0.6,
+          ease: 'power2.inOut',
+          delay: 0.2,
+          onComplete: () => {
+            setIsAnimating(false);
+          }
         }
-      },
-      onComplete: () => {
-        // Re-enable scrub and update scroll position to match
-        scrollTrigger.vars.scrub = originalScrub;
-        
-        // Sync scroll position to match the new timeline progress
-        const scrollStart = scrollTrigger.start;
-        const scrollEnd = scrollTrigger.end;
-        const targetScroll = scrollStart + (scrollEnd - scrollStart) * targetProgress;
-        
-        // Instantly update scroll position without animation
-        window.scrollTo(0, targetScroll);
-        scrollTrigger.update();
-      }
-    });
-    
-    setCurrentSlide(index);
+      );
+
+      setCurrentSlide(index);
+    };
+
+    // Check if image is already loaded
+    if (nextImage.complete && nextImage.naturalHeight !== 0) {
+      performTransition();
+    } else {
+      // Wait for image to load
+      const handleLoad = () => {
+        performTransition();
+        nextImage.removeEventListener('load', handleLoad);
+        nextImage.removeEventListener('error', handleError);
+      };
+      
+      const handleError = () => {
+        // Even on error, perform transition to avoid stuck state
+        performTransition();
+        nextImage.removeEventListener('load', handleLoad);
+        nextImage.removeEventListener('error', handleError);
+      };
+
+      nextImage.addEventListener('load', handleLoad);
+      nextImage.addEventListener('error', handleError);
+      
+      // Fallback timeout in case image never loads/errors
+      setTimeout(() => {
+        if (isAnimating) {
+          nextImage.removeEventListener('load', handleLoad);
+          nextImage.removeEventListener('error', handleError);
+          performTransition();
+        }
+      }, 1000);
+    }
   };
 
   const nextSlide = () => {
     if (currentSlide < illustrations.length - 1) {
-      goToSlide(currentSlide + 1);
+      goToSlide(currentSlide + 1, 'next');
     }
   };
 
   const prevSlide = () => {
     if (currentSlide > 0) {
-      goToSlide(currentSlide - 1);
+      goToSlide(currentSlide - 1, 'prev');
     }
   };
 
+  // Preload adjacent images for smoother navigation
+  useEffect(() => {
+    const preloadImage = (src) => {
+      const img = new Image();
+      img.src = src;
+    };
+
+    // Preload next and previous images
+    if (currentSlide < illustrations.length - 1) {
+      preloadImage(illustrations[currentSlide + 1].art);
+    }
+    if (currentSlide > 0) {
+      preloadImage(illustrations[currentSlide - 1].art);
+    }
+  }, [currentSlide, illustrations]);
+
   useEffect(() => {
     const container = containerRef.current;
-    // CRITICAL: Wait for images to load before initializing animations
     if (!container || !imagesLoaded) return;
 
-    let initTimeout;
-    let resizeTimeout;
-
     const initAnimation = () => {
-      // Kill any existing ScrollTriggers first to prevent conflicts
-      ScrollTrigger.getAll().forEach(trigger => {
-        if (trigger.trigger === container) {
-          trigger.kill();
+      const isMobile = window.innerWidth < 768;
+      const viewportWidth = window.innerWidth;
+      const viewportHeight = window.innerHeight;
+
+      // Get all elements
+      const elements = illustrations.map((_, index) => ({
+        text: container.querySelector(`#text-${index}`),
+        art: container.querySelector(`#art-${index}`)
+      }));
+
+      // Set all slides offscreen except the first one
+      elements.forEach((el, index) => {
+        if (!el.text || !el.art) return;
+
+        if (index === 0) {
+          // First slide visible
+          gsap.set([el.text, el.art], { x: 0, y: 0, opacity: 0 });
+        } else {
+          // Other slides offscreen
+          gsap.set([el.text, el.art], {
+            x: isMobile ? 0 : viewportWidth,
+            y: isMobile ? viewportHeight : 0,
+            opacity: 0
+          });
         }
       });
 
-      // Small delay to ensure DOM is ready and dimensions are correct
-      initTimeout = setTimeout(() => {
-        // Get all elements
-        const elements = illustrations.map((_, index) => ({
-          text: container.querySelector(`#text-${index}`),
-          art: container.querySelector(`#art-${index}`)
-        }));
-
-        // Verify all elements exist
-        const allElementsExist = elements.every(el => el.text && el.art);
-        if (!allElementsExist) {
-          console.warn('Not all hero elements found, skipping animation setup');
-          return;
-        }
-
-        // Get viewport dimensions safely
-        const viewportWidth = window.innerWidth || document.documentElement.clientWidth;
-        const viewportHeight = window.innerHeight || document.documentElement.clientHeight;
-        const isMobile = viewportWidth < 768;
-
-        // Set ALL initial positions BEFORE creating timeline
-        elements.forEach((el, index) => {
-          if (!el.text || !el.art) return;
-
-          if (index === 0) {
-            // First illustration: starts offscreen right, will animate in
-            if (isMobile) {
-              gsap.set([el.text, el.art], { x: 0, y: viewportHeight * 1.2, opacity: 0 });
-            } else {
-              gsap.set([el.text, el.art], { x: viewportWidth * 1.2, y: 0, opacity: 0 });
-            }
-          } else if (index === 1) {
-            // Learn it: offscreen with special transform for art centering
-            if (isMobile) {
-              gsap.set(el.text, { x: 0, y: viewportHeight * 1.2, opacity: 0 });
-              gsap.set(el.art, { x: 0, y: viewportHeight * 1.2, opacity: 0, xPercent: 20 });
-            } else {
-              gsap.set(el.text, { x: viewportWidth * 1.2, y: 0, opacity: 0 });
-              gsap.set(el.art, { x: viewportWidth * 1.2, y: 0, opacity: 0, xPercent: 20 });
-            }
-          } else {
-            // Others: offscreen (right for desktop, bottom for mobile)
-            if (isMobile) {
-              gsap.set([el.text, el.art], { x: 0, y: viewportHeight * 1.2, opacity: 0 });
-            } else {
-              gsap.set([el.text, el.art], { x: viewportWidth * 1.2, y: 0, opacity: 0 });
-            }
-          }
-        });
-
-        // CRITICAL: Create ScrollTrigger immediately to pin the section
-        // This prevents scrolling during the entry animation
-        const pinTrigger = ScrollTrigger.create({
-          trigger: container,
-          start: 'top top',
-          end: '+=300%',
-          pin: true,
-          anticipatePin: 1,
-          scrub: false, // No scrubbing during entry animation
-        });
-
-        // Create entry animation timeline (plays first, before ScrollTrigger)
-        const entryTimeline = gsap.timeline({
-          delay: 0.3
-        });
-
-        // Animate Dream it (first illustration) entering from right
-        // Art enters first
-        entryTimeline.to(elements[0].art, {
-          x: 0,
-          y: 0,
-          opacity: 1,
-          duration: 1.75,
-          ease: 'power2.out'
-        }, 0);
-
-        // Text enters slightly after
-        entryTimeline.to(elements[0].text, {
-          x: 0,
-          y: 0,
-          opacity: 1,
-          duration: 1.75,
-          ease: 'power2.out'
-        }, 0.15);
-
-        // Wait for entry animation to complete before creating scroll timeline
-        entryTimeline.eventCallback('onComplete', () => {
-          // Kill the pin-only trigger
-          pinTrigger.kill();
-          
-          // Create timeline AFTER entry animation finishes
-          const mainTimeline = gsap.timeline({
-            scrollTrigger: {
-              trigger: container,
-              start: 'top top',
-              end: '+=300%',
-              scrub: 1,
-              pin: true,
-              anticipatePin: 1,
-        onUpdate: (self) => {
-          setProgress(self.progress);
-          // Update current slide based on scroll progress
-          const slideIndex = Math.round(self.progress * (illustrations.length - 1));
-          setCurrentSlide(slideIndex);
-        }
-      }
-    });
-
-    timelineRef.current = mainTimeline;
-
-    // Add animations for each transition
-    illustrations.forEach((_, index) => {
-      if (index === illustrations.length - 1) return;
-
-      const current = elements[index];
-      const next = elements[index + 1];
-      
-      if (!current.text || !current.art || !next.text || !next.art) return;
-
-      const transitionDuration = 0.35;
-      const pauseDuration = 0.05;
-      const transitionStart = index * (transitionDuration + pauseDuration);
-      
-      // Special handling for first and second illustrations exit
-      if (index === 0) {
-        // Dream it (index 0) - use fromTo to ensure it starts from center after entry animation
-        // Text exits FIRST (slightly earlier)
-        mainTimeline.fromTo(current.text, 
-          { x: 0, y: 0, opacity: 1 },
-          {
-            x: isMobile ? 0 : -viewportWidth,
-            y: isMobile ? -viewportHeight : 0,
-            opacity: 1,
-            ease: 'power2.inOut',
-            duration: transitionDuration
-          }, transitionStart);
-        
-        // Art exits slightly after text
-        mainTimeline.fromTo(current.art,
-          { x: 0, y: 0, opacity: 1 },
-          {
-            x: isMobile ? 0 : -viewportWidth,
-            y: isMobile ? -viewportHeight : 0,
-            opacity: 1,
-            ease: 'power2.inOut',
-            duration: transitionDuration
-          }, transitionStart + 0.05);
-      } else if (index === 1) {
-        // Learn it (index 1) - text exits first, then art (like Dream it)
-        // Text exits FIRST (slightly earlier)
-        mainTimeline.to(current.text, {
-          x: isMobile ? 0 : -viewportWidth,
-          y: isMobile ? -viewportHeight : 0,
-          opacity: 1,
-          ease: 'power2.inOut',
-          duration: transitionDuration
-        }, transitionStart);
-        
-        // Art exits slightly after text
-        mainTimeline.to(current.art, {
-          x: isMobile ? 0 : -viewportWidth,
-          y: isMobile ? -viewportHeight : 0,
-          opacity: 1,
-          ease: 'power2.inOut',
-          duration: transitionDuration
-        }, transitionStart + 0.05);
-      } else {
-        // Other illustrations exit together
-        mainTimeline.to([current.text, current.art], {
-          x: isMobile ? 0 : -viewportWidth,
-          y: isMobile ? -viewportHeight : 0,
-          opacity: 0,
-          ease: 'power2.inOut',
-          duration: transitionDuration
-        }, transitionStart);
-      }
-
-      // Next illustration ART enters from bottom (mobile) or right (desktop) FIRST
-      // Special handling for Learn it art to maintain xPercent offset
-      if (index + 1 === 1) {
-        mainTimeline.to(next.art, {
-          x: 0,
-          y: 0,
-          xPercent: 4,
-          opacity: 1,
-          ease: 'power2.inOut',
-          duration: transitionDuration
-        }, transitionStart);
-      } else {
-        mainTimeline.to(next.art, {
-          x: 0,
-          y: 0,
-          opacity: 1,
-          ease: 'power2.inOut',
-          duration: transitionDuration
-        }, transitionStart);
-      }
-
-      // Next illustration TEXT enters from bottom (mobile) or right (desktop) (slightly delayed for parallax)
-      mainTimeline.to(next.text, {
+      // Animate first slide entry
+      gsap.to([elements[0].text, elements[0].art], {
         x: 0,
         y: 0,
         opacity: 1,
-        ease: 'power2.inOut',
-        duration: transitionDuration
-      }, transitionStart + 0.05);
-    });
-
-    mainTimeline.to({}, { duration: 0.04 });
-    
-    // CRITICAL: Refresh ScrollTrigger after timeline is fully set up
-    // Use setTimeout to ensure all animations are registered
-    setTimeout(() => {
-      ScrollTrigger.refresh();
-    }, 150);
-        }); // End of onComplete callback
-      }, 100); // End of setTimeout
+        duration: 1.2,
+        delay: 0.3,
+        ease: 'power2.out',
+        stagger: 0.15
+      });
     };
 
-    // Initialize on mount
     initAnimation();
-
-    // Reinitialize on resize to handle desktop/mobile transitions
-    const handleResize = () => {
-      clearTimeout(resizeTimeout);
-      resizeTimeout = setTimeout(() => {
-        initAnimation();
-      }, 300);
-    };
-
-    window.addEventListener('resize', handleResize);
-
-    return () => {
-      clearTimeout(initTimeout);
-      clearTimeout(resizeTimeout);
-      window.removeEventListener('resize', handleResize);
-      ScrollTrigger.getAll().forEach(trigger => trigger.kill());
-    };
-  }, [imagesLoaded]); // Only re-run when images load, not on theme change
+  }, [imagesLoaded]);
 
   return (
     <div ref={containerRef} className="relative h-screen overflow-hidden pt-16 md:pt-0">
@@ -1390,10 +1235,10 @@ function GSAPHeroSection({ isDark, scrollToSection, imagesLoaded }) {
       </div>
     </div>
   );
-}
+});
 
-// Mobile Step Carousel Component
-function MobileStepCarousel({ isDark, steps, activeTab }) {
+// Mobile Step Carousel Component - Memoized to prevent unnecessary re-renders
+const MobileStepCarousel = memo(function MobileStepCarousel({ isDark, steps, activeTab }) {
   const [currentStep, setCurrentStep] = useState(0);
 
   // Reset to first step when tab changes
@@ -1503,10 +1348,10 @@ function MobileStepCarousel({ isDark, steps, activeTab }) {
       </div>
     </div>
   );
-}
+});
 
-// Mobile Hero Section - Static vertical layout
-function MobileHeroSection({ isDark, scrollToSection, imagesLoaded }) {
+// Mobile Hero Section - Static vertical layout - Memoized
+const MobileHeroSection = memo(function MobileHeroSection({ isDark, scrollToSection, imagesLoaded }) {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [autoScrollEnabled, setAutoScrollEnabled] = useState(true);
   const touchStartX = useRef(0);
@@ -1722,4 +1567,4 @@ function MobileHeroSection({ isDark, scrollToSection, imagesLoaded }) {
       </div>
     </div>
   );
-}
+});

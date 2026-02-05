@@ -305,7 +305,7 @@ export default function LearnerSignup({ onNavigate, theme, setTheme }) {
                           ? 'border-red-500 focus:border-red-500'
                           : isDark 
                             ? 'bg-gray-900 border-gray-700' 
-                            : 'bg-white border-transparent'
+                            : 'bg-white border-gray-300 focus:border-black text-black'
                       }`}
                       style={isDark && !errors.lastName ? { borderColor: '#C7DBFF', color: '#C7DBFF' } : {}}
                     />
@@ -331,7 +331,7 @@ export default function LearnerSignup({ onNavigate, theme, setTheme }) {
                         ? 'border-red-500 focus:border-red-500'
                         : isDark 
                           ? 'bg-gray-900 border-gray-700' 
-                          : 'bg-white border-transparent'
+                          : 'bg-white border-gray-300 focus:border-black text-black'
                     }`}
                     style={isDark && !errors.email ? { borderColor: '#C7DBFF', color: '#C7DBFF' } : {}}
                   />
