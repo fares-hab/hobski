@@ -759,12 +759,8 @@ export default function HobskiLanding({ onNavigate, theme, setTheme }) {
                   </label>
                   <input
                     type="text"
-                    className={`w-full px-4 py-3 border rounded-lg focus:outline-none transition-colors ${
-                      isDark 
-                        ? 'bg-gray-900 border-gray-700' 
-                        : 'border-transparent'
-                    }`}
-                    style={isDark ? { borderColor: '#C7DBFF', color: '#C7DBFF' } : { backgroundColor: '#E6F6FF', color: '#143269' }}
+                    className="w-full px-4 py-3 border-0 rounded-lg focus:outline-none transition-colors"
+                    style={isDark ? { backgroundColor: '#0D2A5E', color: '#C7DBFF' } : { backgroundColor: '#E6F6FF', color: '#143269' }}
                   />
                 </div>
                 <div>
@@ -775,12 +771,8 @@ export default function HobskiLanding({ onNavigate, theme, setTheme }) {
                   </label>
                   <input
                     type="text"
-                    className={`w-full px-4 py-3 border rounded-lg focus:outline-none transition-colors ${
-                      isDark 
-                        ? 'bg-gray-900 border-gray-700' 
-                        : 'border-transparent'
-                    }`}
-                    style={isDark ? { borderColor: '#C7DBFF', color: '#C7DBFF' } : { backgroundColor: '#E6F6FF', color: '#143269' }}
+                    className="w-full px-4 py-3 border-0 rounded-lg focus:outline-none transition-colors"
+                    style={isDark ? { backgroundColor: '#0D2A5E', color: '#C7DBFF' } : { backgroundColor: '#E6F6FF', color: '#143269' }}
                   />
                 </div>
                 <div>
@@ -791,12 +783,8 @@ export default function HobskiLanding({ onNavigate, theme, setTheme }) {
                   </label>
                   <input
                     type="email"
-                    className={`w-full px-4 py-3 border rounded-lg focus:outline-none transition-colors ${
-                      isDark 
-                        ? 'bg-gray-900 border-gray-700' 
-                        : 'border-transparent'
-                    }`}
-                    style={isDark ? { borderColor: '#C7DBFF', color: '#C7DBFF' } : { backgroundColor: '#E6F6FF', color: '#143269' }}
+                    className="w-full px-4 py-3 border-0 rounded-lg focus:outline-none transition-colors"
+                    style={isDark ? { backgroundColor: '#0D2A5E', color: '#C7DBFF' } : { backgroundColor: '#E6F6FF', color: '#143269' }}
                   />
                 </div>
               </div>
@@ -809,12 +797,8 @@ export default function HobskiLanding({ onNavigate, theme, setTheme }) {
                 </label>
                 <textarea
                   rows="6"
-                  className={`w-full px-4 py-3 border rounded-lg focus:outline-none transition-colors resize-none ${
-                    isDark 
-                      ? 'bg-gray-900 border-gray-700' 
-                      : 'border-transparent'
-                  }`}
-                  style={isDark ? { borderColor: '#C7DBFF', color: '#C7DBFF' } : { backgroundColor: '#E6F6FF', color: '#143269' }}
+                  className="w-full px-4 py-3 border-0 rounded-lg focus:outline-none transition-colors resize-none"
+                  style={isDark ? { backgroundColor: '#0D2A5E', color: '#C7DBFF' } : { backgroundColor: '#E6F6FF', color: '#143269' }}
                 />
               </div>
 
