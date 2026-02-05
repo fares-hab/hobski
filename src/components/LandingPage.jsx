@@ -1,7 +1,6 @@
 import { useState, useEffect, useRef, useCallback, memo } from 'react';
-import { ChevronDown, Sun, Moon, ChevronLeft, ChevronRight } from 'lucide-react';
+import { ChevronDown, Sun, Moon } from 'lucide-react';
 import { motion, useScroll, useTransform } from 'framer-motion';
-import gsap from 'gsap';
 import { useImagePreloader, useThemeImagePreloader } from '../hooks/useImagePreloader';
 import ImageWithSkeleton from './ImageWithSkeleton';
 
@@ -17,12 +16,6 @@ export default function HobskiLanding({ onNavigate, theme, setTheme }) {
   });
 
   // OPTIMIZATION: Define image categories for smart preloading
-  const getCriticalImages = useCallback((themeMode) => [
-    `/images/${themeMode === 'dark' ? 'Dark' : 'Light'}DreamItArt.webp`,
-    `/images/${themeMode === 'dark' ? 'Dark' : 'Light'}LearnItArt.webp`,
-    `/images/${themeMode === 'dark' ? 'Dark' : 'Light'}DoItArt.webp`,
-  ], []);
-
   const getStepImages = useCallback((themeMode, tab) => {
     const prefix = tab === 'learner' ? 'Learner' : 'Mentor';
     return [
@@ -38,28 +31,20 @@ export default function HobskiLanding({ onNavigate, theme, setTheme }) {
     `/images/${themeMode === 'dark' ? 'Dark' : 'Light'}MentorJoin.webp`,
   ], []);
 
-  // Preload critical hero images with high priority
-  const { loaded: heroImagesLoaded } = useImagePreloader(
-    getCriticalImages(theme),
+  // Preload step images for active tab
+  const { loaded: stepImagesLoaded } = useImagePreloader(
+    getStepImages(theme, activeTab),
     'high',
     true
-  );
-
-  // Preload step images for active tab - only after hero is loaded
-  const { loaded: stepImagesLoaded } = useImagePreloader(
-    heroImagesLoaded ? getStepImages(theme, activeTab) : [],
-    'low',
-    false
   );
 
   // Smart theme preloader for smooth theme switching
   const { preloadTheme, isPreloading } = useThemeImagePreloader(
     theme,
     useCallback((targetTheme) => [
-      ...getCriticalImages(targetTheme),
       ...getStepImages(targetTheme, activeTab),
       ...getCardImages(targetTheme),
-    ], [getCriticalImages, getStepImages, getCardImages, activeTab])
+    ], [getStepImages, getCardImages, activeTab])
   );
 
   // OPTIMIZATION: Improved theme change handler that preloads images before switching
@@ -77,7 +62,7 @@ export default function HobskiLanding({ onNavigate, theme, setTheme }) {
 
   // OPTIMIZATION: Preload opposite theme during idle time - only after critical content loads
   useEffect(() => {
-    if (heroImagesLoaded && stepImagesLoaded) {
+    if (stepImagesLoaded) {
       const oppositeTheme = theme === 'dark' ? 'light' : 'dark';
       
       const schedulePreload = () => {
@@ -94,7 +79,7 @@ export default function HobskiLanding({ onNavigate, theme, setTheme }) {
         return () => clearTimeout(timeout);
       }
     }
-  }, [heroImagesLoaded, stepImagesLoaded, theme, preloadTheme]);
+  }, [stepImagesLoaded, theme, preloadTheme]);
 
   // Detect mobile viewport with debounce for better performance
   useEffect(() => {
@@ -206,20 +191,8 @@ export default function HobskiLanding({ onNavigate, theme, setTheme }) {
         </nav>
       </header>
 
-      {/* Hero Section with GSAP ScrollTrigger */}
-      {isMobile ? (
-        <MobileHeroSection 
-          isDark={isDark} 
-          scrollToSection={scrollToSection}
-          imagesLoaded={heroImagesLoaded}
-        />
-      ) : (
-        <GSAPHeroSection 
-          isDark={isDark} 
-          scrollToSection={scrollToSection}
-          imagesLoaded={heroImagesLoaded}
-        />
-      )}
+      {/* Hero Carousel Section */}
+      <HeroCarousel isDark={isDark} theme={theme} scrollToSection={scrollToSection} />
 
       {/* SVG definitions for wavy clip paths */}
       <svg width="0" height="0" style={{ position: 'absolute' }}>
@@ -888,7 +861,6 @@ export default function HobskiLanding({ onNavigate, theme, setTheme }) {
   );
 }
 
-// Hand-drawn irregular border line component
 // ScrollSection Component - Memoized to prevent unnecessary re-renders
 const ScrollSection = memo(function ScrollSection({ id, children, isDark, className = '' }) {
   const sectionRef = useRef(null);
@@ -927,283 +899,156 @@ const ScrollSection = memo(function ScrollSection({ id, children, isDark, classN
   );
 });
 
-// GSAP Hero Section with navigation arrows - Memoized for performance
-const GSAPHeroSection = memo(function GSAPHeroSection({ isDark, scrollToSection, imagesLoaded }) {
-  const containerRef = useRef(null);
+// Hero Carousel Component
+const HeroCarousel = memo(function HeroCarousel({ isDark, theme, scrollToSection }) {
   const [currentSlide, setCurrentSlide] = useState(0);
-  const [isAnimating, setIsAnimating] = useState(false);
-  
-  const illustrations = [
-    { text: 'Dream it', art: `/images/${isDark ? 'Dark' : 'Light'}DreamItArt.webp`, id: 'dream' },
-    { text: 'Learn it', art: `/images/${isDark ? 'Dark' : 'Light'}LearnItArt.webp`, id: 'learn' },
-    { text: 'Do it', art: `/images/${isDark ? 'Dark' : 'Light'}DoItArt.webp`, id: 'do' }
+  const [direction, setDirection] = useState(0); // -1 for left, 1 for right
+
+  const slides = [
+    { 
+      text: 'Dream it', 
+      image: `/images/${theme === 'dark' ? 'Dark' : 'Light'}DreamItArt.webp`,
+      alt: 'Dream it illustration'
+    },
+    { 
+      text: 'Learn it', 
+      image: `/images/${theme === 'dark' ? 'Dark' : 'Light'}LearnItArt.webp`,
+      alt: 'Learn it illustration'
+    },
+    { 
+      text: 'Do it', 
+      image: `/images/${theme === 'dark' ? 'Dark' : 'Light'}DoItArt.webp`,
+      alt: 'Do it illustration'
+    }
   ];
 
-  const goToSlide = (index, direction = 'next') => {
-    if (isAnimating || index < 0 || index >= illustrations.length || index === currentSlide) return;
-    
-    setIsAnimating(true);
-    const container = containerRef.current;
-    if (!container) {
-      setIsAnimating(false);
-      return;
-    }
-
-    const currentElements = {
-      text: container.querySelector(`#text-${currentSlide}`),
-      art: container.querySelector(`#art-${currentSlide}`)
-    };
-    
-    const nextElements = {
-      text: container.querySelector(`#text-${index}`),
-      art: container.querySelector(`#art-${index}`)
-    };
-
-    if (!nextElements.art) {
-      setIsAnimating(false);
-      return;
-    }
-
-    const isMobile = window.innerWidth < 768;
-    const viewportWidth = window.innerWidth;
-    const viewportHeight = window.innerHeight;
-    
-    // Determine animation direction
-    const isGoingForward = direction === 'next';
-    const exitMultiplier = isGoingForward ? -1 : 1;
-    const enterMultiplier = isGoingForward ? 1 : -1;
-
-    // Ensure the next image is fully loaded before animating
-    const nextImage = nextElements.art;
-    
-    const performTransition = () => {
-      // Animate out current slide - direction depends on navigation
-      gsap.to([currentElements.text, currentElements.art], {
-        x: isMobile ? 0 : exitMultiplier * viewportWidth,
-        y: isMobile ? (isGoingForward ? -viewportHeight : viewportHeight) : 0,
-        opacity: 0,
-        duration: 0.6,
-        ease: 'power2.inOut'
-      });
-
-      // Animate in next slide - enters from opposite side
-      gsap.fromTo([nextElements.text, nextElements.art],
-        {
-          x: isMobile ? 0 : enterMultiplier * viewportWidth,
-          y: isMobile ? (isGoingForward ? viewportHeight : -viewportHeight) : 0,
-          opacity: 0
-        },
-        {
-          x: 0,
-          y: 0,
-          opacity: 1,
-          duration: 0.6,
-          ease: 'power2.inOut',
-          delay: 0.2,
-          onComplete: () => {
-            setIsAnimating(false);
-          }
-        }
-      );
-
-      setCurrentSlide(index);
-    };
-
-    // Check if image is already loaded
-    if (nextImage.complete && nextImage.naturalHeight !== 0) {
-      performTransition();
-    } else {
-      // Wait for image to load
-      const handleLoad = () => {
-        performTransition();
-        nextImage.removeEventListener('load', handleLoad);
-        nextImage.removeEventListener('error', handleError);
-      };
-      
-      const handleError = () => {
-        // Even on error, perform transition to avoid stuck state
-        performTransition();
-        nextImage.removeEventListener('load', handleLoad);
-        nextImage.removeEventListener('error', handleError);
-      };
-
-      nextImage.addEventListener('load', handleLoad);
-      nextImage.addEventListener('error', handleError);
-      
-      // Fallback timeout in case image never loads/errors
-      setTimeout(() => {
-        if (isAnimating) {
-          nextImage.removeEventListener('load', handleLoad);
-          nextImage.removeEventListener('error', handleError);
-          performTransition();
-        }
-      }, 1000);
-    }
+  const goToSlide = (index) => {
+    setDirection(index > currentSlide ? 1 : -1);
+    setCurrentSlide(index);
   };
 
-  const nextSlide = () => {
-    if (currentSlide < illustrations.length - 1) {
-      goToSlide(currentSlide + 1, 'next');
-    }
+  const goToPrevious = () => {
+    setDirection(-1);
+    setCurrentSlide((prev) => (prev === 0 ? slides.length - 1 : prev - 1));
   };
 
-  const prevSlide = () => {
-    if (currentSlide > 0) {
-      goToSlide(currentSlide - 1, 'prev');
-    }
+  const goToNext = () => {
+    setDirection(1);
+    setCurrentSlide((prev) => (prev === slides.length - 1 ? 0 : prev + 1));
   };
-
-  // Preload adjacent images for smoother navigation
-  useEffect(() => {
-    const preloadImage = (src) => {
-      const img = new Image();
-      img.src = src;
-    };
-
-    // Preload next and previous images
-    if (currentSlide < illustrations.length - 1) {
-      preloadImage(illustrations[currentSlide + 1].art);
-    }
-    if (currentSlide > 0) {
-      preloadImage(illustrations[currentSlide - 1].art);
-    }
-  }, [currentSlide, illustrations]);
-
-  useEffect(() => {
-    const container = containerRef.current;
-    if (!container || !imagesLoaded) return;
-
-    const initAnimation = () => {
-      const isMobile = window.innerWidth < 768;
-      const viewportWidth = window.innerWidth;
-      const viewportHeight = window.innerHeight;
-
-      // Get all elements
-      const elements = illustrations.map((_, index) => ({
-        text: container.querySelector(`#text-${index}`),
-        art: container.querySelector(`#art-${index}`)
-      }));
-
-      // Set all slides offscreen except the first one
-      elements.forEach((el, index) => {
-        if (!el.text || !el.art) return;
-
-        if (index === 0) {
-          // First slide visible
-          gsap.set([el.text, el.art], { x: 0, y: 0, opacity: 0 });
-        } else {
-          // Other slides offscreen
-          gsap.set([el.text, el.art], {
-            x: isMobile ? 0 : viewportWidth,
-            y: isMobile ? viewportHeight : 0,
-            opacity: 0
-          });
-        }
-      });
-
-      // Animate first slide entry
-      gsap.to([elements[0].text, elements[0].art], {
-        x: 0,
-        y: 0,
-        opacity: 1,
-        duration: 1.2,
-        delay: 0.3,
-        ease: 'power2.out',
-        stagger: 0.15
-      });
-    };
-
-    initAnimation();
-  }, [imagesLoaded]);
 
   return (
-    <div ref={containerRef} className="relative h-screen overflow-hidden pt-16 md:pt-0">
-      {/* Illustrations - all positioned absolutely */}
-      {illustrations.map((illust, index) => (
-        <div key={illust.id} className="absolute inset-0 flex items-center justify-center">
-          <h1
-            id={`text-${index}`}
-            className="absolute z-10 font-['Inter',sans-serif] font-bold text-center leading-none"
-            style={{ 
-              fontSize: 'clamp(4rem, 9vw, 8rem)',
-              color: isDark ? '#C7DBFF' : '#143269',
-              left: '50%',
-              top: '20%',
-              transform: 'translate(-50%, -50%)',
-              opacity: 0
-            }}
-          >
-            {illust.text}
-          </h1>
-          <img
-            id={`art-${index}`}
-            src={illust.art}
-            alt={`${illust.id} art`}
-            loading="eager"
-            fetchPriority="high"
-            className="absolute max-w-[80vw] max-h-[80vh] object-contain"
-            style={{ 
-              opacity: 0,
-              ...(index === 1 ? { transform: 'translateX(10%)' } : {})
-            }}
-          />
-        </div>
-      ))}
-
-      {/* Navigation Arrows */}
-      <button
-        onClick={prevSlide}
-        disabled={currentSlide === 0}
-        className={`absolute left-1/2 -translate-x-1/2 top-20 md:left-8 md:top-1/2 md:-translate-y-1/2 md:translate-x-0 z-50 p-2 rounded-full transition-all backdrop-blur-sm ${
-          currentSlide === 0
-            ? 'opacity-0 pointer-events-none'
-            : isDark
-              ? 'bg-white/10 hover:bg-white/20'
-              : 'hover:opacity-80'
-        }`}
-        style={isDark && currentSlide !== 0 ? { color: '#C7DBFF' } : (!isDark && currentSlide !== 0 ? { backgroundColor: 'rgba(20, 50, 105, 0.1)', color: '#143269' } : {})}
-        aria-label="Previous illustration"
-      >
-        <ChevronLeft className="w-6 h-6 md:block hidden" />
-        <ChevronDown className="w-6 h-6 md:hidden rotate-180" />
-      </button>
-
-      <button
-        onClick={nextSlide}
-        disabled={currentSlide === illustrations.length - 1}
-        className={`absolute left-1/2 -translate-x-1/2 bottom-32 md:right-8 md:left-auto md:top-1/2 md:-translate-y-1/2 md:translate-x-0 md:bottom-auto z-50 p-2 rounded-full transition-all backdrop-blur-sm ${
-          currentSlide === illustrations.length - 1
-            ? 'opacity-0 pointer-events-none'
-            : isDark
-              ? 'bg-white/10 hover:bg-white/20'
-              : 'hover:opacity-80'
-        }`}
-        style={isDark && currentSlide !== illustrations.length - 1 ? { color: '#C7DBFF' } : (!isDark && currentSlide !== illustrations.length - 1 ? { backgroundColor: 'rgba(20, 50, 105, 0.1)', color: '#143269' } : {})}
-        aria-label="Next illustration"
-      >
-        <ChevronRight className="w-6 h-6 md:block hidden" />
-        <ChevronDown className="w-6 h-6 md:hidden" />
-      </button>
-
-      {/* Progress indicator */}
-      <div className="absolute bottom-28 left-1/2 -translate-x-1/2 z-50">
-        <div className="flex gap-2 items-center">
-          {illustrations.map((_, index) => (
+    <div className="relative w-full h-screen pt-16" style={{ backgroundColor: isDark ? '#143269' : '#E6F6FF' }}>
+      {/* Carousel wrapper */}
+      <div className="relative h-full overflow-hidden">
+        {slides.map((slide, index) => {
+          const isActive = index === currentSlide;
+          const isPrev = index < currentSlide;
+          const isNext = index > currentSlide;
+          
+          return (
             <div
               key={index}
-              className="rounded-full transition-all duration-300"
-              style={{
-                width: index === currentSlide ? '12px' : '8px',
-                height: index === currentSlide ? '12px' : '8px',
-                backgroundColor: index === currentSlide ? '#377BD9' : '#95a8c5'
-              }}
-            />
-          ))}
-        </div>
+              className={`absolute inset-0 transition-transform duration-700 ease-out ${
+                isActive 
+                  ? 'translate-x-0 z-10' 
+                  : isPrev 
+                    ? '-translate-x-full z-0' 
+                    : 'translate-x-full z-0'
+              }`}
+            >
+              <div className="flex flex-col items-center justify-center h-full px-8 -mt-12">
+                {/* Text Header */}
+                <h1 
+                  className="text-5xl sm:text-6xl md:text-7xl lg:text-9xl font-bold mb-0 md:-mb-32 text-center"
+                  style={{ color: isDark ? '#C7DBFF' : '#143269' }}
+                >
+                  {slide.text}
+                </h1>
+                {/* Image */}
+                <img
+                  src={slide.image}
+                  alt={slide.alt}
+                  className="w-full md:w-[95%] lg:w-[90%] max-w-7xl object-contain"
+                  style={{ maxHeight: '80vh' }}
+                  loading={index === 0 ? "eager" : "lazy"}
+                  fetchPriority={index === 0 ? "high" : "low"}
+                />
+              </div>
+            </div>
+          );
+        })}
       </div>
 
-      {/* Permanent scroll down button */}
-      <div className="absolute bottom-8 left-1/2 -translate-x-1/2 z-50">
+      {/* Slider indicators */}
+      <div className="absolute z-30 flex -translate-x-1/2 space-x-3 bottom-24 left-1/2">
+        {slides.map((_, index) => (
+          <button
+            key={index}
+            type="button"
+            className="w-3 h-3 rounded-full transition-all"
+            style={{
+              backgroundColor: index === currentSlide ? '#377BD9' : '#95a8c5'
+            }}
+            aria-current={index === currentSlide}
+            aria-label={`Slide ${index + 1}`}
+            onClick={() => goToSlide(index)}
+          />
+        ))}
+      </div>
+
+      {/* Slider controls */}
+      <button
+        type="button"
+        className="absolute top-0 start-0 z-30 flex items-center justify-center h-full px-4 cursor-pointer group focus:outline-none"
+        onClick={goToPrevious}
+        aria-label="Previous slide"
+      >
+        <span 
+          className="inline-flex items-center justify-center w-10 h-10 rounded-full group-hover:bg-white/50 dark:group-hover:bg-gray-800/60 group-focus:ring-4 group-focus:outline-none transition-colors"
+          style={{
+            backgroundColor: isDark ? 'rgba(255, 255, 255, 0.1)' : 'rgba(20, 50, 105, 0.1)'
+          }}
+        >
+          <svg 
+            className="w-5 h-5" 
+            aria-hidden="true" 
+            xmlns="http://www.w3.org/2000/svg" 
+            fill="none" 
+            viewBox="0 0 24 24"
+            style={{ color: isDark ? '#C7DBFF' : '#143269' }}
+          >
+            <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="m15 19-7-7 7-7"/>
+          </svg>
+        </span>
+      </button>
+      <button
+        type="button"
+        className="absolute top-0 end-0 z-30 flex items-center justify-center h-full px-4 cursor-pointer group focus:outline-none"
+        onClick={goToNext}
+        aria-label="Next slide"
+      >
+        <span 
+          className="inline-flex items-center justify-center w-10 h-10 rounded-full group-hover:bg-white/50 dark:group-hover:bg-gray-800/60 group-focus:ring-4 group-focus:outline-none transition-colors"
+          style={{
+            backgroundColor: isDark ? 'rgba(255, 255, 255, 0.1)' : 'rgba(20, 50, 105, 0.1)'
+          }}
+        >
+          <svg 
+            className="w-5 h-5" 
+            aria-hidden="true" 
+            xmlns="http://www.w3.org/2000/svg" 
+            fill="none" 
+            viewBox="0 0 24 24"
+            style={{ color: isDark ? '#C7DBFF' : '#143269' }}
+          >
+            <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="m9 5 7 7-7 7"/>
+          </svg>
+        </span>
+      </button>
+
+      {/* Scroll down button */}
+      <div className="absolute bottom-8 left-1/2 -translate-x-1/2 z-30">
         <button 
           onClick={() => scrollToSection('how-it-works')}
           className={`inline-flex items-center gap-2 px-6 py-3 rounded-full border-2 transition-all group ${
@@ -1220,6 +1065,7 @@ const GSAPHeroSection = memo(function GSAPHeroSection({ isDark, scrollToSection,
     </div>
   );
 });
+
 
 // Mobile Step Carousel Component - Memoized to prevent unnecessary re-renders
 const MobileStepCarousel = memo(function MobileStepCarousel({ isDark, steps, activeTab }) {
@@ -1294,7 +1140,7 @@ const MobileStepCarousel = memo(function MobileStepCarousel({ isDark, steps, act
           style={isDark && currentStep !== 0 ? { color: '#C7DBFF' } : {}}
           aria-label="Previous step"
         >
-          <ChevronLeft className="w-6 h-6" />
+          <ChevronDown className="w-6 h-6 rotate-90" />
         </button>
 
         <button
@@ -1310,7 +1156,7 @@ const MobileStepCarousel = memo(function MobileStepCarousel({ isDark, steps, act
           style={isDark && currentStep !== steps.length - 1 ? { color: '#C7DBFF' } : {}}
           aria-label="Next step"
         >
-          <ChevronRight className="w-6 h-6" />
+          <ChevronDown className="w-6 h-6 -rotate-90" />
         </button>
       </div>
 
@@ -1329,225 +1175,6 @@ const MobileStepCarousel = memo(function MobileStepCarousel({ isDark, steps, act
             aria-label={`Go to step ${index + 1}`}
           />
         ))}
-      </div>
-    </div>
-  );
-});
-
-// Mobile Hero Section - Static vertical layout - Memoized
-const MobileHeroSection = memo(function MobileHeroSection({ isDark, scrollToSection, imagesLoaded }) {
-  const [currentSlide, setCurrentSlide] = useState(0);
-  const [autoScrollEnabled, setAutoScrollEnabled] = useState(true);
-  const touchStartX = useRef(0);
-  const touchEndX = useRef(0);
-  const carouselRef = useRef(null);
-  const intervalRef = useRef(null);
-
-  const illustrations = [
-    { text: 'Dream it', art: `/images/${isDark ? 'Dark' : 'Light'}DreamItArt.webp`, id: 'dream' },
-    { text: 'Learn it', art: `/images/${isDark ? 'Dark' : 'Light'}LearnItArt.webp`, id: 'learn' },
-    { text: 'Do it', art: `/images/${isDark ? 'Dark' : 'Light'}DoItArt.webp`, id: 'do' }
-  ];
-
-  // Function to immediately stop auto-scroll
-  const stopAutoScroll = () => {
-    if (intervalRef.current) {
-      clearInterval(intervalRef.current);
-      intervalRef.current = null;
-    }
-    setAutoScrollEnabled(false);
-  };
-
-  // Auto-scroll functionality
-  useEffect(() => {
-    if (!autoScrollEnabled) {
-      if (intervalRef.current) {
-        clearInterval(intervalRef.current);
-        intervalRef.current = null;
-      }
-      return;
-    }
-
-    intervalRef.current = setInterval(() => {
-      setCurrentSlide((prev) => (prev + 1) % illustrations.length);
-    }, 3000); // Change slide every 3 seconds
-
-    return () => {
-      if (intervalRef.current) {
-        clearInterval(intervalRef.current);
-        intervalRef.current = null;
-      }
-    };
-  }, [autoScrollEnabled, illustrations.length]);
-
-  // Handle touch events for swiping
-  const handleTouchStart = (e) => {
-    // Ignore touch events that start on buttons
-    if (e.target.closest('button')) {
-      return;
-    }
-    stopAutoScroll();
-    touchStartX.current = e.touches[0].clientX;
-  };
-
-  const handleTouchMove = (e) => {
-    // Ignore if touch started on a button
-    if (e.target.closest('button')) {
-      return;
-    }
-    touchEndX.current = e.touches[0].clientX;
-  };
-
-  const handleTouchEnd = () => {
-    const swipeThreshold = 50;
-    const diff = touchStartX.current - touchEndX.current;
-
-    if (Math.abs(diff) > swipeThreshold) {
-      if (diff > 0) {
-        // Swiped left - go to next slide
-        setCurrentSlide((prev) => (prev + 1) % illustrations.length);
-      } else {
-        // Swiped right - go to previous slide
-        setCurrentSlide((prev) => (prev - 1 + illustrations.length) % illustrations.length);
-      }
-    }
-  };
-
-  const goToSlide = (index) => {
-    stopAutoScroll();
-    setCurrentSlide(index);
-  };
-
-  const nextSlide = (e) => {
-    e.preventDefault();
-    e.stopPropagation();
-    stopAutoScroll();
-    setCurrentSlide((prev) => (prev + 1) % illustrations.length);
-  };
-
-  const prevSlide = (e) => {
-    e.preventDefault();
-    e.stopPropagation();
-    stopAutoScroll();
-    setCurrentSlide((prev) => (prev - 1 + illustrations.length) % illustrations.length);
-  };
-
-  return (
-    <div className="pt-16 pb-6 min-h-screen flex flex-col justify-center relative">
-      {/* Carousel container */}
-      <div 
-        ref={carouselRef}
-        className="relative w-full overflow-hidden px-6"
-        onTouchStart={handleTouchStart}
-        onTouchMove={handleTouchMove}
-        onTouchEnd={handleTouchEnd}
-      >
-        {/* Text centered above illustration */}
-        <h1 
-          className="text-center transition-opacity duration-500"
-          style={{ 
-            fontSize: 'clamp(4rem, 20vw, 7rem)',
-            color: isDark ? '#ffffff' : '#143269',
-            fontWeight: '900',
-            transform: 'translateY(50px)',
-            position: 'relative',
-            zIndex: 10
-          }}
-        >
-          {illustrations[currentSlide].text}
-        </h1>
-
-        {/* Illustrations */}
-        <div className="relative h-[350px] flex items-center justify-center -my-4">
-          {illustrations.map((illust, index) => (
-            <div
-              key={illust.id}
-              className="absolute w-full h-full transition-all duration-500 ease-in-out"
-              style={{
-                transform: `translateX(${(index - currentSlide) * 100}%)`,
-                opacity: index === currentSlide ? 1 : 0,
-                pointerEvents: index === currentSlide ? 'auto' : 'none'
-              }}
-            >
-              <img 
-                src={illust.art}
-                alt={`${illust.id} art`}
-                loading="eager"
-                fetchPriority="high"
-                className="w-full h-full object-contain"
-                style={{ 
-                  transform: 'scale(1.2)',
-                  clipPath: 'inset(10% 0 10% 0)'
-                }}
-              />
-            </div>
-          ))}
-        </div>
-
-        {/* Navigation arrows */}
-        <button
-          onClick={prevSlide}
-          disabled={currentSlide === 0}
-          className={`absolute left-2 bottom-4 z-10 p-2 rounded-full transition-all ${
-            currentSlide === 0
-              ? 'opacity-0 pointer-events-none'
-              : isDark
-                ? 'bg-white/10 hover:bg-white/20'
-                : 'bg-[#143269]/10 hover:bg-[#143269]/20 text-[#143269]'
-          }`}
-          style={isDark && currentSlide !== 0 ? { color: '#C7DBFF' } : {}}
-          aria-label="Previous slide"
-        >
-          <ChevronLeft className="w-6 h-6" />
-        </button>
-
-        <button
-          onClick={nextSlide}
-          disabled={currentSlide === illustrations.length - 1}
-          className={`absolute right-2 bottom-4 z-10 p-2 rounded-full transition-all ${
-            currentSlide === illustrations.length - 1
-              ? 'opacity-0 pointer-events-none'
-              : isDark
-                ? 'bg-white/10 hover:bg-white/20'
-                : 'bg-[#143269]/10 hover:bg-[#143269]/20 text-[#143269]'
-          }`}
-          style={isDark && currentSlide !== illustrations.length - 1 ? { color: '#C7DBFF' } : {}}
-          aria-label="Next slide"
-        >
-          <ChevronRight className="w-6 h-6" />
-        </button>
-      </div>
-
-      {/* Progress indicators */}
-      <div className="flex justify-center gap-2 mt-8 mb-6">
-        {illustrations.map((_, index) => (
-          <button
-            key={index}
-            onClick={() => goToSlide(index)}
-            className="rounded-full transition-all duration-300"
-            style={{
-              width: index === currentSlide ? '12px' : '8px',
-              height: index === currentSlide ? '12px' : '8px',
-              backgroundColor: index === currentSlide ? '#377BD9' : '#95a8c5'
-            }}
-            aria-label={`Go to slide ${index + 1}`}
-          />
-        ))}
-      </div>
-
-      {/* Pssst there's more button */}
-      <div className="flex justify-center pb-6">
-        <button 
-          onClick={() => scrollToSection('how-it-works')}
-          className="inline-flex items-center gap-2 px-6 py-3 rounded-full border-2 transition-all group"
-          style={{
-            color: '#143269',
-            borderColor: '#143269'
-          }}
-        >
-          Pssst there's more
-          <ChevronDown className="w-5 h-5 group-hover:translate-y-1 transition-transform" />
-        </button>
       </div>
     </div>
   );
