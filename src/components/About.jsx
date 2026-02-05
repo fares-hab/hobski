@@ -1,6 +1,6 @@
-import { ChevronLeft, Sun, Moon } from 'lucide-react';
+import Navigation from './Navigation';
 
-export default function About({ onNavigate, theme, setTheme }) {
+export default function About({ theme, setTheme }) {
   const isDark = theme === 'dark';
 
   return (
@@ -8,47 +8,8 @@ export default function About({ onNavigate, theme, setTheme }) {
       isDark ? 'text-white' : ''
     }`}
     style={isDark ? { backgroundColor: '#143269', color: '#C7DBFF' } : { backgroundColor: '#E6F6FF', color: '#143269' }}>
-      {/* Header */}
-      <header 
-        className={`fixed top-0 left-0 right-0 z-50 ${
-          isDark ? 'border-gray-800' : 'border-blue-80'
-        }`}
-        style={{ 
-          backgroundColor: isDark ? '#143269' : '#E6F6FF'
-        }}
-      >
-        <nav className="max-w-7xl mx-auto px-3 sm:px-6 py-3 sm:py-4 flex items-center justify-between">
-          <button 
-            onClick={() => onNavigate('landing')}
-            className="text-2xl sm:text-4xl font-bold hover:opacity-80 px-2 sm:px-6"
-            style={{ transition: 'opacity 0.2s' }}
-          >
-            hobski
-          </button>
-          <div className="flex gap-2 sm:gap-4 items-center">
-            <button 
-              onClick={() => setTheme(isDark ? 'light' : 'dark')}
-              className={`p-2 rounded-full ${
-                isDark ? 'hover:bg-gray-800' : 'hover:bg-gray-100'
-              }`}
-              style={{ transition: 'background-color 0.2s' }}
-              aria-label="Toggle theme"
-            >
-              {isDark ? <Sun className="w-4 h-4 sm:w-5 sm:h-5" /> : <Moon className="w-4 h-4 sm:w-5 sm:h-5" />}
-            </button>
-            <button 
-              onClick={() => onNavigate('landing')}
-              className={`flex items-center gap-2 px-3 sm:px-4 py-1.5 sm:py-2 text-sm sm:text-base transition-colors ${
-                isDark ? 'hover:opacity-80' : 'hover:text-gray-600'
-              }`}
-              style={isDark ? { color: '#C7DBFF', transition: 'color 0.2s' } : { color: '#143269', transition: 'color 0.2s' }}
-            >
-              <ChevronLeft className="w-4 h-4 sm:w-5 sm:h-5" />
-              Home
-            </button>
-          </div>
-        </nav>
-      </header>
+      {/* Navigation */}
+      <Navigation theme={theme} setTheme={setTheme} variant="page" />
 
       {/* Main Content */}
       <main className="max-w-6xl mx-auto px-6 py-16 pt-32">

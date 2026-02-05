@@ -1,10 +1,13 @@
 import { useState, useEffect, useRef, useCallback, memo } from 'react';
-import { ChevronDown, Sun, Moon } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { ChevronDown } from 'lucide-react';
 import { motion, useScroll, useTransform } from 'framer-motion';
-import { useImagePreloader, useThemeImagePreloader } from '../hooks/useImagePreloader';
+import { useImagePreloader } from '../hooks/useImagePreloader';
 import ImageWithSkeleton from './ImageWithSkeleton';
+import Navigation from './Navigation';
 
-export default function HobskiLanding({ onNavigate, theme, setTheme }) {
+export default function HobskiLanding({ theme, setTheme }) {
+  const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('learner');
   const [showNotice, setShowNotice] = useState(true);
   const [isMobile, setIsMobile] = useState(() => {
@@ -16,20 +19,13 @@ export default function HobskiLanding({ onNavigate, theme, setTheme }) {
   });
 
   // OPTIMIZATION: Define image categories for smart preloading
+  // Modified to use single horizontal images instead of individual step images
   const getStepImages = useCallback((themeMode, tab) => {
     const prefix = tab === 'learner' ? 'Learner' : 'Mentor';
     return [
-      `/images/${themeMode === 'dark' ? 'Dark' : 'Light'}${prefix}Step1.webp`,
-      `/images/${themeMode === 'dark' ? 'Dark' : 'Light'}${prefix}Step2.webp`,
-      `/images/${themeMode === 'dark' ? 'Dark' : 'Light'}${prefix}Step3.webp`,
-      `/images/${themeMode === 'dark' ? 'Dark' : 'Light'}BothStep4.webp`,
+      `/images/${themeMode === 'dark' ? 'Dark' : 'Light'}${prefix}Steps.png`
     ];
   }, []);
-
-  const getCardImages = useCallback((themeMode) => [
-    `/images/${themeMode === 'dark' ? 'Dark' : 'Light'}LearnerJoin.webp`,
-    `/images/${themeMode === 'dark' ? 'Dark' : 'Light'}MentorJoin.webp`,
-  ], []);
 
   // Preload step images for active tab
   const { loaded: stepImagesLoaded } = useImagePreloader(
@@ -37,49 +33,6 @@ export default function HobskiLanding({ onNavigate, theme, setTheme }) {
     'high',
     true
   );
-
-  // Smart theme preloader for smooth theme switching
-  const { preloadTheme, isPreloading } = useThemeImagePreloader(
-    theme,
-    useCallback((targetTheme) => [
-      ...getStepImages(targetTheme, activeTab),
-      ...getCardImages(targetTheme),
-    ], [getStepImages, getCardImages, activeTab])
-  );
-
-  // OPTIMIZATION: Improved theme change handler that preloads images before switching
-  const handleThemeChange = useCallback(async (newTheme) => {
-    if (theme === newTheme || isPreloading) return;
-
-    // Preload target theme images BEFORE switching
-    await preloadTheme(newTheme);
-    
-    // Use requestAnimationFrame for smooth visual transition
-    requestAnimationFrame(() => {
-      setTheme(newTheme);
-    });
-  }, [theme, isPreloading, preloadTheme, setTheme]);
-
-  // OPTIMIZATION: Preload opposite theme during idle time - only after critical content loads
-  useEffect(() => {
-    if (stepImagesLoaded) {
-      const oppositeTheme = theme === 'dark' ? 'light' : 'dark';
-      
-      const schedulePreload = () => {
-        preloadTheme(oppositeTheme);
-      };
-
-      if ('requestIdleCallback' in window) {
-        const idleCallback = window.requestIdleCallback(schedulePreload, {
-          timeout: 5000 // Increased timeout to avoid interfering with critical rendering
-        });
-        return () => window.cancelIdleCallback(idleCallback);
-      } else {
-        const timeout = setTimeout(schedulePreload, 2000);
-        return () => clearTimeout(timeout);
-      }
-    }
-  }, [stepImagesLoaded, theme, preloadTheme]);
 
   // Detect mobile viewport with debounce for better performance
   useEffect(() => {
@@ -129,67 +82,14 @@ export default function HobskiLanding({ onNavigate, theme, setTheme }) {
       }`}
       style={isDark ? { backgroundColor: '#143269', color: '#C7DBFF' } : { backgroundColor: '#E6F6FF', color: '#143269' }}
     >
-      {/* Header */}
-      <header 
-        className={`fixed top-0 left-0 right-0 z-50 ${
-          isDark ? 'border-gray-800' : 'border-blue-80'
-        }`}
-        style={{ 
-          backgroundColor: isDark ? '#143269' : '#E6F6FF'
-        }}
-      >
-        <nav className="max-w-7xl mx-auto px-3 sm:px-6 py-3 sm:py-4 flex items-center justify-between">
-          <button 
-            onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-            className="text-2xl sm:text-4xl font-bold hover:opacity-80 px-2 sm:px-6"
-            style={{ transition: 'opacity 0.2s' }}
-          >
-            hobski
-          </button>
-          <div className="flex gap-2 sm:gap-6 items-center">
-            <button 
-              onClick={() => handleThemeChange(isDark ? 'light' : 'dark')}
-              className={`p-2 rounded-full ${
-                isDark ? 'hover:bg-gray-800' : 'hover:bg-gray-100'
-              } ${isPreloading ? 'opacity-50 cursor-wait' : ''}`}
-              style={{ transition: 'background-color 0.2s' }}
-              aria-label="Toggle theme"
-              disabled={isPreloading}
-            >
-              {isDark ? <Sun className="w-4 h-4 sm:w-5 sm:h-5" /> : <Moon className="w-4 h-4 sm:w-5 sm:h-5" />}
-            </button>
-            <button 
-              onClick={() => scrollToSection('get-involved')}
-              className={`px-3 sm:px-6 py-1.5 sm:py-2 rounded-full text-sm sm:text-base font-medium ${
-                isDark 
-                  ? 'hover:opacity-80' 
-                  : 'bg-[#143269] text-white hover:opacity-80'
-              }`}
-              style={isDark ? { backgroundColor: '#C7DBFF', color: '#143269', transition: 'opacity 0.2s' } : { transition: 'background-color 0.2s', color: 'white' }}
-            >
-              Join
-            </button>
-            <button 
-              onClick={() => onNavigate('about')}
-              className={`px-3 sm:px-6 py-1.5 sm:py-2 text-sm sm:text-base ${
-              isDark ? 'hover:opacity-80' : 'hover:opacity-80'
-            }`}
-              style={{ transition: 'color 0.2s', color: isDark ? '#C7DBFF' : '#143269' }}
-            >
-              About
-            </button>
-            <button 
-              onClick={() => scrollToSection('contact')}
-              className={`px-3 sm:px-6 py-1.5 sm:py-2 text-sm sm:text-base ${
-                isDark ? 'hover:opacity-80' : 'hover:opacity-80'
-              }`}
-              style={{ transition: 'color 0.2s', color: isDark ? '#C7DBFF' : '#143269' }}
-            >
-              Contact
-            </button>
-          </div>
-        </nav>
-      </header>
+      {/* Navigation */}
+      <Navigation 
+        theme={theme} 
+        setTheme={setTheme} 
+        variant="landing" 
+        activeTab={activeTab}
+        onScrollToSection={scrollToSection}
+      />
 
       {/* Hero Carousel Section */}
       <HeroCarousel isDark={isDark} theme={theme} scrollToSection={scrollToSection} />
@@ -276,130 +176,63 @@ export default function HobskiLanding({ onNavigate, theme, setTheme }) {
             {activeTab === 'learner' ? (
               <>
                 {/* Desktop Grid View */}
-                <div className="hidden md:grid grid-cols-1 md:grid-cols-4 gap-3 md:gap-4 mb-12 max-w-6xl mx-auto">
-                {/* Step 1 */}
-                <div className="flex flex-col items-start relative">
-                  {/* Image Placeholder - Resized smaller and cropped */}
-                  <div className="w-full rounded-lg mb-0 flex items-center justify-start overflow-hidden" style={{ aspectRatio: '1/1' }}>
-                    <img 
-                      src={`/images/${isDark ? 'Dark' : 'Light'}LearnerStep1.webp`} 
-                      alt="Find your hobby illustration"
+                <div className="hidden md:block mb-12 max-w-6xl mx-auto">
+                  {/* Single Horizontal Image */}
+                  <div className="w-full mb-8 rounded-lg overflow-hidden">
+                    <ImageWithSkeleton
+                      src={`/images/${isDark ? 'Dark' : 'Light'}LearnerSteps.png`}
+                      alt="Learner steps illustration"
+                      className="w-full h-auto object-contain"
                       loading="eager"
                       fetchPriority="high"
-                      className="w-[85%] h-[85%] object-cover rounded-lg"
-                      style={{ 
-                        objectPosition: 'center center',
-                        clipPath: 'inset(10% 0 10% 0)'
-                      }}
-                      onError={(e) => {
-                        e.target.style.display = 'none';
-                        e.target.parentElement.innerHTML = '<span class="text-gray-600 text-sm">Image</span>';
-                      }}
+                      skeletonClassName="!bg-transparent !bg-none"
+                      showErrorMessage={false}
                     />
                   </div>
-                  
-                  <h3 className="text-base md:text-lg font-bold mb-3 md:mb-4" style={{ color: isDark ? '#C7DBFF' : '#143269' }}>
-                    1. Find your hobby
-                  </h3>
-                  
-                  <p className="text-base md:text-lg font-normal leading-relaxed" style={{ color: isDark ? '#C7DBFF' : '#143269' }}>
-                    Got a hobby or project in mind? Just type it into our search bar, or browse through our categories for inspiration!
-                  </p>
-                  
-                </div>
 
-                {/* Step 2 */}
-                <div className="flex flex-col items-start relative">
-                  {/* Image Placeholder - Resized smaller and cropped */}
-                  <div className="w-full rounded-lg mb-0 flex items-center justify-start overflow-hidden" style={{ aspectRatio: '1/1' }}>
-                    <img 
-                      src={`/images/${isDark ? 'Dark' : 'Light'}LearnerStep2.webp`} 
-                      alt="Browse mentors illustration"
-                      loading="eager"
-                      fetchPriority="high"
-                      className="w-[85%] h-[85%] object-cover rounded-lg"
-                      style={{ 
-                        objectPosition: 'center center',
-                        clipPath: 'inset(10% 0 10% 0)'
-                      }}
-                      onError={(e) => {
-                        e.target.style.display = 'none';
-                        e.target.parentElement.innerHTML = '<span class="text-gray-600 text-sm">Image</span>';
-                      }}
-                    />
-                  </div>
-                  
-                  <h3 className="text-base md:text-lg font-bold mb-3 md:mb-4" style={{ color: isDark ? '#C7DBFF' : '#143269' }}>
-                    2. Browse mentors
-                  </h3>
-                  
-                  <p className="text-base md:text-lg font-normal leading-relaxed" style={{ color: isDark ? '#C7DBFF' : '#143269' }}>
-                    Take a look at available mentors and browse their portfolios, rates, schedules, resources, and reviews!
-                  </p>
-                  
-                </div>
+                  {/* Step Descriptions Grid */}
+                  <div className="grid grid-cols-1 md:grid-cols-4 gap-3 md:gap-4">
+                    {/* Step 1 */}
+                    <div className="flex flex-col items-start">
+                      <h3 className="text-base md:text-lg font-bold mb-3 md:mb-4" style={{ color: isDark ? '#C7DBFF' : '#143269' }}>
+                        1. Find your hobby
+                      </h3>
+                      <p className="text-base md:text-lg font-normal leading-relaxed" style={{ color: isDark ? '#C7DBFF' : '#143269' }}>
+                        Got a hobby or project in mind? Just type it into our search bar, or browse through our categories for inspiration!
+                      </p>
+                    </div>
 
-                {/* Step 3 */}
-                <div className="flex flex-col items-start relative">
-                  {/* Image Placeholder - Resized smaller and cropped */}
-                  <div className="w-full rounded-lg mb-0 flex items-center justify-start overflow-hidden" style={{ aspectRatio: '1/1' }}>
-                    <img 
-                      src={`/images/${isDark ? 'Dark' : 'Light'}LearnerStep3.webp`} 
-                      alt="Book a session illustration"
-                      loading="eager"
-                      fetchPriority="high"
-                      className="w-[85%] h-[85%] object-cover rounded-lg"
-                      style={{ 
-                        objectPosition: 'center center',
-                        clipPath: 'inset(10% 0 10% 0)'
-                      }}
-                      onError={(e) => {
-                        e.target.style.display = 'none';
-                        e.target.parentElement.innerHTML = '<span class="text-gray-600 text-sm">Image</span>';
-                      }}
-                    />
-                  </div>
-                  
-                  <h3 className="text-base md:text-lg font-bold mb-3 md:mb-4" style={{ color: isDark ? '#C7DBFF' : '#143269' }}>
-                    3. Book a session
-                  </h3>
-                  
-                  <p className="text-base md:text-lg font-normal leading-relaxed" style={{ color: isDark ? '#C7DBFF' : '#143269' }}>
-                    Request a session with a mentor. Outline your goals, resources, session preferences, and chat with your mentor before confirming!
-                  </p>
-                  
-                </div>
+                    {/* Step 2 */}
+                    <div className="flex flex-col items-start">
+                      <h3 className="text-base md:text-lg font-bold mb-3 md:mb-4" style={{ color: isDark ? '#C7DBFF' : '#143269' }}>
+                        2. Browse mentors
+                      </h3>
+                      <p className="text-base md:text-lg font-normal leading-relaxed" style={{ color: isDark ? '#C7DBFF' : '#143269' }}>
+                        Take a look at available mentors and browse their portfolios, rates, schedules, resources, and reviews!
+                      </p>
+                    </div>
 
-                {/* Step 4 */}
-                <div className="flex flex-col items-start">
-                  {/* Image Placeholder - Resized smaller and cropped */}
-                  <div className="w-full rounded-lg mb-0 flex items-center justify-start overflow-hidden" style={{ aspectRatio: '1/1' }}>
-                    <img 
-                      src={`/images/${isDark ? 'Dark' : 'Light'}BothStep4.webp`} 
-                      alt="Get learning illustration"
-                      loading="eager"
-                      fetchPriority="high"
-                      className="w-[85%] h-[85%] object-cover rounded-lg"
-                      style={{ 
-                        objectPosition: 'center center',
-                        clipPath: 'inset(10% 0 10% 0)'
-                      }}
-                      onError={(e) => {
-                        e.target.style.display = 'none';
-                        e.target.parentElement.innerHTML = '<span class="text-gray-600 text-sm">Image</span>';
-                      }}
-                    />
+                    {/* Step 3 */}
+                    <div className="flex flex-col items-start">
+                      <h3 className="text-base md:text-lg font-bold mb-3 md:mb-4" style={{ color: isDark ? '#C7DBFF' : '#143269' }}>
+                        3. Book a session
+                      </h3>
+                      <p className="text-base md:text-lg font-normal leading-relaxed" style={{ color: isDark ? '#C7DBFF' : '#143269' }}>
+                        Request a session with a mentor. Outline your goals, resources, session preferences, and chat with your mentor before confirming!
+                      </p>
+                    </div>
+
+                    {/* Step 4 */}
+                    <div className="flex flex-col items-start">
+                      <h3 className="text-base md:text-lg font-bold mb-3 md:mb-4" style={{ color: isDark ? '#C7DBFF' : '#143269' }}>
+                        4. Get learning!
+                      </h3>
+                      <p className="text-base md:text-lg font-normal leading-relaxed" style={{ color: isDark ? '#C7DBFF' : '#143269' }}>
+                        Meet in-person or virtually, depending on your preferences, and get learning!
+                      </p>
+                    </div>
                   </div>
-                  
-                  <h3 className="text-base md:text-lg font-bold mb-3 md:mb-4" style={{ color: isDark ? '#C7DBFF' : '#143269' }}>
-                    4. Get learning!
-                  </h3>
-                  
-                  <p className="text-base md:text-lg font-normal leading-relaxed" style={{ color: isDark ? '#C7DBFF' : '#143269' }}>
-                    Meet in-person or virtually, depending on your preferences, and get learning!
-                  </p>
                 </div>
-              </div>
 
               {/* Mobile Carousel View */}
               <MobileStepCarousel 
@@ -436,130 +269,64 @@ export default function HobskiLanding({ onNavigate, theme, setTheme }) {
             ) : (
               <>
               {/* Desktop Grid View */}
-              <div className="hidden md:grid grid-cols-1 md:grid-cols-4 gap-3 md:gap-4 mb-12 max-w-6xl mx-auto">
-                {/* Mentor Step 1 */}
-                <div className="flex flex-col items-start relative">
-                  {/* Image Placeholder - Resized smaller and cropped */}
-                  <div className="w-full rounded-lg mb-0 flex items-center justify-start overflow-hidden" style={{ aspectRatio: '1/1' }}>
-                    <img 
-                      src={`/images/${isDark ? 'Dark' : 'Light'}MentorStep1.webp`} 
-                      alt="Mentor step 1 illustration"
-                      loading="eager"
-                      fetchPriority="high"
-                      className="w-[85%] h-[85%] object-cover rounded-lg"
-                      style={{ 
-                        objectPosition: 'center center',
-                        clipPath: 'inset(10% 0 10% 0)'
-                      }}
-                      onError={(e) => {
-                        e.target.style.display = 'none';
-                        e.target.parentElement.innerHTML = '<span class=\"text-gray-600 text-sm\">Image</span>';
-                      }}
-                    />
-                  </div>
-                  
-                  <h3 className="text-base md:text-lg font-bold mb-3 md:mb-4" style={{ color: isDark ? '#C7DBFF' : '#143269' }}>
-                    1. Find your skill OR Create one
-                  </h3>
-                  
-                  <p className="text-base md:text-lg font-normal leading-relaxed" style={{ color: isDark ? '#C7DBFF' : '#143269'}}>
-                    Browse through our skill categories and choose yours. If you can’t find it, request to add a new one to our list!
-                  </p>
-                  
+              <div className="hidden md:block mb-12 max-w-6xl mx-auto">
+                {/* Single Horizontal Image */}
+                <div className="w-full mb-8 rounded-lg overflow-hidden">
+                  <ImageWithSkeleton
+                    src={`/images/${isDark ? 'Dark' : 'Light'}MentorSteps.png`}
+                    alt="Mentor steps illustration"
+                    className="w-full h-auto object-contain"
+                    loading="eager"
+                    fetchPriority="high"
+                    skeletonClassName="!bg-transparent !bg-none"
+                    showErrorMessage={false}
+                  />
                 </div>
 
-                {/* Mentor Step 2 */}
-                <div className="flex flex-col items-start relative">
-                  {/* Image Placeholder - Resized smaller and cropped */}
-                  <div className="w-full rounded-lg mb-0 flex items-center justify-start overflow-hidden" style={{ aspectRatio: '1/1' }}>
-                    <img 
-                      src={`/images/${isDark ? 'Dark' : 'Light'}MentorStep2.webp`} 
-                      alt="Mentor step 2 illustration"
-                      loading="eager"
-                      fetchPriority="high"
-                      className="w-[85%] h-[85%] object-cover rounded-lg"
-                      style={{ 
-                        objectPosition: 'center center',
-                        clipPath: 'inset(10% 0 10% 0)'
-                      }}
-                      onError={(e) => {
-                        e.target.style.display = 'none';
-                        e.target.parentElement.innerHTML = '<span class="text-gray-600 text-sm">Image</span>';
-                      }}
-                    />
+                {/* Step Descriptions Grid */}
+                <div className="grid grid-cols-1 md:grid-cols-4 gap-3 md:gap-4">
+                  {/* Mentor Step 1 */}
+                  <div className="flex flex-col items-start">
+                    <h3 className="text-base md:text-lg font-bold mb-3 md:mb-4" style={{ color: isDark ? '#C7DBFF' : '#143269' }}>
+                      1. Find your skill OR Create one
+                    </h3>
+                    <p className="text-base md:text-lg font-normal leading-relaxed" style={{ color: isDark ? '#C7DBFF' : '#143269'}}>
+                      Browse through our skill categories and choose yours. If you can't find it, request to add a new one to our list!
+                    </p>
                   </div>
-                  
-                  <h3 className="text-base md:text-lg font-bold mb-3 md:mb-4" style={{ color: isDark ? '#C7DBFF' : '#143269' }}>
-                    2. Set up your profile
-                  </h3>
-                  
-                  <p className="text-base md:text-lg font-normal leading-relaxed" style={{ color: isDark ? '#C7DBFF' : '#143269' }}>
-                    Demonstrate your skill. Pick your skill level, rate, schedule, and outline your session preferences (resources offered, session size, and location).
-                  </p>
-                  
-                </div>
 
-                {/* Mentor Step 3 */}
-                <div className="flex flex-col items-start relative">
-                  {/* Image Placeholder - Resized smaller and cropped */}
-                  <div className="w-full rounded-lg mb-0 flex items-center justify-start overflow-hidden" style={{ aspectRatio: '1/1' }}>
-                    <img 
-                      src={`/images/${isDark ? 'Dark' : 'Light'}MentorStep3.webp`} 
-                      alt="Mentor step 3 illustration"
-                      loading="eager"
-                      fetchPriority="high"
-                      className="w-[85%] h-[85%] object-cover rounded-lg"
-                      style={{ 
-                        objectPosition: 'center center',
-                        clipPath: 'inset(10% 0 10% 0)'
-                      }}
-                      onError={(e) => {
-                        e.target.style.display = 'none';
-                        e.target.parentElement.innerHTML = '<span class=\"text-gray-600 text-sm\">Image</span>';
-                      }}
-                    />
+                  {/* Mentor Step 2 */}
+                  <div className="flex flex-col items-start">
+                    <h3 className="text-base md:text-lg font-bold mb-3 md:mb-4" style={{ color: isDark ? '#C7DBFF' : '#143269' }}>
+                      2. Set up your profile
+                    </h3>
+                    <p className="text-base md:text-lg font-normal leading-relaxed" style={{ color: isDark ? '#C7DBFF' : '#143269' }}>
+                      Demonstrate your skill. Pick your skill level, rate, schedule, and outline your session preferences (resources offered, session size, and location).
+                    </p>
                   </div>
-                  
-                  <h3 className="text-base md:text-lg font-bold mb-3 md:mb-4" style={{ color: isDark ? '#C7DBFF' : '#143269' }}>
-                    3. Chat with learners
-                  </h3>
-                  
-                  <p className="text-base md:text-lg font-normal leading-relaxed" style={{ color: isDark ? '#C7DBFF' : '#143269'}}>
-                    Start a conversation with learners when they’ve requested a session and discuss goals and sessions details before confirming!
-                  </p>
-                  
-                </div>
 
-                {/* Mentor Step 4 */}
-                <div className="flex flex-col items-start">
-                  {/* Image Placeholder - Resized smaller and cropped */}
-                  <div className="w-full rounded-lg mb-0 flex items-center justify-start overflow-hidden" style={{ aspectRatio: '1/1' }}>
-                    <img 
-                      src={`/images/${isDark ? 'Dark' : 'Light'}BothStep4.webp`} 
-                      alt="Mentor step 4 illustration"
-                      loading="eager"
-                      fetchPriority="high"
-                      className="w-[85%] h-[85%] object-cover rounded-lg"
-                      style={{ 
-                        objectPosition: 'center center',
-                        clipPath: 'inset(10% 0 10% 0)'
-                      }}
-                      onError={(e) => {
-                        e.target.style.display = 'none';
-                        e.target.parentElement.innerHTML = '<span class="text-gray-600 text-sm">Image</span>';
-                      }}
-                    />
+                  {/* Mentor Step 3 */}
+                  <div className="flex flex-col items-start">
+                    <h3 className="text-base md:text-lg font-bold mb-3 md:mb-4" style={{ color: isDark ? '#C7DBFF' : '#143269' }}>
+                      3. Chat with learners
+                    </h3>
+                    <p className="text-base md:text-lg font-normal leading-relaxed" style={{ color: isDark ? '#C7DBFF' : '#143269'}}>
+                      Start a conversation with learners when they've requested a session and discuss goals and sessions details before confirming!
+                    </p>
                   </div>
-                  
-                  <h3 className="text-base md:text-lg font-bold mb-3 md:mb-4" style={{ color: isDark ? '#C7DBFF' : '#143269' }}>
-                    4. Get mentoring!
-                  </h3>
-                  
-                  <p className="text-base md:text-lg font-normal leading-relaxed" style={{ color: isDark ? '#C7DBFF' : '#143269' }}>
-                    Meet your learners in-person or virtually, depending on your preferences, and get mentoring!
-                  </p>
+
+                  {/* Mentor Step 4 */}
+                  <div className="flex flex-col items-start">
+                    <h3 className="text-base md:text-lg font-bold mb-3 md:mb-4" style={{ color: isDark ? '#C7DBFF' : '#143269' }}>
+                      4. Get mentoring!
+                    </h3>
+                    <p className="text-base md:text-lg font-normal leading-relaxed" style={{ color: isDark ? '#C7DBFF' : '#143269' }}>
+                      Meet your learners in-person or virtually, depending on your preferences, and get mentoring!
+                    </p>
+                  </div>
                 </div>
               </div>
+
 
               {/* Mobile Carousel View */}
               <MobileStepCarousel 
@@ -624,7 +391,7 @@ export default function HobskiLanding({ onNavigate, theme, setTheme }) {
               <div className="relative w-full max-w-md md:max-w-xl group md:transition-transform md:hover:scale-110">
                 {/* Card */}
                 <button 
-                  onClick={() => onNavigate('learner-signup')}
+                  onClick={() => navigate('/signup/learner')}
                   className={`relative z-0 rounded-2xl p-8 text-left w-full mt-28 md:mt-0 ${
                     isDark 
                       ? 'group-hover:border-white' 
@@ -664,7 +431,7 @@ export default function HobskiLanding({ onNavigate, theme, setTheme }) {
               <div className="relative w-full max-w-md md:max-w-xl group md:transition-transform md:hover:scale-110">
                 {/* Card */}
                 <button 
-                  onClick={() => onNavigate('mentor-signup')}
+                  onClick={() => navigate('/signup/mentor')}
                   className={`relative z-0 rounded-2xl p-8 text-left w-full mt-40 md:mt-0 ${
                     isDark 
                       ? 'group-hover:border-white' 

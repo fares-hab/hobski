@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react';
-import { Sun, Moon, ChevronLeft } from 'lucide-react';
 import { supabase } from '../lib/supabase';
+import Navigation from './Navigation';
 
-export default function LearnerSignup({ onNavigate, theme, setTheme }) {
+export default function LearnerSignup({ theme, setTheme }) {
   const [currentPage, setCurrentPage] = useState(1);
   const [formData, setFormData] = useState({
     firstName: '',
@@ -201,55 +201,8 @@ export default function LearnerSignup({ onNavigate, theme, setTheme }) {
       isDark ? 'text-white' : ''
     }`}
     style={isDark ? { backgroundColor: '#143269', color: 'white' } : { backgroundColor: '#E6F6FF', color: '#143269' }}>
-      {/* Header */}
-      <header 
-        className={`fixed top-0 left-0 right-0 z-50 ${
-          isDark ? 'border-gray-800' : 'border-blue-80'
-        }`}
-        style={{ 
-          backgroundColor: isDark ? '#143269' : '#E6F6FF'
-        }}
-      >
-        <nav className="max-w-7xl mx-auto px-3 sm:px-6 py-3 sm:py-4 flex items-center justify-between">
-          <button 
-            onClick={() => onNavigate('landing')}
-            className="text-2xl sm:text-4xl font-bold hover:opacity-80 px-2 sm:px-6"
-            style={{ transition: 'opacity 0.2s' }}
-          >
-            hobski
-          </button>
-          <div className="flex gap-2 sm:gap-6 items-center">
-            <button 
-              onClick={() => setTheme(isDark ? 'light' : 'dark')}
-              className={`p-2 rounded-full ${
-                isDark ? 'hover:bg-gray-800' : 'hover:bg-gray-100'
-              }`}
-              style={{ transition: 'background-color 0.2s' }}
-              aria-label="Toggle theme"
-            >
-              {isDark ? <Sun className="w-4 h-4 sm:w-5 sm:h-5" /> : <Moon className="w-4 h-4 sm:w-5 sm:h-5" />}
-            </button>
-            <button 
-            onClick={() => onNavigate('landing')}
-            className={`flex items-center gap-2 px-3 sm:px-6 py-1.5 sm:py-2 text-sm sm:text-base transition-colors ${
-                isDark ? 'hover:opacity-80' : 'hover:text-gray-600'
-              }`}
-              style={isDark ? { color: '#C7DBFF', transition: 'color 0.2s' } : { color: '#143269', transition: 'color 0.2s' }}
-            >
-              <ChevronLeft className="w-4 h-4" />
-              Home
-            </button>
-            <button 
-            onClick={() => onNavigate('about')}
-            className={`px-3 sm:px-6 py-1.5 sm:py-2 text-sm sm:text-base transition-colors ${
-              isDark ? 'text-white hover:text-gray-300' : 'hover:text-gray-600'
-            }`}
-            style={!isDark ? { color: '#143269', transition: 'color 0.2s' } : { transition: 'color 0.2s' }}>
-              About
-            </button>
-          </div>
-        </nav>
-      </header>
+      {/* Navigation */}
+      <Navigation theme={theme} setTheme={setTheme} variant="page" />
 
       {/* Main Content */}
       <main className="pt-32 pb-20 px-6">

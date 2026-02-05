@@ -1,4 +1,5 @@
 import { useState, lazy, Suspense, useEffect } from 'react';
+import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom';
 
 // Lazy load route components for better code splitting
 const LandingPage = lazy(() => import('./components/LandingPage'));
@@ -21,8 +22,35 @@ function PageLoader({ isDark }) {
   );
 }
 
-function App() {
-  const [currentPage, setCurrentPage] = useState('landing');
+// Scroll restoration component
+function ScrollToTop() {
+  const { pathname, state } = useLocation();
+  
+  useEffect(() => {
+    // Check if we should scroll to a section (from navigation state)
+    if (state?.scrollTo) {
+      const element = document.getElementById(state.scrollTo);
+      if (element) {
+        const header = document.querySelector('header');
+        const headerHeight = header ? header.offsetHeight : 0;
+        const offset = headerHeight + 16;
+        const elementPosition = element.getBoundingClientRect().top + window.scrollY;
+        const offsetPosition = elementPosition - offset;
+        
+        setTimeout(() => {
+          window.scrollTo({ top: offsetPosition, behavior: 'smooth' });
+        }, 100);
+        return;
+      }
+    }
+    // Default: scroll to top on route change
+    window.scrollTo({ top: 0, behavior: 'instant' });
+  }, [pathname, state]);
+  
+  return null;
+}
+
+function AppContent() {
   // Initialize theme from localStorage or system preference
   const [theme, setTheme] = useState(() => {
     const saved = localStorage.getItem('hobski-theme');
@@ -40,45 +68,60 @@ function App() {
     }
   }, [theme]);
 
-  const handleNavigation = (page) => {
-    setCurrentPage(page);
-    // Scroll to top when navigating
-    window.scrollTo({ top: 0, behavior: 'instant' });
-  };
-
   const isDark = theme === 'dark';
 
   return (
-    <Suspense fallback={<PageLoader isDark={isDark} />}>
-      {currentPage === 'landing' && (
-        <LandingPage 
-          onNavigate={handleNavigation} 
-          theme={theme}
-          setTheme={setTheme}
-        />
-      )}
-      {currentPage === 'about' && (
-        <About 
-          onNavigate={handleNavigation}
-          theme={theme}
-          setTheme={setTheme}
-        />
-      )}
-      {currentPage === 'learner-signup' && (
-        <LearnerSignup 
-          onNavigate={handleNavigation}
-          theme={theme}
-          setTheme={setTheme}
-        />
-      )}
-      {currentPage === 'mentor-signup' && (
-        <MentorSignup 
-          onNavigate={handleNavigation}
-          theme={theme}
-          setTheme={setTheme}
-        />
-      )}
-    </Suspense>
+    <>
+      <ScrollToTop />
+      <Suspense fallback={<PageLoader isDark={isDark} />}>
+        <Routes>
+          <Route 
+            path="/" 
+            element={
+              <LandingPage 
+                theme={theme}
+                setTheme={setTheme}
+              />
+            } 
+          />
+          <Route 
+            path="/about" 
+            element={
+              <About 
+                theme={theme}
+                setTheme={setTheme}
+              />
+            } 
+          />
+          <Route 
+            path="/signup/learner" 
+            element={
+              <LearnerSignup 
+                theme={theme}
+                setTheme={setTheme}
+              />
+            } 
+          />
+          <Route 
+            path="/signup/mentor" 
+            element={
+              <MentorSignup 
+                theme={theme}
+                setTheme={setTheme}
+              />
+            } 
+          />
+        </Routes>
+      </Suspense>
+    </>
+  );
+}
+
+function App() {
+  return (
+    <BrowserRouter>
+      <AppContent />
+    </BrowserRouter>
   );
 }
 
