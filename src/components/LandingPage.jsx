@@ -895,7 +895,7 @@ export default function HobskiLanding({ onNavigate, theme, setTheme }) {
             <p className={`text-sm font-medium leading-relaxed ${
               isDark ? 'text-gray-200' : 'text-gray-800'
             }`}>
-              🚧 We are still under construction but feel free to look around!
+              We are still under construction but feel free to look around!
             </p>
           </div>
         </div>
