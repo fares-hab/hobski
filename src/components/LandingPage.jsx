@@ -724,7 +724,7 @@ const HeroCarousel = memo(function HeroCarousel({ isDark, theme, scrollToSection
                     : 'translate-x-full z-0'
               }`}
             >
-              <div className="flex flex-col items-center justify-center h-full px-8 -mt-12">
+              <div className="flex flex-col items-center justify-center h-full px-8 -mt-10">
                 {/* Text Header */}
                 <h1 
                   className="text-5xl sm:text-6xl md:text-7xl lg:text-9xl font-bold mb-0 md:-mb-32 text-center"
