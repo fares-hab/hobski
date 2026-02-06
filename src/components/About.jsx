@@ -26,19 +26,19 @@ export default function About({ theme, setTheme }) {
         <div className="grid md:grid-cols-2 gap-12 items-start mb-12">
           {/* Text Content */}
           <div className="space-y-6">
-            <p className="text-lg leading-relaxed font-medium text-theme-muted">
+            <p className="text-lg leading-relaxed font-medium">
               Hi, we're Tala and Fares Habbab, the sibling founders of hobski! This all started when we each ran into obstacles with our hobbies. At roughly the same time, Tala wished she knew someone who could help her with her sewing project that she'd been stuck on for months, while Fares was having trouble reaching students interested in learning Muay Thai. We found ourselves wishing for a platform where peers could connect and help each other grow their interests.
             </p>
 
-            <p className="text-lg leading-relaxed font-medium text-theme-muted">
+            <p className="text-lg leading-relaxed font-medium">
               That's why we're building a new way for people to connect, share skills, and learn from each other. This is our early stage website, and we're inviting mentors and learners to join our community, share their interests, and help us bring hobski to life.
             </p>
 
-            <p className="text-lg leading-relaxed font-medium text-theme-muted">
+            <p className="text-lg leading-relaxed font-medium">
               Thank you for being a part of our journey.
             </p>
 
-            <p className="text-lg leading-relaxed font-medium text-theme-muted">
+            <p className="text-lg leading-relaxed font-medium">
               Fares & Tala
             </p>
           </div>
