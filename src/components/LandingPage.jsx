@@ -608,7 +608,8 @@ const ScrollSection = memo(function ScrollSection({ id, children, className = ''
 // Hero Carousel Component
 const HeroCarousel = memo(function HeroCarousel({ theme, scrollToSection }) {
   const [currentSlide, setCurrentSlide] = useState(0);
-  const [direction, setDirection] = useState(0); // -1 for left, 1 for right
+  const [prevSlide, setPrevSlide] = useState(null);
+  const [direction, setDirection] = useState(1); // 1 = next (slide from right), -1 = prev (slide from left)
 
   const slides = [
     { 
@@ -629,51 +630,97 @@ const HeroCarousel = memo(function HeroCarousel({ theme, scrollToSection }) {
   ];
 
   const goToSlide = (index) => {
+    if (index === currentSlide) return;
     setDirection(index > currentSlide ? 1 : -1);
+    setPrevSlide(currentSlide);
     setCurrentSlide(index);
   };
 
   const goToPrevious = () => {
     setDirection(-1);
+    setPrevSlide(currentSlide);
     setCurrentSlide((prev) => (prev === 0 ? slides.length - 1 : prev - 1));
   };
 
   const goToNext = () => {
     setDirection(1);
+    setPrevSlide(currentSlide);
     setCurrentSlide((prev) => (prev === slides.length - 1 ? 0 : prev + 1));
   };
 
   return (
     <div className="relative w-full h-screen pt-16 bg-theme-primary">
+      {/* CSS Animations for carousel */}
+      <style>{`
+        @keyframes slideInFromRight {
+          from { transform: translateX(100%); }
+          to { transform: translateX(0); }
+        }
+        @keyframes slideInFromLeft {
+          from { transform: translateX(-100%); }
+          to { transform: translateX(0); }
+        }
+        @keyframes slideOutToLeft {
+          from { transform: translateX(0); }
+          to { transform: translateX(-100%); }
+        }
+        @keyframes slideOutToRight {
+          from { transform: translateX(0); }
+          to { transform: translateX(100%); }
+        }
+      `}</style>
+      
       {/* Carousel wrapper */}
       <div className="relative h-full overflow-hidden">
         {slides.map((slide, index) => {
           const isActive = index === currentSlide;
-          const isPrev = index < currentSlide;
-          const isNext = index > currentSlide;
+          const isLeaving = index === prevSlide;
+          
+          // Only render active and leaving slides
+          if (!isActive && !isLeaving) {
+            return null;
+          }
+          
+          // Determine animation based on state and direction
+          let animationStyle = {};
+          if (isActive) {
+            // No animation on initial load (prevSlide is null)
+            if (prevSlide === null) {
+              animationStyle = { zIndex: 10 };
+            } else {
+              animationStyle = {
+                animation: direction === 1 
+                  ? 'slideInFromRight 700ms ease-out forwards' 
+                  : 'slideInFromLeft 700ms ease-out forwards',
+                zIndex: 10
+              };
+            }
+          } else if (isLeaving) {
+            animationStyle = {
+              animation: direction === 1 
+                ? 'slideOutToLeft 700ms ease-out forwards' 
+                : 'slideOutToRight 700ms ease-out forwards',
+              zIndex: 5
+            };
+          }
           
           return (
             <div
-              key={index}
-              className={`absolute inset-0 transition-transform duration-700 ease-out ${
-                isActive 
-                  ? 'translate-x-0 z-10' 
-                  : isPrev 
-                    ? '-translate-x-full z-0' 
-                    : 'translate-x-full z-0'
-              }`}
+              key={`${index}-${currentSlide}`}
+              className="absolute inset-0"
+              style={animationStyle}
             >
               <div className="flex flex-col items-center justify-center h-full px-8 -mt-10">
                 {/* Text Header */}
                 <h1 className="text-5xl sm:text-6xl md:text-7xl lg:text-9xl font-bold mb-0 md:-mb-32 text-center text-theme-primary">
                   {slide.text}
                 </h1>
-                {/* Image */}
+                {/* Image - MOBILE SIZE: w-[85%], DESKTOP: w-[95%] lg:w-[90%] */}
                 <img
                   src={slide.image}
                   alt={slide.alt}
-                  className="w-full md:w-[95%] lg:w-[90%] max-w-7xl object-contain"
-                  style={{ maxHeight: '80vh' }}
+                  className="w-[85%] md:w-[95%] lg:w-[90%] max-w-7xl object-contain"
+                  style={{ maxHeight: '70vh' }}
                   loading={index === 0 ? "eager" : "lazy"}
                   fetchPriority={index === 0 ? "high" : "low"}
                 />
@@ -684,7 +731,7 @@ const HeroCarousel = memo(function HeroCarousel({ theme, scrollToSection }) {
       </div>
 
       {/* Slider indicators */}
-      <div className="absolute z-30 flex -translate-x-1/2 space-x-3 bottom-24 left-1/2">
+      <div className="absolute z-30 flex -translate-x-1/2 space-x-3 bottom-28 md:bottom-24 left-1/2">
         {slides.map((_, index) => (
           <button
             key={index}
@@ -739,13 +786,13 @@ const HeroCarousel = memo(function HeroCarousel({ theme, scrollToSection }) {
       </button>
 
       {/* Scroll down button */}
-      <div className="absolute bottom-8 left-1/2 -translate-x-1/2 z-30">
+      <div className="absolute bottom-4 md:bottom-8 left-1/2 -translate-x-1/2 z-30">
         <button 
           onClick={() => scrollToSection('how-it-works')}
-          className="inline-flex items-center gap-2 px-6 py-3 rounded-full border-2 group border-theme-accent text-theme-accent hover:bg-theme-accent hover:text-theme-on-accent transition-colors"
+          className="inline-flex items-center gap-1.5 md:gap-2 px-4 py-2 md:px-6 md:py-3 text-sm md:text-base rounded-full border-2 group border-theme-accent text-theme-accent hover:bg-theme-accent hover:text-theme-on-accent transition-colors"
         >
           Pssst there's more
-          <ChevronDown className="w-5 h-5 group-hover:translate-y-1 transition-transform" />
+          <ChevronDown className="w-4 h-4 md:w-5 md:h-5 group-hover:translate-y-1 transition-transform" />
         </button>
       </div>
     </div>
@@ -801,7 +848,7 @@ const MobileStepCarousel = memo(function MobileStepCarousel({ steps, activeTab }
           </div>
           
           {/* Step Title */}
-          <h3 className="text-xl font-bold mb-4 text-theme-on-card">
+          <h3 className="text-xl font-bold mb-4 text-theme-primary">
             {steps[currentStep].number}. {steps[currentStep].title}
           </h3>
           
