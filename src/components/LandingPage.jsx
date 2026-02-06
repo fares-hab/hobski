@@ -369,7 +369,7 @@ export default function HobskiLanding({ theme, setTheme }) {
                       // LEARNER IMAGE - Locked to card position
                       // bottom: 100% = image bottom aligns with card top
                       // marginBottom = negative to overlap, positive to add gap
-                      bottom: '19%',
+                      bottom: '-56.2%',
                       marginBottom: '0px',  // ADJUST: overlap onto card (px)
                       left: '-2%',            // ADJUST: horizontal position
                     }}
@@ -401,9 +401,9 @@ export default function HobskiLanding({ theme, setTheme }) {
                     className="absolute pointer-events-none w-full md:w-[120%] h-auto object-contain z-0"
                     style={{
                       // MENTOR BODY - Locked to card position
-                      bottom: '100%',
+                      bottom: '-49.5%',
                       marginBottom: '-10px',  // ADJUST: overlap onto card (px)
-                      left: '5%',             // ADJUST: horizontal position
+                      left: '11%',             // ADJUST: horizontal position
                     }}
                   />
 
@@ -427,9 +427,9 @@ export default function HobskiLanding({ theme, setTheme }) {
                     className="absolute pointer-events-none w-full md:w-[120%] h-auto object-contain z-20"
                     style={{
                       // MENTOR ARM - Locked to card position
-                      bottom: '100%',
+                      bottom: '-49.5%',
                       marginBottom: '-10px',  // ADJUST: overlap onto card (px)
-                      left: '5%',             // ADJUST: horizontal position
+                      left: '11%',             // ADJUST: horizontal position
                     }}
                   />
                 </div>
