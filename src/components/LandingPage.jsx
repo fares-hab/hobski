@@ -339,7 +339,8 @@ export default function HobskiLanding({ theme, setTheme }) {
           className="bg-theme-involved"
           style={{ 
             marginTop: '-4rem',
-            paddingTop: '2rem'
+            paddingTop: '2rem',
+            paddingBottom: '8rem',
           }}
         >
           <ScrollSection 
