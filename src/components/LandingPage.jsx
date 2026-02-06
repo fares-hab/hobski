@@ -90,7 +90,7 @@ export default function HobskiLanding({ theme, setTheme }) {
       <div 
         className="bg-theme-secondary"
         style={{ 
-          marginTop: '-1.5rem',
+          marginTop: '-0.5rem',
           marginBottom: '-5rem',
           paddingTop: '3rem',
           paddingBottom: '3rem',
@@ -368,14 +368,14 @@ export default function HobskiLanding({ theme, setTheme }) {
                       // LEARNER IMAGE - Separate mobile/desktop positioning
                       ...(isMobile ? {
                         // MOBILE positioning - adjust these values
-                        bottom: '13.9%',
-                        marginBottom: '0px',
+                        top: '0',
+                        transform: 'translateY(-48.4%)',  // pulls the image up above the card
                         left: '0%',
                       } : {
                         // DESKTOP positioning - adjust these values
-                        bottom: '-56.2%',
-                        marginBottom: '0px',
-                        left: '-2%',
+                        top: '0',
+                        transform: 'translateY(-48.4%)',  // pulls the image up above the card
+                        left: '0%',
                       })
                     }}
                   />
@@ -407,14 +407,14 @@ export default function HobskiLanding({ theme, setTheme }) {
                       // MENTOR BODY - Separate mobile/desktop positioning
                       ...(isMobile ? {
                         // MOBILE positioning - adjust these values
-                        bottom: '24%',
-                        marginBottom: '0px',
-                        left: '5%',
+                        top: '0',
+                        transform: 'translateY(-48.4%)',  // pulls the image up above the card
+                        left: '10%',
                       } : {
                         // DESKTOP positioning - adjust these values
-                        bottom: '-49.5%',
-                        marginBottom: '-10px',
-                        left: '11%',
+                        top: '0',
+                        transform: 'translateY(-48.4%)',  // pulls the image up above the card
+                        left: '10%',
                       })
                     }}
                   />
@@ -440,13 +440,13 @@ export default function HobskiLanding({ theme, setTheme }) {
                       // MENTOR ARM - Separate mobile/desktop positioning
                       ...(isMobile ? {
                         // MOBILE positioning - adjust these values
-                        bottom: '24%',
-                        marginBottom: '0px',
-                        left: '5%',
+                        top: '0',
+                        transform: 'translateY(-48.4%)',  // pulls the image up above the card
+                        left: '11%',
                       } : {
                         // DESKTOP positioning - adjust these values
-                        bottom: '-49.5%',
-                        marginBottom: '-10px',
+                        top: '0',
+                        transform: 'translateY(-48.4%)',  // pulls the image up above the card
                         left: '11%',
                       })
                     }}
@@ -901,7 +901,7 @@ const MobileStepCarousel = memo(function MobileStepCarousel({ steps, activeTab }
   };
 
   return (
-    <div className="md:hidden mb-16 relative">
+    <div className="md:hidden mb-1 relative">
       {/* Step Card */}
       <div className="px-6 relative">
         <div className="transition-opacity duration-300 min-h-[550px]">
@@ -924,6 +924,23 @@ const MobileStepCarousel = memo(function MobileStepCarousel({ steps, activeTab }
                 }}
               />
             </div>
+          </div>
+
+          {/* Progress Indicators - right under the image */}
+          <div className="flex justify-center gap-2 mb-6">
+            {steps.map((_, index) => (
+              <button
+                key={index}
+                onClick={() => goToStep(index)}
+                className="rounded-full transition-colors duration-200"
+                style={{
+                  width: index === currentStep ? '12px' : '8px',
+                  height: index === currentStep ? '12px' : '8px',
+                  backgroundColor: index === currentStep ? '#377BD9' : '#95a8c5'
+                }}
+                aria-label={`Go to step ${index + 1}`}
+              />
+            ))}
           </div>
           
           {/* Step Title */}
@@ -965,22 +982,7 @@ const MobileStepCarousel = memo(function MobileStepCarousel({ steps, activeTab }
         </button>
       </div>
 
-      {/* Progress Indicators */}
-      <div className="flex justify-center gap-2 mt-8">
-        {steps.map((_, index) => (
-          <button
-            key={index}
-            onClick={() => goToStep(index)}
-            className="rounded-full transition-colors duration-200"
-            style={{
-              width: index === currentStep ? '12px' : '8px',
-              height: index === currentStep ? '12px' : '8px',
-              backgroundColor: index === currentStep ? '#377BD9' : '#95a8c5'
-            }}
-            aria-label={`Go to step ${index + 1}`}
-          />
-        ))}
-      </div>
+      {/* Progress Indicators moved inside carousel above */}
     </div>
   );
 });
