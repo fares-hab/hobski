@@ -561,28 +561,7 @@ export default function HobskiLanding({ theme, setTheme }) {
               }
             }
           `}</style>
-          <div className="p-4 pr-12 relative">
-            <button
-              onClick={() => setShowNotice(false)}
-              className="absolute top-2 right-2 p-1 rounded-full transition-colors hover:bg-theme-hover"
-              aria-label="Close notice"
-            >
-              <svg 
-                className="w-5 h-5 text-theme-notice-icon"
-                fill="none" 
-                strokeLinecap="round" 
-                strokeLinejoin="round" 
-                strokeWidth="2" 
-                viewBox="0 0 24 24" 
-                stroke="currentColor"
-              >
-                <path d="M6 18L18 6M6 6l12 12"></path>
-              </svg>
-            </button>
-            <p className="text-sm font-medium leading-relaxed text-theme-notice">
-              We are still under construction but feel free to look around!
-            </p>
-          </div>
+          
         </div>
       )}
     </div>
