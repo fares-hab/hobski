@@ -356,95 +356,80 @@ export default function HobskiLanding({ theme, setTheme }) {
             <div className="flex flex-col md:flex-row gap-6 md:gap-16 justify-center items-stretch md:items-stretch items-center">
               {/* As a Learner Card with Illustration */}
               <div className="relative w-full max-w-md md:max-w-xl group md:transition-transform md:hover:scale-110">
-                {/* Card */}
-                <button 
-                  onClick={() => navigate('/signup/learner')}
-                  className="relative z-0 rounded-2xl p-8 text-left w-full mt-28 md:mt-0 bg-theme-involved-card"
-                >
-                  <h3 className="text-2xl font-bold mb-3 text-theme-on-card">As a Learner</h3>
-                  <p className="leading-relaxed text-theme-on-card-muted">
-                    Explore a new hobby, get guidance on that DIY project, and take your skills to the next level when you join our community of learners.
-                  </p>
-                </button>
-                
-                {/* Character Illustration - Overlays card on both mobile and desktop */}
-                <div className="absolute inset-0 pointer-events-none overflow-visible z-10">
+                {/* Card wrapper - mt creates space for image on mobile */}
+                <div className="relative mt-28 md:mt-0">
+                  {/* Character Illustration - anchored to card top */}
                   <img 
                     src={`/images/${isDark ? 'Dark' : 'Light'}LearnerJoin.webp`}
                     alt=""
                     loading="eager"
                     fetchPriority="high"
-                    className="absolute w-full md:w-[120%] h-auto object-contain"
+                    className="absolute pointer-events-none w-full md:w-[120%] h-auto object-contain z-10"
                     style={{
-                      // Mobile positioning - adjust translateX and translateY values (in percentages or px)
-                      ...(isMobile ? {
-                        top: '-23%',
-                        left: '0%',
-                      } : {
-                        // Desktop positioning - original values
-                        top: '-145.8%',
-                        left: '-4%',
-                      })
+                      // LEARNER IMAGE - Locked to card position
+                      // bottom: 100% = image bottom aligns with card top
+                      // marginBottom = negative to overlap, positive to add gap
+                      bottom: '19%',
+                      marginBottom: '0px',  // ADJUST: overlap onto card (px)
+                      left: '-2%',            // ADJUST: horizontal position
                     }}
                   />
+                  
+                  {/* Card */}
+                  <button 
+                    onClick={() => navigate('/signup/learner')}
+                    className="relative z-0 rounded-2xl p-8 text-left w-full bg-theme-involved-card"
+                  >
+                    <h3 className="text-2xl font-bold mb-3 text-theme-on-card">As a Learner</h3>
+                    <p className="leading-relaxed text-theme-on-card-muted">
+                      Explore a new hobby, get guidance on that DIY project, and take your skills to the next level when you join our community of learners.
+                    </p>
+                  </button>
                 </div>
               </div>
 
               {/* As a Mentor Card with Illustration */}
               <div className="relative w-full max-w-md md:max-w-xl group md:transition-transform md:hover:scale-110 isolate">
-                {/* Body Image - Behind the card */}
-                <div className="absolute inset-0 pointer-events-none overflow-visible z-0">
+                {/* Card wrapper - mt creates space for image on mobile */}
+                <div className="relative mt-40 md:mt-0">
+                  {/* Body Image - Behind the card, anchored to card top */}
                   <img 
                     src={`/images/${isDark ? 'Dark' : 'Light'}MentorBodyCard.webp`}
                     alt=""
                     loading="eager"
                     fetchPriority="high"
-                    className="absolute w-full md:w-[120%] h-auto object-contain"
+                    className="absolute pointer-events-none w-full md:w-[120%] h-auto object-contain z-0"
                     style={{
-                      // FINE-TUNE BODY (BEHIND CARD) POSITION HERE:
-                      ...(isMobile ? {
-                        // Mobile positioning
-                        top: '-40%',      // Adjust: move up (more negative) or down (less negative/positive)
-                        left: '0%',       // Adjust: move left (negative) or right (positive)
-                      } : {
-                        // Desktop positioning
-                        top: '-146%',     // Adjust: move up (more negative) or down (less negative/positive)
-                        left: '11%',      // Adjust: move left (negative) or right (positive)
-                      })
+                      // MENTOR BODY - Locked to card position
+                      bottom: '100%',
+                      marginBottom: '-10px',  // ADJUST: overlap onto card (px)
+                      left: '5%',             // ADJUST: horizontal position
                     }}
                   />
-                </div>
 
-                {/* Card */}
-                <button 
-                  onClick={() => navigate('/signup/mentor')}
-                  className="relative z-10 rounded-2xl p-8 text-left w-full mt-40 md:mt-0 bg-theme-involved-card"
-                >
-                  <h3 className="text-2xl font-bold mb-3 text-theme-on-card">As a Mentor</h3>
-                  <p className="leading-relaxed text-theme-on-card-muted">
-                    Share your passions, pass down your knowledge, and help others achieve their goals when you make their hobby dreams come true as a mentor.
-                  </p>
-                </button>
-                
-                {/* Arm Image - Above the card */}
-                <div className="absolute inset-0 pointer-events-none overflow-visible z-20">
+                  {/* Card */}
+                  <button 
+                    onClick={() => navigate('/signup/mentor')}
+                    className="relative z-10 rounded-2xl p-8 text-left w-full bg-theme-involved-card"
+                  >
+                    <h3 className="text-2xl font-bold mb-3 text-theme-on-card">As a Mentor</h3>
+                    <p className="leading-relaxed text-theme-on-card-muted">
+                      Share your passions, pass down your knowledge, and help others achieve their goals when you make their hobby dreams come true as a mentor.
+                    </p>
+                  </button>
+                  
+                  {/* Arm Image - Above the card, anchored to card top */}
                   <img 
                     src={`/images/${isDark ? 'Dark' : 'Light'}MentorArm.webp`}
                     alt=""
                     loading="eager"
                     fetchPriority="high"
-                    className="absolute w-full md:w-[120%] h-auto object-contain"
+                    className="absolute pointer-events-none w-full md:w-[120%] h-auto object-contain z-20"
                     style={{
-                      // FINE-TUNE ARM (ABOVE CARD) POSITION HERE:
-                      ...(isMobile ? {
-                        // Mobile positioning
-                        top: '-7%',       // Adjust: move up (more negative) or down (less negative/positive)
-                        left: '0%',       // Adjust: move left (negative) or right (positive)
-                      } : {
-                        // Desktop positioning
-                        top: '-147%',     // Adjust: move up (more negative) or down (less negative/positive)
-                        left: '11.5%',      // Adjust: move left (negative) or right (positive)
-                      })
+                      // MENTOR ARM - Locked to card position
+                      bottom: '100%',
+                      marginBottom: '-10px',  // ADJUST: overlap onto card (px)
+                      left: '5%',             // ADJUST: horizontal position
                     }}
                   />
                 </div>
