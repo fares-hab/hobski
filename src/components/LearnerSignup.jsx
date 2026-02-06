@@ -185,7 +185,7 @@ export default function LearnerSignup({ theme, setTheme }) {
   };
 
   return (
-    <div className="min-h-screen font-['Inter',sans-serif] bg-theme-primary text-theme-primary">
+    <div className="min-h-screen font-['Inter',sans-serif] bg-theme-primary text-theme-primary overflow-x-hidden">
       {/* Navigation */}
       <Navigation theme={theme} setTheme={setTheme} variant="page" />
 

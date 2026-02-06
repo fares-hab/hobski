@@ -60,7 +60,7 @@ export default function HobskiLanding({ theme, setTheme }) {
 
   return (
     <div 
-      className="min-h-screen font-['Inter',sans-serif] bg-theme-primary text-theme-primary"
+      className="min-h-screen font-['Inter',sans-serif] bg-theme-primary text-theme-primary overflow-x-hidden"
     >
       {/* Navigation */}
       <Navigation 
@@ -532,7 +532,7 @@ export default function HobskiLanding({ theme, setTheme }) {
         </div>
 
       {/* Footer */}
-      <footer className="relative z-20 py-8 px-6 bg-theme-primary">
+      <footer className="relative z-20 py-8 px-6 bg-theme-secondary">
         <div className="max-w-7xl mx-auto text-center text-sm text-theme-secondary">
           ℠ 2026 hobski. 
         </div>

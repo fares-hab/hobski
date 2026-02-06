@@ -56,15 +56,15 @@ const Navigation = memo(function Navigation({
   };
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 bg-theme-primary">
-      <nav className="max-w-7xl mx-auto px-3 sm:px-6 py-3 sm:py-4 flex items-center justify-between">
+    <header className="fixed top-0 left-0 right-0 z-50 bg-theme-primary overflow-x-hidden">
+      <nav className="max-w-7xl mx-auto px-2 sm:px-6 py-3 sm:py-4 flex items-center justify-between">
         <button 
           onClick={handleLogoClick}
-          className="text-2xl sm:text-4xl font-bold text-primary hover:opacity-80 px-2 sm:px-6 transition-opacity"
+          className="text-2xl sm:text-4xl font-bold text-primary hover:opacity-80 px-1 sm:px-6 transition-opacity flex-shrink-0"
         >
           hobski
         </button>
-        <div className="flex gap-2 sm:gap-6 items-center">
+        <div className="flex gap-1 sm:gap-6 items-center">
           {/* Theme Toggle */}
           <button 
             onClick={() => handleThemeChange(isDark ? 'light' : 'dark')}
@@ -79,19 +79,19 @@ const Navigation = memo(function Navigation({
               {/* Landing Page Navigation */}
               <button 
                 onClick={handleJoinClick}
-                className="px-3 sm:px-6 py-1.5 sm:py-2 rounded-full text-sm sm:text-base font-medium bg-theme-accent text-theme-on-accent hover:opacity-80 transition-opacity"
+                className="px-2 sm:px-6 py-1.5 sm:py-2 rounded-full text-sm sm:text-base font-medium bg-theme-accent text-theme-on-accent hover:opacity-80 transition-opacity"
               >
                 Join
               </button>
               <button 
                 onClick={() => navigate('/about')}
-                className="px-3 sm:px-6 py-1.5 sm:py-2 text-sm sm:text-base text-primary hover:opacity-80 transition-opacity"
+                className="px-2 sm:px-6 py-1.5 sm:py-2 text-sm sm:text-base text-primary hover:opacity-80 transition-opacity"
               >
                 About
               </button>
               <button 
                 onClick={handleContactClick}
-                className="px-3 sm:px-6 py-1.5 sm:py-2 text-sm sm:text-base text-primary hover:opacity-80 transition-opacity"
+                className="px-2 sm:px-6 py-1.5 sm:py-2 text-sm sm:text-base text-primary hover:opacity-80 transition-opacity"
               >
                 Contact
               </button>

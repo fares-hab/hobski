@@ -123,6 +123,7 @@ body {
   /* Border colors */
   .border-theme { border-color: var(--color-border); }
   .border-theme-muted { border-color: var(--color-border-muted); }
+  .border-theme-accent { border-color: var(--color-bg-accent); }
   
   /* Hover utilities */
   .hover\:bg-theme-hover:hover { background-color: var(--color-hover-bg); }

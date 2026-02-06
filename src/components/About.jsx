@@ -2,7 +2,7 @@ import Navigation from './Navigation';
 
 export default function About({ theme, setTheme }) {
   return (
-    <div className="min-h-screen font-['Inter',sans-serif] bg-theme-primary text-theme-primary">
+    <div className="min-h-screen font-['Inter',sans-serif] bg-theme-primary text-theme-primary overflow-x-hidden">
       {/* Navigation */}
       <Navigation theme={theme} setTheme={setTheme} variant="page" />
 
@@ -15,7 +15,7 @@ export default function About({ theme, setTheme }) {
             alt="Fares and Tala Habbab, founders of hobski"
             loading="eager"
             fetchpriority="high"
-            className="w-full h-auto object-contain scale-125"
+            className="w-[85%] max-h-[50vh] h-auto object-contain"
           />
         </div>
 
