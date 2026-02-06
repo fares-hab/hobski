@@ -540,30 +540,6 @@ export default function HobskiLanding({ theme, setTheme }) {
           ℠ 2026 hobski. 
         </div>
       </footer>
-
-      {/* Construction Notice Bubble */}
-      {showNotice && (
-        <div 
-          className="fixed bottom-6 left-6 z-50 max-w-sm rounded-2xl shadow-2xl border-2 bg-theme-notice border-theme-notice"
-          style={{
-            animation: 'slideIn 0.5s ease-out'
-          }}
-        >
-          <style>{`
-            @keyframes slideIn {
-              from {
-                transform: translateX(-100%);
-                opacity: 0;
-              }
-              to {
-                transform: translateX(0);
-                opacity: 1;
-              }
-            }
-          `}</style>
-          
-        </div>
-      )}
     </div>
   );
 }
