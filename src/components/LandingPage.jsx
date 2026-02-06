@@ -357,7 +357,7 @@ export default function HobskiLanding({ theme, setTheme }) {
               {/* As a Learner Card with Illustration */}
               <div className="relative w-full max-w-md md:max-w-xl group md:transition-transform md:hover:scale-110">
                 {/* Card wrapper - mt creates space for image on mobile */}
-                <div className="relative mt-28 md:mt-0">
+                <div className="relative mt-32 md:mt-0">
                   {/* Character Illustration - anchored to card top */}
                   <img 
                     src={`/images/${isDark ? 'Dark' : 'Light'}LearnerJoin.webp`}
@@ -366,12 +366,18 @@ export default function HobskiLanding({ theme, setTheme }) {
                     fetchPriority="high"
                     className="absolute pointer-events-none w-full md:w-[120%] h-auto object-contain z-10"
                     style={{
-                      // LEARNER IMAGE - Locked to card position
-                      // bottom: 100% = image bottom aligns with card top
-                      // marginBottom = negative to overlap, positive to add gap
-                      bottom: '-56.2%',
-                      marginBottom: '0px',  // ADJUST: overlap onto card (px)
-                      left: '-2%',            // ADJUST: horizontal position
+                      // LEARNER IMAGE - Separate mobile/desktop positioning
+                      ...(isMobile ? {
+                        // MOBILE positioning - adjust these values
+                        bottom: '13.9%',
+                        marginBottom: '0px',
+                        left: '0%',
+                      } : {
+                        // DESKTOP positioning - adjust these values
+                        bottom: '-56.2%',
+                        marginBottom: '0px',
+                        left: '-2%',
+                      })
                     }}
                   />
                   
@@ -400,10 +406,18 @@ export default function HobskiLanding({ theme, setTheme }) {
                     fetchPriority="high"
                     className="absolute pointer-events-none w-full md:w-[120%] h-auto object-contain z-0"
                     style={{
-                      // MENTOR BODY - Locked to card position
-                      bottom: '-49.5%',
-                      marginBottom: '-10px',  // ADJUST: overlap onto card (px)
-                      left: '11%',             // ADJUST: horizontal position
+                      // MENTOR BODY - Separate mobile/desktop positioning
+                      ...(isMobile ? {
+                        // MOBILE positioning - adjust these values
+                        bottom: '24%',
+                        marginBottom: '0px',
+                        left: '5%',
+                      } : {
+                        // DESKTOP positioning - adjust these values
+                        bottom: '-49.5%',
+                        marginBottom: '-10px',
+                        left: '11%',
+                      })
                     }}
                   />
 
@@ -426,10 +440,18 @@ export default function HobskiLanding({ theme, setTheme }) {
                     fetchPriority="high"
                     className="absolute pointer-events-none w-full md:w-[120%] h-auto object-contain z-20"
                     style={{
-                      // MENTOR ARM - Locked to card position
-                      bottom: '-49.5%',
-                      marginBottom: '-10px',  // ADJUST: overlap onto card (px)
-                      left: '11%',             // ADJUST: horizontal position
+                      // MENTOR ARM - Separate mobile/desktop positioning
+                      ...(isMobile ? {
+                        // MOBILE positioning - adjust these values
+                        bottom: '24%',
+                        marginBottom: '0px',
+                        left: '5%',
+                      } : {
+                        // DESKTOP positioning - adjust these values
+                        bottom: '-49.5%',
+                        marginBottom: '-10px',
+                        left: '11%',
+                      })
                     }}
                   />
                 </div>
