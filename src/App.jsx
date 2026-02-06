@@ -7,16 +7,10 @@ const About = lazy(() => import('./components/About'));
 const LearnerSignup = lazy(() => import('./components/LearnerSignup'));
 const MentorSignup = lazy(() => import('./components/MentorSignup'));
 
-// Loading fallback component
-function PageLoader({ isDark }) {
+// Loading fallback component - uses CSS variables for automatic theme support
+function PageLoader() {
   return (
-    <div 
-      className="min-h-screen flex items-center justify-center"
-      style={{
-        backgroundColor: isDark ? '#143269' : '#E6F6FF',
-        color: isDark ? '#C7DBFF' : '#143269'
-      }}
-    >
+    <div className="min-h-screen flex items-center justify-center bg-primary text-primary">
       <div className="text-2xl font-bold animate-pulse">Loading...</div>
     </div>
   );
@@ -58,9 +52,20 @@ function AppContent() {
     return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
   });
 
-  // Persist theme to localStorage
+  // Apply theme class to root HTML element and persist to localStorage
   useEffect(() => {
+    const root = document.documentElement;
+    
+    // Update class on <html> element
+    if (theme === 'dark') {
+      root.classList.add('dark');
+    } else {
+      root.classList.remove('dark');
+    }
+    
+    // Persist to localStorage
     localStorage.setItem('hobski-theme', theme);
+    
     // Update meta theme-color for mobile browsers
     const metaTheme = document.querySelector('meta[name="theme-color"]');
     if (metaTheme) {
@@ -68,12 +73,10 @@ function AppContent() {
     }
   }, [theme]);
 
-  const isDark = theme === 'dark';
-
   return (
     <>
       <ScrollToTop />
-      <Suspense fallback={<PageLoader isDark={isDark} />}>
+      <Suspense fallback={<PageLoader />}>
         <Routes>
           <Route 
             path="/" 

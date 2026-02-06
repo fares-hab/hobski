@@ -1,13 +1,8 @@
 import Navigation from './Navigation';
 
 export default function About({ theme, setTheme }) {
-  const isDark = theme === 'dark';
-
   return (
-    <div className={`min-h-screen font-['Inter',sans-serif] transition-colors ${
-      isDark ? 'text-white' : ''
-    }`}
-    style={isDark ? { backgroundColor: '#143269', color: '#C7DBFF' } : { backgroundColor: '#E6F6FF', color: '#143269' }}>
+    <div className="min-h-screen font-['Inter',sans-serif] bg-theme-primary text-theme-primary">
       {/* Navigation */}
       <Navigation theme={theme} setTheme={setTheme} variant="page" />
 
@@ -31,27 +26,19 @@ export default function About({ theme, setTheme }) {
         <div className="grid md:grid-cols-2 gap-12 items-start mb-12">
           {/* Text Content */}
           <div className="space-y-6">
-            <p className={`text-lg leading-relaxed font-medium ${
-              isDark ? 'text-gray-300' : 'text-gray-900'
-            }`}>
+            <p className="text-lg leading-relaxed font-medium text-theme-muted">
               Hi, we're Tala and Fares Habbab, the sibling founders of hobski! This all started when we each ran into obstacles with our hobbies. At roughly the same time, Tala wished she knew someone who could help her with her sewing project that she'd been stuck on for months, while Fares was having trouble reaching students interested in learning Muay Thai. We found ourselves wishing for a platform where peers could connect and help each other grow their interests.
             </p>
 
-            <p className={`text-lg leading-relaxed font-medium ${
-              isDark ? 'text-gray-300' : 'text-gray-900'
-            }`}>
+            <p className="text-lg leading-relaxed font-medium text-theme-muted">
               That's why we're building a new way for people to connect, share skills, and learn from each other. This is our early stage website, and we're inviting mentors and learners to join our community, share their interests, and help us bring hobski to life.
             </p>
 
-            <p className={`text-lg leading-relaxed font-medium ${
-              isDark ? 'text-gray-300' : 'text-gray-900'
-            }`}>
+            <p className="text-lg leading-relaxed font-medium text-theme-muted">
               Thank you for being a part of our journey.
             </p>
 
-            <p className={`text-lg leading-relaxed font-medium ${
-              isDark ? 'text-gray-300' : 'text-gray-900'
-            }`}>
+            <p className="text-lg leading-relaxed font-medium text-theme-muted">
               Fares & Tala
             </p>
           </div>
@@ -70,12 +57,8 @@ export default function About({ theme, setTheme }) {
       </main>
 
       {/* Footer */}
-      <footer className={`py-8 px-6 border-t transition-colors ${
-        isDark ? 'border-gray-800' : 'border-gray-200'
-      }`}>
-        <div className={`max-w-7xl mx-auto text-center text-sm ${
-          isDark ? 'text-gray-400' : 'text-gray-600'
-        }`}>
+      <footer className="relative z-20 py-8 px-6 bg-theme-primary">
+        <div className="max-w-7xl mx-auto text-center text-sm text-theme-secondary">
           ℠ 2026 hobski.
         </div>
       </footer>

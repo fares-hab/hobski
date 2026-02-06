@@ -1,10 +1,10 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, memo } from 'react';
 
 /**
  * Image component with skeleton loader and error handling
  * Provides visual feedback while images load
  */
-export default function ImageWithSkeleton({ 
+const ImageWithSkeleton = memo(function ImageWithSkeleton({ 
   src, 
   alt, 
   className = '',
@@ -61,9 +61,7 @@ export default function ImageWithSkeleton({
           ref={imgRef}
           src={src}
           alt={alt}
-          className={`transition-opacity duration-300 ${
-            isLoaded ? 'opacity-100' : 'opacity-0'
-          } ${className}`}
+          className={`${isLoaded ? 'opacity-100' : 'opacity-0'} ${className}`}
           loading={loading}
           fetchPriority={fetchPriority}
           onLoad={handleLoad}
@@ -93,4 +91,6 @@ export default function ImageWithSkeleton({
       )}
     </div>
   );
-}
+});
+
+export default ImageWithSkeleton;

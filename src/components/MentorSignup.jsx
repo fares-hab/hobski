@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { supabase } from '../lib/supabase';
 import Navigation from './Navigation';
 
@@ -20,19 +20,6 @@ export default function MentorSignup({ theme, setTheme }) {
   const [submitError, setSubmitError] = useState('');
 
   const isDark = theme === 'dark';
-
-  // Preload form images for both themes
-  useEffect(() => {
-    const imagesToPreload = [
-      '/images/DarkMentorForm.webp',
-      '/images/LightMentorForm.webp'
-    ];
-
-    imagesToPreload.forEach(src => {
-      const img = new Image();
-      img.src = src;
-    });
-  }, []);
 
   const handleInputChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -197,10 +184,7 @@ export default function MentorSignup({ theme, setTheme }) {
   };
 
   return (
-    <div className={`min-h-screen font-['Inter',sans-serif] transition-colors ${
-      isDark ? 'text-white' : ''
-    }`}
-    style={isDark ? { backgroundColor: '#143269', color: 'white' } : { backgroundColor: '#E6F6FF', color: '#143269' }}>
+    <div className="min-h-screen font-['Inter',sans-serif] bg-theme-primary text-theme-primary">
       {/* Navigation */}
       <Navigation theme={theme} setTheme={setTheme} variant="page" />
 
@@ -212,55 +196,37 @@ export default function MentorSignup({ theme, setTheme }) {
           {currentPage === 1 && (
             <div>
               <h1 className="text-4xl md:text-5xl font-bold mb-6">Become a mentor</h1>
-              <p className={`text-lg mb-8 ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>
+              <p className="text-lg mb-8 text-theme-muted">
                 We are currently working to bring this app to you. Sign up to participate in our early testing, get notified when we launch, and help us make this a reality!
               </p>
 
               <div className="space-y-6">
                 <div className="grid md:grid-cols-2 gap-6">
                   <div>
-                    <label className={`block mb-2 ${
-                      isDark ? 'text-gray-300' : 'text-gray-700'
-                    }`}>
-                      First Name <span className="text-gray-400">(required)</span>
+                    <label className="block mb-2 text-theme-muted">
+                      First Name <span className="text-theme-secondary">(required)</span>
                     </label>
                     <input
                       type="text"
                       name="firstName"
                       value={formData.firstName}
                       onChange={handleInputChange}
-                      className={`w-full px-4 py-3 border rounded-lg focus:outline-none transition-colors ${
-                        errors.firstName
-                          ? 'border-red-500 focus:border-red-500'
-                          : isDark 
-                            ? 'bg-gray-900 border-gray-700' 
-                            : 'bg-white border-gray-300 focus:border-black text-black'
-                      }`}
-                      style={isDark && !errors.firstName ? { borderColor: '#C7DBFF', color: '#C7DBFF' } : {}}
+                      className={`w-full px-4 py-3 border rounded-lg input-theme ${errors.firstName ? 'error' : ''}`}
                     />
                     {errors.firstName && (
                       <p className="text-red-500 text-sm mt-1">{errors.firstName}</p>
                     )}
                   </div>
                   <div>
-                    <label className={`block mb-2 ${
-                      isDark ? 'text-gray-300' : 'text-gray-700'
-                    }`}>
-                      Last Name <span className="text-gray-400">(required)</span>
+                    <label className="block mb-2 text-theme-muted">
+                      Last Name <span className="text-theme-secondary">(required)</span>
                     </label>
                     <input
                       type="text"
                       name="lastName"
                       value={formData.lastName}
                       onChange={handleInputChange}
-                      className={`w-full px-4 py-3 border rounded-lg focus:outline-none transition-colors ${
-                        errors.lastName
-                          ? 'border-red-500 focus:border-red-500'
-                          : isDark 
-                            ? 'bg-gray-900 border-gray-700' 
-                            : 'bg-white border-gray-300'
-                      }`}
-                      style={isDark && !errors.lastName ? { borderColor: '#C7DBFF', color: '#C7DBFF' } : {}}
+                      className={`w-full px-4 py-3 border rounded-lg input-theme ${errors.lastName ? 'error' : ''}`}
                     />
                     {errors.lastName && (
                       <p className="text-red-500 text-sm mt-1">{errors.lastName}</p>
@@ -269,24 +235,15 @@ export default function MentorSignup({ theme, setTheme }) {
                 </div>
 
                 <div>
-                  <label className={`block mb-2 ${
-                    isDark ? 'text-gray-300' : 'text-gray-700'
-                  }`}>
-                    Email <span className="text-gray-400">(required)</span>
+                  <label className="block mb-2 text-theme-muted">
+                    Email <span className="text-theme-secondary">(required)</span>
                   </label>
                   <input
                     type="email"
                     name="email"
                     value={formData.email}
                     onChange={handleInputChange}
-                    className={`w-full px-4 py-3 border rounded-lg focus:outline-none transition-colors ${
-                      errors.email
-                        ? 'border-red-500 focus:border-red-500'
-                        : isDark 
-                          ? 'bg-gray-900 border-gray-700' 
-                          : 'bg-white border-gray-300'
-                    }`}
-                    style={isDark && !errors.email ? { borderColor: '#C7DBFF', color: '#C7DBFF' } : {}}
+                    className={`w-full px-4 py-3 border rounded-lg input-theme ${errors.email ? 'error' : ''}`}
                   />
                   {errors.email && (
                     <p className="text-red-500 text-sm mt-1">{errors.email}</p>
@@ -294,9 +251,7 @@ export default function MentorSignup({ theme, setTheme }) {
                 </div>
 
                 <div>
-                  <label className={`block mb-2 ${
-                    isDark ? 'text-gray-300' : 'text-gray-700'
-                  }`}>
+                  <label className="block mb-2 text-theme-muted">
                     Phone
                   </label>
                   <input
@@ -304,12 +259,7 @@ export default function MentorSignup({ theme, setTheme }) {
                     name="phone"
                     value={formData.phone}
                     onChange={handleInputChange}
-                    className={`w-full px-4 py-3 border rounded-lg focus:outline-none transition-colors ${
-                      isDark 
-                        ? 'bg-gray-900 border-gray-700' 
-                        : 'bg-white border-transparent'
-                    }`}
-                    style={isDark ? { borderColor: '#C7DBFF', color: '#C7DBFF' } : {}}
+                    className="w-full px-4 py-3 border rounded-lg input-theme"
                   />
                 </div>
 
@@ -323,14 +273,7 @@ export default function MentorSignup({ theme, setTheme }) {
                   <button
                     onClick={handleNext}
                     disabled={isSubmitting}
-                    className={`px-8 py-3 rounded-full font-medium transition-colors ${
-                      isSubmitting
-                        ? 'opacity-50 cursor-not-allowed'
-                        : isDark 
-                          ? 'hover:opacity-80' 
-                          : 'bg-black text-white hover:bg-gray-800'
-                    }`}
-                    style={isDark && !isSubmitting ? { backgroundColor: '#C7DBFF', color: '#143269' } : {}}
+                    className={`px-8 py-3 rounded-full font-medium transition-colors btn-primary ${isSubmitting ? 'opacity-50 cursor-not-allowed' : ''}`}
                   >
                     {isSubmitting ? 'Checking...' : 'Next'}
                   </button>
@@ -346,10 +289,8 @@ export default function MentorSignup({ theme, setTheme }) {
 
               <div className="space-y-8">
                 <div>
-                  <label className={`block mb-2 ${
-                    isDark ? 'text-gray-300' : 'text-gray-700'
-                  }`}>
-                    List 1-3 hobbies, skills, or projects that you'd like to mentor <span className="text-gray-400">(required)</span>
+                  <label className="block mb-2 text-theme-muted">
+                    List 1-3 hobbies, skills, or projects that you'd like to mentor <span className="text-theme-secondary">(required)</span>
                   </label>
                   <textarea
                     name="hobbies"
@@ -357,14 +298,7 @@ export default function MentorSignup({ theme, setTheme }) {
                     onChange={handleInputChange}
                     placeholder="(e.g, Guitar, Muay-Thai, Sewing, DIY home projects)"
                     rows="6"
-                    className={`w-full px-4 py-3 border rounded-lg focus:outline-none transition-colors resize-none ${
-                      errors.hobbies
-                        ? 'border-red-500 focus:border-red-500'
-                        : isDark 
-                          ? 'bg-gray-900 border-gray-700 placeholder-gray-500' 
-                          : 'bg-white border-gray-300 placeholder-gray-400'
-                    }`}
-                    style={isDark && !errors.hobbies ? { borderColor: '#C7DBFF', color: '#C7DBFF' } : (!isDark && !errors.hobbies ? { borderColor: '#143269', color: '#143269' } : {})}
+                    className={`w-full px-4 py-3 border rounded-lg resize-none input-theme placeholder-theme-secondary ${errors.hobbies ? 'error' : ''}`}
                   />
                   {errors.hobbies && (
                     <p className="text-red-500 text-sm mt-1">{errors.hobbies}</p>
@@ -372,10 +306,8 @@ export default function MentorSignup({ theme, setTheme }) {
                 </div>
 
                 <div>
-                  <label className={`block mb-3 ${
-                    isDark ? 'text-gray-300' : 'text-gray-700'
-                  }`}>
-                    I would like to... <span className="text-gray-400">(required)</span>
+                  <label className="block mb-3 text-theme-muted">
+                    I would like to... <span className="text-theme-secondary">(required)</span>
                   </label>
                   <div className="space-y-3">
                     <label className="flex items-center gap-3 cursor-pointer">
@@ -402,9 +334,7 @@ export default function MentorSignup({ theme, setTheme }) {
                 </div>
 
                 <div>
-                  <label className={`block mb-3 ${
-                    isDark ? 'text-gray-300' : 'text-gray-700'
-                  }`}>
+                  <label className="block mb-3 text-theme-muted">
                     How did you hear about us?
                   </label>
                   <div className="space-y-3">
@@ -469,12 +399,7 @@ export default function MentorSignup({ theme, setTheme }) {
                         name="otherSource"
                         value={formData.otherSource}
                         onChange={handleInputChange}
-                        className={`w-full max-w-md ml-8 px-4 py-2 border rounded-lg focus:outline-none transition-colors ${
-                          isDark 
-                            ? 'bg-gray-900 border-gray-700' 
-                            : 'bg-white border-gray-300'
-                        }`}
-                        style={isDark ? { borderColor: '#C7DBFF', color: '#C7DBFF' } : { borderColor: '#143269', color: '#143269' }}
+                        className="w-full max-w-md ml-8 px-4 py-2 border rounded-lg input-theme"
                       />
                     )}
                   </div>
@@ -490,28 +415,14 @@ export default function MentorSignup({ theme, setTheme }) {
                   <button
                     onClick={handleBack}
                     disabled={isSubmitting}
-                    className={`px-8 py-3 rounded-full font-medium transition-colors ${
-                      isSubmitting
-                        ? 'opacity-50 cursor-not-allowed'
-                        : isDark 
-                          ? 'bg-gray-800 hover:bg-gray-700' 
-                          : 'bg-gray-200 hover:bg-gray-300'
-                    }`}
-                    style={isDark && !isSubmitting ? { color: '#C7DBFF' } : (!isDark ? { color: '#143269' } : {})}
+                    className={`px-8 py-3 rounded-full font-medium transition-colors btn-secondary ${isSubmitting ? 'opacity-50 cursor-not-allowed' : ''}`}
                   >
                     Back
                   </button>
                   <button
                     onClick={handleSubmit}
                     disabled={isSubmitting}
-                    className={`px-8 py-3 rounded-full font-medium transition-colors ${
-                      isSubmitting
-                        ? 'opacity-50 cursor-not-allowed'
-                        : isDark 
-                          ? 'hover:opacity-80' 
-                          : 'bg-black text-white hover:bg-gray-800'
-                    }`}
-                    style={isDark && !isSubmitting ? { backgroundColor: '#C7DBFF', color: '#143269' } : {}}
+                    className={`px-8 py-3 rounded-full font-medium transition-colors btn-primary ${isSubmitting ? 'opacity-50 cursor-not-allowed' : ''}`}
                   >
                     {isSubmitting ? 'Submitting...' : 'Submit'}
                   </button>
@@ -524,7 +435,7 @@ export default function MentorSignup({ theme, setTheme }) {
           {currentPage === 3 && (
             <div className="text-center">
               <h1 className="text-4xl md:text-5xl font-bold mb-6">Thank you for joining us on our journey!</h1>
-              <div className={`text-lg space-y-6 mb-8 ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>
+              <div className="text-lg space-y-6 mb-8 text-theme-muted">
                 <p>
                   As an early mentor, you'll be part of our pilot and help shape how hobski works while connecting with curious learners in your community.
                 </p>
