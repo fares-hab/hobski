@@ -7,7 +7,7 @@ export default function About({ theme, setTheme }) {
       <Navigation theme={theme} setTheme={setTheme} variant="page" />
 
       {/* Main Content */}
-      <main className="max-w-6xl mx-auto px-6 py-16 pt-32">
+      <main className="max-w-6xl mx-auto px-6 py-16 pt-28">
         {/* Founders Image - Shows first on mobile, second on desktop */}
         <div className="flex items-center justify-center md:hidden mb-8">
           <img 
