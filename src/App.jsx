@@ -7,11 +7,14 @@ const About = lazy(() => import('./components/About'));
 const LearnerSignup = lazy(() => import('./components/LearnerSignup'));
 const MentorSignup = lazy(() => import('./components/MentorSignup'));
 
-// Loading fallback component - uses CSS variables for automatic theme support
+// Loading fallback component - shows header skeleton while chunks load
 function PageLoader() {
   return (
-    <div className="min-h-screen flex items-center justify-center bg-primary text-primary">
-      <div className="text-2xl font-bold animate-pulse">Loading...</div>
+    <div className="min-h-screen bg-theme-primary">
+      {/* Header skeleton */}
+      <header className="fixed top-0 left-0 right-0 z-50 h-16 bg-theme-primary" />
+      {/* Hero area - empty, waiting for content */}
+      <div className="h-screen" />
     </div>
   );
 }

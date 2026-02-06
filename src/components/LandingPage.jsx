@@ -363,7 +363,6 @@ export default function HobskiLanding({ theme, setTheme }) {
                     src={`/images/${isDark ? 'Dark' : 'Light'}LearnerJoin.webp`}
                     alt=""
                     loading="eager"
-                    fetchPriority="high"
                     className="absolute pointer-events-none w-full md:w-[120%] h-auto object-contain z-10"
                     style={{
                       // LEARNER IMAGE - Separate mobile/desktop positioning
@@ -403,7 +402,6 @@ export default function HobskiLanding({ theme, setTheme }) {
                     src={`/images/${isDark ? 'Dark' : 'Light'}MentorBodyCard.webp`}
                     alt=""
                     loading="eager"
-                    fetchPriority="high"
                     className="absolute pointer-events-none w-full md:w-[120%] h-auto object-contain z-0"
                     style={{
                       // MENTOR BODY - Separate mobile/desktop positioning
@@ -437,7 +435,6 @@ export default function HobskiLanding({ theme, setTheme }) {
                     src={`/images/${isDark ? 'Dark' : 'Light'}MentorArm.webp`}
                     alt=""
                     loading="eager"
-                    fetchPriority="high"
                     className="absolute pointer-events-none w-full md:w-[120%] h-auto object-contain z-20"
                     style={{
                       // MENTOR ARM - Separate mobile/desktop positioning
@@ -588,6 +585,8 @@ const HeroCarousel = memo(function HeroCarousel({ theme, scrollToSection }) {
   const [prevSlide, setPrevSlide] = useState(null);
   const [direction, setDirection] = useState(1); // 1 = next (slide from right), -1 = prev (slide from left)
   const [isPaused, setIsPaused] = useState(false);
+  const [imagesLoaded, setImagesLoaded] = useState(false);
+  const [initialAnimationDone, setInitialAnimationDone] = useState(false);
 
   const slides = [
     { 
@@ -606,6 +605,40 @@ const HeroCarousel = memo(function HeroCarousel({ theme, scrollToSection }) {
       alt: 'Do it illustration'
     }
   ];
+
+  // Preload carousel images on mount and when theme changes
+  useEffect(() => {
+    setImagesLoaded(false);
+    setInitialAnimationDone(false);
+    
+    // Get current slide URLs based on theme
+    const imageUrls = [
+      `/images/${theme === 'dark' ? 'Dark' : 'Light'}DreamItArt.webp`,
+      `/images/${theme === 'dark' ? 'Dark' : 'Light'}LearnItArt.webp`,
+      `/images/${theme === 'dark' ? 'Dark' : 'Light'}DoItArt.webp`
+    ];
+
+    // Use Image objects for preloading
+    let loadedCount = 0;
+    const totalImages = imageUrls.length;
+    
+    imageUrls.forEach((url) => {
+      const img = new Image();
+      img.onload = () => {
+        loadedCount++;
+        if (loadedCount === totalImages) {
+          setImagesLoaded(true);
+        }
+      };
+      img.onerror = () => {
+        loadedCount++;
+        if (loadedCount === totalImages) {
+          setImagesLoaded(true);
+        }
+      };
+      img.src = url;
+    });
+  }, [theme]);
 
   const goToSlide = (index) => {
     if (index === currentSlide) return;
@@ -626,16 +659,16 @@ const HeroCarousel = memo(function HeroCarousel({ theme, scrollToSection }) {
     setCurrentSlide((prev) => (prev === slides.length - 1 ? 0 : prev + 1));
   }, [currentSlide, slides.length]);
 
-  // Auto-cycle carousel every 5 seconds
+  // Auto-cycle carousel every 5 seconds (only after images are loaded)
   useEffect(() => {
-    if (isPaused) return;
+    if (isPaused || !imagesLoaded) return;
     
     const interval = setInterval(() => {
       goToNext();
     }, 5000); // ADJUST: Change interval time here (ms)
     
     return () => clearInterval(interval);
-  }, [goToNext, isPaused]);
+  }, [goToNext, isPaused, imagesLoaded]);
 
   return (
     <div 
@@ -663,70 +696,116 @@ const HeroCarousel = memo(function HeroCarousel({ theme, scrollToSection }) {
           from { transform: translateX(0); }
           to { transform: translateX(100%); }
         }
+        @keyframes initialSlideIn {
+          from { 
+            transform: translateY(30px); 
+            opacity: 0; 
+          }
+          to { 
+            transform: translateY(0); 
+            opacity: 1; 
+          }
+        }
       `}</style>
       
-      {/* Carousel wrapper */}
+      {/* Carousel wrapper - all slides always rendered for preloading */}
       <div className="relative h-full overflow-hidden">
         {slides.map((slide, index) => {
           const isActive = index === currentSlide;
           const isLeaving = index === prevSlide;
           
-          // Only render active and leaving slides
-          if (!isActive && !isLeaving) {
-            return null;
-          }
+          // Determine position and animation based on state
+          let slideStyle = {};
           
-          // Determine animation based on state and direction
-          let animationStyle = {};
-          if (isActive) {
-            // No animation on initial load (prevSlide is null)
-            if (prevSlide === null) {
-              animationStyle = { zIndex: 10 };
+          // Before images are loaded, hide all slides
+          if (!imagesLoaded) {
+            slideStyle = {
+              transform: 'translateX(0)',
+              opacity: 0,
+              zIndex: 1,
+              pointerEvents: 'none'
+            };
+          } else if (isActive) {
+            // Initial slide-in animation when images first load
+            if (prevSlide === null && !initialAnimationDone) {
+              slideStyle = { 
+                animation: 'initialSlideIn 600ms ease-out forwards',
+                zIndex: 10 
+              };
+            } else if (prevSlide === null) {
+              // After initial animation, just show normally
+              slideStyle = { 
+                transform: 'translateX(0)',
+                opacity: 1,
+                zIndex: 10 
+              };
             } else {
-              animationStyle = {
+              slideStyle = {
                 animation: direction === 1 
                   ? 'slideInFromRight 700ms ease-out forwards' 
                   : 'slideInFromLeft 700ms ease-out forwards',
+                opacity: 1,
                 zIndex: 10
               };
             }
           } else if (isLeaving) {
-            animationStyle = {
+            slideStyle = {
               animation: direction === 1 
                 ? 'slideOutToLeft 700ms ease-out forwards' 
                 : 'slideOutToRight 700ms ease-out forwards',
+              opacity: 1,
               zIndex: 5
+            };
+          } else {
+            // Inactive slides - keep at same position but hidden BEHIND active slide
+            slideStyle = {
+              transform: 'translateX(0)',
+              opacity: 0.01,
+              zIndex: 1,
+              pointerEvents: 'none'
             };
           }
           
           return (
             <div
-              key={`${index}-${currentSlide}`}
-              className="absolute inset-0"
-              style={animationStyle}
+              key={index}
+              className="absolute inset-0 bg-theme-primary"
+              style={slideStyle}
+              onAnimationEnd={(e) => {
+                // Only handle the initialSlideIn animation, not bubbled events
+                if (e.animationName === 'initialSlideIn' && isActive && prevSlide === null) {
+                  setInitialAnimationDone(true);
+                }
+              }}
             >
               <div className="flex flex-col items-center justify-center h-full px-6 -mt-12">
                 {/* Text Header */}
-                <h1 className="text-7xl sm:text-6xl md:text-7xl lg:text-9xl font-bold mb-0 md:-mb-24 text-center text-theme-primary">
+                <h1 className="text-7xl sm:text-6xl md:text-7xl lg:text-9xl font-bold -mb-20 md:-mb-24 text-center text-theme-primary z-10">
                   {slide.text}
                 </h1>
-                {/* Image - MOBILE SIZE: w-[85%], DESKTOP: w-[95%] lg:w-[90%] */}
-                <img
-                  src={slide.image}
-                  alt={slide.alt}
-                  className="w-[120%] md:w-[95%] lg:w-[90%] max-w-7xl object-contain"
-                  style={{ maxHeight: '70vh' }}
-                  loading={index === 0 ? "eager" : "lazy"}
-                  fetchPriority={index === 0 ? "high" : "low"}
-                />
+                {/* Image container with reserved space to prevent layout shift */}
+                <div 
+                  className="w-[120%] md:w-[95%] lg:w-[90%] max-w-7xl flex items-center justify-center"
+                  style={{ height: '70vh', minHeight: '300px' }}
+                >
+                  <img
+                    src={slide.image}
+                    alt={slide.alt}
+                    className="w-full h-full object-contain"
+                    loading="eager"
+                  />
+                </div>
               </div>
             </div>
           );
         })}
       </div>
 
-      {/* Slider indicators */}
-      <div className="absolute z-30 flex -translate-x-1/2 space-x-3 bottom-28 md:bottom-24 left-1/2">
+      {/* Slider indicators - fade in when loaded */}
+      <div 
+        className="absolute z-30 flex -translate-x-1/2 space-x-3 bottom-28 md:bottom-24 left-1/2 transition-opacity duration-500"
+        style={{ opacity: imagesLoaded ? 1 : 0 }}
+      >
         {slides.map((_, index) => (
           <button
             key={index}
@@ -742,10 +821,11 @@ const HeroCarousel = memo(function HeroCarousel({ theme, scrollToSection }) {
         ))}
       </div>
 
-      {/* Slider controls */}
+      {/* Slider controls - fade in when loaded */}
       <button
         type="button"
-        className="absolute top-[70%] md:top-0 start-0 z-30 flex items-center justify-center h-auto md:h-full px-4 cursor-pointer group focus:outline-none"
+        className="absolute top-[70%] md:top-0 start-0 z-30 flex items-center justify-center h-auto md:h-full px-4 cursor-pointer group focus:outline-none transition-opacity duration-500"
+        style={{ opacity: imagesLoaded ? 1 : 0 }}
         onClick={goToPrevious}
         aria-label="Previous slide"
       >
@@ -763,7 +843,8 @@ const HeroCarousel = memo(function HeroCarousel({ theme, scrollToSection }) {
       </button>
       <button
         type="button"
-        className="absolute top-[70%] md:top-0 end-0 z-30 flex items-center justify-center h-auto md:h-full px-4 cursor-pointer group focus:outline-none"
+        className="absolute top-[70%] md:top-0 end-0 z-30 flex items-center justify-center h-auto md:h-full px-4 cursor-pointer group focus:outline-none transition-opacity duration-500"
+        style={{ opacity: imagesLoaded ? 1 : 0 }}
         onClick={goToNext}
         aria-label="Next slide"
       >
@@ -780,8 +861,11 @@ const HeroCarousel = memo(function HeroCarousel({ theme, scrollToSection }) {
         </span>
       </button>
 
-      {/* Scroll down button */}
-      <div className="absolute bottom-4 md:bottom-8 left-1/2 -translate-x-1/2 z-30">
+      {/* Scroll down button - fade in when loaded */}
+      <div 
+        className="absolute bottom-4 md:bottom-8 left-1/2 -translate-x-1/2 z-30 transition-opacity duration-500"
+        style={{ opacity: imagesLoaded ? 1 : 0 }}
+      >
         <button 
           onClick={() => scrollToSection('how-it-works')}
           className="inline-flex items-center gap-1.5 md:gap-2 px-4 py-2 md:px-6 md:py-3 text-sm md:text-base rounded-full border-2 group border-theme-accent text-theme-accent hover:bg-theme-accent hover:text-theme-on-accent transition-colors"
