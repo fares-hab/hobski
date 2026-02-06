@@ -610,6 +610,7 @@ const HeroCarousel = memo(function HeroCarousel({ theme, scrollToSection }) {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [prevSlide, setPrevSlide] = useState(null);
   const [direction, setDirection] = useState(1); // 1 = next (slide from right), -1 = prev (slide from left)
+  const [isPaused, setIsPaused] = useState(false);
 
   const slides = [
     { 
@@ -642,14 +643,31 @@ const HeroCarousel = memo(function HeroCarousel({ theme, scrollToSection }) {
     setCurrentSlide((prev) => (prev === 0 ? slides.length - 1 : prev - 1));
   };
 
-  const goToNext = () => {
+  const goToNext = useCallback(() => {
     setDirection(1);
     setPrevSlide(currentSlide);
     setCurrentSlide((prev) => (prev === slides.length - 1 ? 0 : prev + 1));
-  };
+  }, [currentSlide, slides.length]);
+
+  // Auto-cycle carousel every 5 seconds
+  useEffect(() => {
+    if (isPaused) return;
+    
+    const interval = setInterval(() => {
+      goToNext();
+    }, 5000); // ADJUST: Change interval time here (ms)
+    
+    return () => clearInterval(interval);
+  }, [goToNext, isPaused]);
 
   return (
-    <div className="relative w-full h-screen pt-16 bg-theme-primary">
+    <div 
+      className="relative w-full h-screen pt-16 bg-theme-primary"
+      onMouseEnter={() => setIsPaused(true)}
+      onMouseLeave={() => setIsPaused(false)}
+      onTouchStart={() => setIsPaused(true)}
+      onTouchEnd={() => setIsPaused(false)}
+    >
       {/* CSS Animations for carousel */}
       <style>{`
         @keyframes slideInFromRight {
@@ -710,16 +728,16 @@ const HeroCarousel = memo(function HeroCarousel({ theme, scrollToSection }) {
               className="absolute inset-0"
               style={animationStyle}
             >
-              <div className="flex flex-col items-center justify-center h-full px-8 -mt-10">
+              <div className="flex flex-col items-center justify-center h-full px-6 -mt-12">
                 {/* Text Header */}
-                <h1 className="text-5xl sm:text-6xl md:text-7xl lg:text-9xl font-bold mb-0 md:-mb-32 text-center text-theme-primary">
+                <h1 className="text-7xl sm:text-6xl md:text-7xl lg:text-9xl font-bold mb-0 md:-mb-24 text-center text-theme-primary">
                   {slide.text}
                 </h1>
                 {/* Image - MOBILE SIZE: w-[85%], DESKTOP: w-[95%] lg:w-[90%] */}
                 <img
                   src={slide.image}
                   alt={slide.alt}
-                  className="w-[85%] md:w-[95%] lg:w-[90%] max-w-7xl object-contain"
+                  className="w-[120%] md:w-[95%] lg:w-[90%] max-w-7xl object-contain"
                   style={{ maxHeight: '70vh' }}
                   loading={index === 0 ? "eager" : "lazy"}
                   fetchPriority={index === 0 ? "high" : "low"}
@@ -750,7 +768,7 @@ const HeroCarousel = memo(function HeroCarousel({ theme, scrollToSection }) {
       {/* Slider controls */}
       <button
         type="button"
-        className="absolute top-0 start-0 z-30 flex items-center justify-center h-full px-4 cursor-pointer group focus:outline-none"
+        className="absolute top-[70%] md:top-0 start-0 z-30 flex items-center justify-center h-auto md:h-full px-4 cursor-pointer group focus:outline-none"
         onClick={goToPrevious}
         aria-label="Previous slide"
       >
@@ -768,7 +786,7 @@ const HeroCarousel = memo(function HeroCarousel({ theme, scrollToSection }) {
       </button>
       <button
         type="button"
-        className="absolute top-0 end-0 z-30 flex items-center justify-center h-full px-4 cursor-pointer group focus:outline-none"
+        className="absolute top-[70%] md:top-0 end-0 z-30 flex items-center justify-center h-auto md:h-full px-4 cursor-pointer group focus:outline-none"
         onClick={goToNext}
         aria-label="Next slide"
       >
