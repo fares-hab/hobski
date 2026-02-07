@@ -340,7 +340,7 @@ export default function HobskiLanding({ theme, setTheme }) {
           style={{ 
             marginTop: '-4rem',
             paddingTop: '2rem',
-            paddingBottom: '2rem',
+            paddingBottom: '8rem',
           }}
         >
           <ScrollSection 
