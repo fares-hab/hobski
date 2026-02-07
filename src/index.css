@@ -8,9 +8,9 @@
   --color-bg-primary: #E6F6FF;
   --color-bg-secondary: #B7D0FF;
   --color-bg-card: #E6F6FF;
-  --color-bg-card-alt: #0D2A5E;
+  --color-bg-card-alt: #143269;
   --color-bg-nav: #E6F6FF;
-  --color-bg-tab-active: #0D2A5E;
+  --color-bg-tab-active: #143269;
   --color-bg-tab-inactive: #E6F6FF;
   --color-bg-accent: #143269;
   --color-bg-accent-invert: #C7DBFF;
@@ -48,15 +48,15 @@
 
 :root.dark {
   /* Dark theme */
-  --color-bg-primary: #143269;
+  --color-bg-primary: #0D2A5E;
   --color-bg-secondary: #3F60CF;
-  --color-bg-card: #143269;
-  --color-bg-card-alt: #143269;
-  --color-bg-nav: #143269;
+  --color-bg-card: #0D2A5E;
+  --color-bg-card-alt: #0D2A5E;
+  --color-bg-nav: #0D2A5E;
   --color-bg-tab-active: #0D2A5E;
   --color-bg-tab-inactive: #FFFFFF;
   --color-bg-accent: #C7DBFF;
-  --color-bg-accent-invert: #143269;
+  --color-bg-accent-invert: #0D2A5E;
   
   /* Get Involved section */
   --color-bg-involved: #0D2A5E;
@@ -66,10 +66,10 @@
   --color-text-primary: #C7DBFF;
   --color-text-secondary: #9CA3AF; /* gray-400 */
   --color-text-muted: #D1D5DB; /* gray-300 */
-  --color-text-on-accent: #143269;
+  --color-text-on-accent: #0D2A5E;
   --color-text-on-card: #FFFFFF;
   --color-text-on-card-muted: rgba(255, 255, 255, 0.75);
-  --color-text-tab-inactive: #143269;
+  --color-text-tab-inactive: #0D2A5E;
   
   --color-border: #374151; /* gray-700 */
   --color-border-muted: #4B5563; /* gray-600 */
@@ -123,7 +123,6 @@ body {
   /* Border colors */
   .border-theme { border-color: var(--color-border); }
   .border-theme-muted { border-color: var(--color-border-muted); }
-  .border-theme-accent { border-color: var(--color-bg-accent); }
   
   /* Hover utilities */
   .hover\:bg-theme-hover:hover { background-color: var(--color-hover-bg); }

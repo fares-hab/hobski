@@ -60,7 +60,7 @@ export default function HobskiLanding({ theme, setTheme }) {
 
   return (
     <div 
-      className="min-h-screen font-['Inter',sans-serif] bg-theme-primary text-theme-primary overflow-x-hidden"
+      className="min-h-screen font-['Inter',sans-serif] bg-theme-primary text-theme-primary"
     >
       {/* Navigation */}
       <Navigation 
@@ -339,8 +339,7 @@ export default function HobskiLanding({ theme, setTheme }) {
           className="bg-theme-involved"
           style={{ 
             marginTop: '-4rem',
-            paddingTop: '2rem',
-            paddingBottom: '8rem',
+            paddingTop: '2rem'
           }}
         >
           <ScrollSection 
@@ -533,7 +532,7 @@ export default function HobskiLanding({ theme, setTheme }) {
         </div>
 
       {/* Footer */}
-      <footer className="relative z-20 py-8 px-6 bg-theme-secondary">
+      <footer className="relative z-20 py-8 px-6 bg-theme-primary">
         <div className="max-w-7xl mx-auto text-center text-sm text-theme-secondary">
           ℠ 2026 hobski. 
         </div>
