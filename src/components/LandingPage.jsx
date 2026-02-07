@@ -111,7 +111,7 @@ export default function HobskiLanding({ theme, setTheme }) {
                   onClick={() => setActiveTab('learner')}
                   className={`flex-1 px-4 py-2 md:px-8 md:py-3 font-semibold text-lg md:text-xl ${
                     activeTab === 'learner'
-                      ? 'text-white z-10 bg-theme-tab-active'
+                      ? 'text-theme-tab-active z-10 bg-theme-tab-active'
                       : 'text-theme-tab-inactive bg-theme-tab-inactive hover:brightness-95'
                   }`}
                   style={{ 
@@ -128,7 +128,7 @@ export default function HobskiLanding({ theme, setTheme }) {
                   onClick={() => setActiveTab('mentor')}
                   className={`flex-1 px-4 py-2 md:px-8 md:py-3 font-semibold text-lg md:text-xl ${
                     activeTab === 'mentor'
-                      ? 'text-white z-10 bg-theme-tab-active'
+                      ? 'text-theme-tab-active z-10 bg-theme-tab-active'
                       : 'text-theme-tab-inactive bg-theme-tab-inactive hover:brightness-95'
                   }`}
                   style={{ 
@@ -533,7 +533,7 @@ export default function HobskiLanding({ theme, setTheme }) {
         </div>
 
       {/* Footer */}
-      <footer className="relative z-20 py-8 px-6 bg-theme-primary">
+      <footer className="relative z-20 py-8 px-6 bg-theme-secondary">
         <div className="max-w-7xl mx-auto text-center text-sm text-theme-secondary">
           ℠ 2026 hobski. 
         </div>

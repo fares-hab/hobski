@@ -13,7 +13,7 @@
   --color-bg-tab-active: #143269;
   --color-bg-tab-inactive: #E6F6FF;
   --color-bg-accent: #143269;
-  --color-bg-accent-invert: #C7DBFF;
+  --color-bg-accent-invert: #E6F6FF;
   
   /* Get Involved section */
   --color-bg-involved: #E6F6FF;
@@ -23,11 +23,11 @@
   --color-text-primary: #143269;
   --color-text-secondary: #4B5563; /* gray-600 */
   --color-text-muted: #6B7280; /* gray-500 */
-  --color-text-on-accent: #FFFFFF;
-  --color-text-on-card: #C7DBFF;
+  --color-text-on-accent: #E6F6FF;
+  --color-text-on-card: #E6F6FF;
   --color-text-on-card-muted: rgba(199, 219, 255, 0.85);
   --color-text-tab-inactive: #143269;
-  
+  --color-text-tab-active: #E6F6FF;
   --color-border: #BFDBFE; /* blue-200 */
   --color-border-muted: #E5E7EB; /* gray-200 */
   
@@ -54,7 +54,7 @@
   --color-bg-card-alt: #0D2A5E;
   --color-bg-nav: #0D2A5E;
   --color-bg-tab-active: #0D2A5E;
-  --color-bg-tab-inactive: #FFFFFF;
+  --color-bg-tab-inactive: #C7DBFF;
   --color-bg-accent: #C7DBFF;
   --color-bg-accent-invert: #0D2A5E;
   
@@ -67,9 +67,10 @@
   --color-text-secondary: #9CA3AF; /* gray-400 */
   --color-text-muted: #D1D5DB; /* gray-300 */
   --color-text-on-accent: #0D2A5E;
-  --color-text-on-card: #FFFFFF;
+  --color-text-on-card: #C7DBFF;
   --color-text-on-card-muted: rgba(255, 255, 255, 0.75);
   --color-text-tab-inactive: #0D2A5E;
+  --color-text-tab-active: #C7DBFF;
   
   --color-border: #374151; /* gray-700 */
   --color-border-muted: #4B5563; /* gray-600 */
@@ -119,7 +120,7 @@ body {
   .text-theme-on-card { color: var(--color-text-on-card); }
   .text-theme-on-card-muted { color: var(--color-text-on-card-muted); }
   .text-theme-tab-inactive { color: var(--color-text-tab-inactive); }
-  
+  .text-theme-tab-active { color: var(--color-text-tab-active); }
   /* Border colors */
   .border-theme { border-color: var(--color-border); }
   .border-theme-muted { border-color: var(--color-border-muted); }
