@@ -534,7 +534,7 @@ export default function HobskiLanding({ theme, setTheme }) {
 
       {/* Footer */}
       <footer className="relative z-20 py-8 px-6 bg-theme-secondary">
-        <div className="max-w-7xl mx-auto text-center text-sm text-theme-secondary">
+        <div className="max-w-7xl mx-auto text-center text-sm text-theme-primary">
           ℠ 2026 hobski. 
         </div>
       </footer>
@@ -813,7 +813,9 @@ const HeroCarousel = memo(function HeroCarousel({ theme, scrollToSection }) {
             type="button"
             className="w-3 h-3 rounded-full transition-colors"
             style={{
-              backgroundColor: index === currentSlide ? '#377BD9' : '#95a8c5'
+              backgroundColor: index === currentSlide
+                ? 'var(--color-indicator-selected)'
+                : 'var(--color-indicator-unselected)'
             }}
             aria-current={index === currentSlide}
             aria-label={`Slide ${index + 1}`}
@@ -937,7 +939,9 @@ const MobileStepCarousel = memo(function MobileStepCarousel({ steps, activeTab }
                 style={{
                   width: index === currentStep ? '12px' : '8px',
                   height: index === currentStep ? '12px' : '8px',
-                  backgroundColor: index === currentStep ? '#377BD9' : '#95a8c5'
+                  backgroundColor: index === currentStep
+                    ? 'var(--color-indicator-selected)'
+                    : 'var(--color-indicator-unselected)'
                 }}
                 aria-label={`Go to step ${index + 1}`}
               />

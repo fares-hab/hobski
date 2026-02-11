@@ -44,6 +44,10 @@
   --color-notice-border: #E5E7EB; /* gray-200 */
   --color-notice-text: #1F2937; /* gray-800 */
   --color-notice-icon: #6B7280; /* gray-500 */
+  
+  /* Progress indicator colors */
+  --color-indicator-unselected: #B7D0FF;
+  --color-indicator-selected: #143269;
 }
 
 :root.dark {
@@ -88,6 +92,10 @@
   --color-notice-border: #4B5563; /* gray-600 */
   --color-notice-text: #E5E7EB; /* gray-200 */
   --color-notice-icon: #9CA3AF; /* gray-400 */
+  
+  /* Progress indicator colors */
+  --color-indicator-unselected: #C7DBFF;
+  --color-indicator-selected: #3F60CF;
 }
 
 /* Base styles using CSS variables */

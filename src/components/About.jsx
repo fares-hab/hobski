@@ -58,7 +58,7 @@ export default function About({ theme, setTheme }) {
 
       {/* Footer */}
       <footer className="relative z-20 py-8 px-6 bg-theme-primary">
-        <div className="max-w-7xl mx-auto text-center text-sm text-theme-secondary">
+        <div className="max-w-7xl mx-auto text-center text-sm text-theme-primary">
           ℠ 2026 hobski.
         </div>
       </footer>
