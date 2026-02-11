@@ -162,7 +162,7 @@ export default function HobskiLanding({ theme, setTheme }) {
                   </div>
 
                   {/* Step Descriptions Grid */}
-                  <div className="grid grid-cols-1 md:grid-cols-4 gap-3 md:gap-4">
+                  <div className="grid grid-cols-1 md:grid-cols-4 gap-3 md:gap-8">
                     {/* Step 1 */}
                     <div className="flex flex-col items-start">
                       <h3 className="text-base md:text-lg font-bold mb-3 md:mb-4 text-theme-primary">
@@ -253,7 +253,7 @@ export default function HobskiLanding({ theme, setTheme }) {
                 </div>
 
                 {/* Step Descriptions Grid */}
-                <div className="grid grid-cols-1 md:grid-cols-4 gap-3 md:gap-4">
+                <div className="grid grid-cols-1 md:grid-cols-4 gap-3 md:gap-8">
                   {/* Mentor Step 1 */}
                   <div className="flex flex-col items-start">
                     <h3 className="text-base md:text-lg font-bold mb-3 md:mb-4 text-theme-primary">
