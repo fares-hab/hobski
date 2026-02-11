@@ -169,7 +169,7 @@ export default function HobskiLanding({ theme, setTheme }) {
                         1. Find your hobby
                       </h3>
                       <p className="text-base md:text-lg font-normal leading-relaxed text-theme-primary">
-                        Got a hobby or project in mind? Just type it into our search bar, or browse through our categories for inspiration!
+                        Got a hobby or project in mind? Type it into our search bar or browse through our categories for inspiration!
                       </p>
                     </div>
 
@@ -179,7 +179,7 @@ export default function HobskiLanding({ theme, setTheme }) {
                         2. Browse mentors
                       </h3>
                       <p className="text-base md:text-lg font-normal leading-relaxed text-theme-primary">
-                        Take a look at available mentors and browse their portfolios, rates, schedules, resources, and reviews!
+                        Browse through available mentors and their profiles for rates, schedules, resources, and reviews!
                       </p>
                     </div>
 
@@ -189,7 +189,7 @@ export default function HobskiLanding({ theme, setTheme }) {
                         3. Book a session
                       </h3>
                       <p className="text-base md:text-lg font-normal leading-relaxed text-theme-primary">
-                        Request a session with a mentor. Outline your goals, resources, session preferences, and chat with your mentor before confirming!
+                        Request a session with a mentor. Outline your goals and chat with your mentor before confirming!
                       </p>
                     </div>
 
@@ -199,7 +199,7 @@ export default function HobskiLanding({ theme, setTheme }) {
                         4. Get learning!
                       </h3>
                       <p className="text-base md:text-lg font-normal leading-relaxed text-theme-primary">
-                        Meet in-person or virtually, depending on your preferences, and get learning!
+                        Meet your mentor in-person or virtually and get learning!
                       </p>
                     </div>
                   </div>
@@ -213,25 +213,25 @@ export default function HobskiLanding({ theme, setTheme }) {
                     number: 1,
                     title: 'Find your hobby',
                     image: `/images/${isDark ? 'Dark' : 'Light'}LearnerStep1.webp`,
-                    description: 'Got a hobby or project in mind? Just type it into our search bar, or browse through our categories for inspiration!'
+                    description: 'Got a hobby or project in mind? Type it into our search bar or browse through our categories for inspiration!'
                   },
                   {
                     number: 2,
                     title: 'Browse mentors',
                     image: `/images/${isDark ? 'Dark' : 'Light'}LearnerStep2.webp`,
-                    description: 'Take a look at available mentors and browse their portfolios, rates, schedules, resources, and reviews!'
+                    description: 'Browse through available mentors and their profiles for rates, schedules, resources, and reviews!'
                   },
                   {
                     number: 3,
                     title: 'Book a session',
                     image: `/images/${isDark ? 'Dark' : 'Light'}LearnerStep3.webp`,
-                    description: 'Request a session with a mentor. Outline your goals, resources, session preferences, and chat with your mentor before confirming!'
+                    description: 'Request a session with a mentor. Outline your goals and chat with your mentor before confirming!'
                   },
                   {
                     number: 4,
                     title: 'Get learning!',
                     image: `/images/${isDark ? 'Dark' : 'Light'}BothStep4.webp`,
-                    description: 'Meet in-person or virtually, depending on your preferences, and get learning!'
+                    description: 'Meet your mentor in-person or virtually and get learning!!'
                   }
                 ]}
               />
@@ -260,7 +260,7 @@ export default function HobskiLanding({ theme, setTheme }) {
                       1. Find your skill OR Create one
                     </h3>
                     <p className="text-base md:text-lg font-normal leading-relaxed text-theme-primary">
-                      Browse through our skill categories and choose yours. If you can't find it, request to add a new one to our list!
+                      Browse through our skill categories and choose yours. If you can't find it, add your skill!
                     </p>
                   </div>
 
@@ -270,7 +270,7 @@ export default function HobskiLanding({ theme, setTheme }) {
                       2. Set up your profile
                     </h3>
                     <p className="text-base md:text-lg font-normal leading-relaxed text-theme-primary">
-                      Demonstrate your skill. Pick your skill level, rate, schedule, and outline your session preferences (resources offered, session size, and location).
+                       Build your portfolio. Pick your skill level. Set your rate and schedule. Outline your offerings.
                     </p>
                   </div>
 
@@ -280,7 +280,7 @@ export default function HobskiLanding({ theme, setTheme }) {
                       3. Chat with learners
                     </h3>
                     <p className="text-base md:text-lg font-normal leading-relaxed text-theme-primary">
-                      Start a conversation with learners when they've requested a session and discuss goals and sessions details before confirming!
+                      Chat with learners after they have requested a session to discuss goals before confirming!
                     </p>
                   </div>
 
@@ -290,7 +290,7 @@ export default function HobskiLanding({ theme, setTheme }) {
                       4. Get mentoring!
                     </h3>
                     <p className="text-base md:text-lg font-normal leading-relaxed text-theme-primary">
-                      Meet your learners in-person or virtually, depending on your preferences, and get mentoring!
+                      Meet your learner in-person or virtually and get mentoring!
                     </p>
                   </div>
                 </div>
@@ -305,25 +305,25 @@ export default function HobskiLanding({ theme, setTheme }) {
                     number: 1,
                     title: 'Find your skill OR Create one',
                     image: `/images/${isDark ? 'Dark' : 'Light'}MentorStep1.webp`,
-                    description: 'Browse through our skill categories and choose yours. If you can\'t find it, request to add a new one to our list!'
+                    description: 'Browse through our skill categories and choose yours. If you can\'t find it, add your skill!'
                   },
                   {
                     number: 2,
                     title: 'Set up your profile',
                     image: `/images/${isDark ? 'Dark' : 'Light'}MentorStep2.webp`,
-                    description: 'Demonstrate your skill. Pick your skill level, rate, schedule, and outline your session preferences (resources offered, session size, and location).'
+                    description: 'Build your portfolio. Pick your skill level. Set your rate and schedule. Outline your offerings.'
                   },
                   {
                     number: 3,
                     title: 'Chat with learners',
                     image: `/images/${isDark ? 'Dark' : 'Light'}MentorStep3.webp`,
-                    description: 'Start a conversation with learners when they\'ve requested a session and discuss goals and sessions details before confirming!'
+                    description: 'Chat with learners after they have requested a session to discuss goals before confirming!'
                   },
                   {
                     number: 4,
                     title: 'Get mentoring!',
                     image: `/images/${isDark ? 'Dark' : 'Light'}BothStep4.webp`,
-                    description: 'Meet your learners in-person or virtually, depending on your preferences, and get mentoring!'
+                    description: 'Meet your learner in-person or virtually and get mentoring!'
                   }
                 ]}
               />
