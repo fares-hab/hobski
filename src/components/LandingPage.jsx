@@ -150,7 +150,7 @@ export default function HobskiLanding({ theme, setTheme }) {
                 {/* Desktop Grid View */}
                 <div className="hidden md:block mb-12 max-w-6xl mx-auto">
                   {/* Single Horizontal Image */}
-                  <div className="w-full mb-8 rounded-lg overflow-hidden">
+                  <div className="w-full mb-0 rounded-lg overflow-hidden">
                     <ImageWithSkeleton
                       src={`/images/${isDark ? 'Dark' : 'Light'}LearnerSteps.png`}
                       alt="Learner steps illustration"
@@ -162,7 +162,7 @@ export default function HobskiLanding({ theme, setTheme }) {
                   </div>
 
                   {/* Step Descriptions Grid */}
-                  <div className="grid grid-cols-1 md:grid-cols-4 gap-3 md:gap-8">
+                  <div className="grid grid-cols-1 md:grid-cols-4 gap-3 md:gap-20">
                     {/* Step 1 */}
                     <div className="flex flex-col items-start">
                       <h3 className="text-base md:text-lg font-bold mb-3 md:mb-4 text-theme-primary">
@@ -241,7 +241,7 @@ export default function HobskiLanding({ theme, setTheme }) {
               {/* Desktop Grid View */}
               <div className="hidden md:block mb-12 max-w-6xl mx-auto">
                 {/* Single Horizontal Image */}
-                <div className="w-full mb-8 rounded-lg overflow-hidden">
+                <div className="w-full mb-0 rounded-lg overflow-hidden">
                   <ImageWithSkeleton
                     src={`/images/${isDark ? 'Dark' : 'Light'}MentorSteps.png`}
                     alt="Mentor steps illustration"
@@ -253,7 +253,7 @@ export default function HobskiLanding({ theme, setTheme }) {
                 </div>
 
                 {/* Step Descriptions Grid */}
-                <div className="grid grid-cols-1 md:grid-cols-4 gap-3 md:gap-8">
+                <div className="grid grid-cols-1 md:grid-cols-4 gap-3 md:gap-20">
                   {/* Mentor Step 1 */}
                   <div className="flex flex-col items-start">
                     <h3 className="text-base md:text-lg font-bold mb-3 md:mb-4 text-theme-primary">
