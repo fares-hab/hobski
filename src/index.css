@@ -48,6 +48,9 @@
   /* Progress indicator colors */
   --color-indicator-unselected: #B7D0FF;
   --color-indicator-selected: #143269;
+
+  /* Required text color */
+  --color-text-required: #4979D2;
 }
 
 :root.dark {
@@ -96,6 +99,9 @@
   /* Progress indicator colors */
   --color-indicator-unselected: #C7DBFF;
   --color-indicator-selected: #3F60CF;
+
+  /* Required text color */
+  --color-text-required: #6C89EA;
 }
 
 /* Base styles using CSS variables */
@@ -119,6 +125,15 @@ body {
   .bg-theme-involved { background-color: var(--color-bg-involved); }
   .bg-theme-involved-card { background-color: var(--color-bg-involved-card); }
   .text-theme-involved { color: var(--color-text-involved); }
+  /* Toggle button accent border */
+  .border-toggle-accent {
+    border-width: 2px;
+    border-style: solid;
+    border-color: #143269;
+  }
+  .dark .border-toggle-accent {
+    border-color: #0D2A5E;
+  }
   
   /* Text colors */
   .text-theme-primary { color: var(--color-text-primary); }
@@ -127,6 +142,7 @@ body {
   .text-theme-on-accent { color: var(--color-text-on-accent); }
   .text-theme-on-card { color: var(--color-text-on-card); }
   .text-theme-on-card-muted { color: var(--color-text-on-card-muted); }
+  .text-theme-required { color: var(--color-text-required); }
   .text-theme-tab-inactive { color: var(--color-text-tab-inactive); }
   .text-theme-tab-active { color: var(--color-text-tab-active); }
   /* Border colors */

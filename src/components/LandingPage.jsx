@@ -109,7 +109,7 @@ export default function HobskiLanding({ theme, setTheme }) {
               <div className="flex gap-0">
                 <button
                   onClick={() => setActiveTab('learner')}
-                  className={`flex-1 px-4 py-2 md:px-8 md:py-3 font-semibold text-lg md:text-xl ${
+                  className={`flex-1 px-4 py-2 md:px-8 md:py-3 font-semibold text-lg md:text-xl border-toggle-accent ${
                     activeTab === 'learner'
                       ? 'text-theme-tab-active z-10 bg-theme-tab-active'
                       : 'text-theme-tab-inactive bg-theme-tab-inactive hover:brightness-95'
@@ -119,14 +119,15 @@ export default function HobskiLanding({ theme, setTheme }) {
                     position: 'relative',
                     transform: activeTab === 'learner' ? 'scaleX(1.05) scaleY(1.05)' : 'scale(1)',
                     transformOrigin: 'right center',
-                    transition: 'filter 0.2s'
+                    transition: 'filter 0.2s',
+                    borderRight: 'none'
                   }}
                 >
                   Learner
                 </button>
                 <button
                   onClick={() => setActiveTab('mentor')}
-                  className={`flex-1 px-4 py-2 md:px-8 md:py-3 font-semibold text-lg md:text-xl ${
+                  className={`flex-1 px-4 py-2 md:px-8 md:py-3 font-semibold text-lg md:text-xl border-toggle-accent ${
                     activeTab === 'mentor'
                       ? 'text-theme-tab-active z-10 bg-theme-tab-active'
                       : 'text-theme-tab-inactive bg-theme-tab-inactive hover:brightness-95'
@@ -136,7 +137,8 @@ export default function HobskiLanding({ theme, setTheme }) {
                     position: 'relative',
                     transform: activeTab === 'mentor' ? 'scaleX(1.05) scaleY(1.05)' : 'scale(1)',
                     transformOrigin: 'left center',
-                    transition: 'filter 0.2s'
+                    transition: 'filter 0.2s',
+                    borderLeft: 'none'
                   }}
                 >
                   Mentor
@@ -481,7 +483,7 @@ export default function HobskiLanding({ theme, setTheme }) {
               <div className="grid md:grid-cols-3 gap-6">
                 <div>
                   <label className="block text-sm mb-2 text-theme-muted">
-                    First Name (required)
+                    First Name <span className="text-theme-required">(required)</span>
                   </label>
                   <input
                     type="text"
@@ -490,7 +492,7 @@ export default function HobskiLanding({ theme, setTheme }) {
                 </div>
                 <div>
                   <label className="block text-sm mb-2 text-theme-muted">
-                    Last Name (required)
+                    Last Name <span className="text-theme-required">(required)</span>
                   </label>
                   <input
                     type="text"
@@ -499,7 +501,7 @@ export default function HobskiLanding({ theme, setTheme }) {
                 </div>
                 <div>
                   <label className="block text-sm mb-2 text-theme-muted">
-                    Email (required)
+                    Email <span className="text-theme-required">(required)</span>
                   </label>
                   <input
                     type="email"
