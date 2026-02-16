@@ -56,7 +56,7 @@ const Navigation = memo(function Navigation({
   };
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 bg-theme-primary overflow-x-hidden">
+    <header className="fixed top-0 left-0 right-0 z-50 bg-theme-primary overflow-hidden">
       <nav className="max-w-7xl mx-auto px-2 sm:px-6 py-3 sm:py-4 flex items-center justify-between">
         <button 
           onClick={handleLogoClick}
@@ -83,13 +83,13 @@ const Navigation = memo(function Navigation({
               >
                 Join
               </button>
-              <button 
+              <button
                 onClick={() => navigate('/about')}
                 className="px-2 sm:px-6 py-1.5 sm:py-2 text-sm sm:text-base text-primary hover:opacity-80 transition-opacity"
               >
                 About
               </button>
-              <button 
+              <button
                 onClick={handleContactClick}
                 className="px-2 sm:px-6 py-1.5 sm:py-2 text-sm sm:text-base text-primary hover:opacity-80 transition-opacity"
               >

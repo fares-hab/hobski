@@ -337,9 +337,9 @@ export default function HobskiLanding({ theme, setTheme }) {
       </div>
 
         {/* Get Involved Section */}
-        <div 
-          className="bg-theme-involved"
-          style={{ 
+        <div
+          className="bg-theme-involved overflow-hidden"
+          style={{
             marginTop: '-4rem',
             paddingTop: '2rem',
             paddingBottom: '8rem',
@@ -675,7 +675,7 @@ const HeroCarousel = memo(function HeroCarousel({ theme, scrollToSection }) {
 
   return (
     <div 
-      className="relative w-full h-screen pt-16 bg-theme-primary"
+      className="relative w-full h-screen pt-16 bg-theme-primary overflow-hidden"
       onMouseEnter={() => setIsPaused(true)}
       onMouseLeave={() => setIsPaused(false)}
       onTouchStart={() => setIsPaused(true)}
