@@ -662,24 +662,80 @@ const HeroCarousel = memo(function HeroCarousel({ theme, scrollToSection }) {
     setCurrentSlide((prev) => (prev === slides.length - 1 ? 0 : prev + 1));
   }, [currentSlide, slides.length]);
 
-  // Auto-cycle carousel every 5 seconds (only after images are loaded)
+  // Touch swipe state
+  const touchStartX = useRef(null);
+  const touchStartY = useRef(null);
+  const touchDeltaX = useRef(0);
+  const isSwipingHorizontally = useRef(null);
+  const [dragOffset, setDragOffset] = useState(0);
+  const isDragging = useRef(false);
+
+  const handleTouchStart = (e) => {
+    touchStartX.current = e.touches[0].clientX;
+    touchStartY.current = e.touches[0].clientY;
+    touchDeltaX.current = 0;
+    isSwipingHorizontally.current = null;
+    isDragging.current = false;
+    setIsPaused(true);
+  };
+
+  const handleTouchMove = (e) => {
+    if (touchStartX.current === null) return;
+    const deltaX = e.touches[0].clientX - touchStartX.current;
+    const deltaY = e.touches[0].clientY - touchStartY.current;
+
+    // Lock direction on first significant movement
+    if (isSwipingHorizontally.current === null && (Math.abs(deltaX) > 8 || Math.abs(deltaY) > 8)) {
+      isSwipingHorizontally.current = Math.abs(deltaX) > Math.abs(deltaY);
+    }
+
+    if (isSwipingHorizontally.current) {
+      e.preventDefault();
+      isDragging.current = true;
+      touchDeltaX.current = deltaX;
+      // Apply resistance at edges
+      const isAtEdge = (deltaX > 0 && currentSlide === 0) || (deltaX < 0 && currentSlide === slides.length - 1);
+      setDragOffset(isAtEdge ? deltaX * 0.25 : deltaX);
+    }
+  };
+
+  const handleTouchEnd = () => {
+    if (isDragging.current) {
+      const threshold = window.innerWidth * 0.15;
+      if (touchDeltaX.current < -threshold && currentSlide < slides.length - 1) {
+        goToNext();
+      } else if (touchDeltaX.current > threshold && currentSlide > 0) {
+        goToPrevious();
+      }
+    }
+    touchStartX.current = null;
+    touchStartY.current = null;
+    touchDeltaX.current = 0;
+    isSwipingHorizontally.current = null;
+    isDragging.current = false;
+    setDragOffset(0);
+    setIsPaused(false);
+  };
+
+  // Auto-cycle carousel every 3 seconds (only after images are loaded)
   useEffect(() => {
     if (isPaused || !imagesLoaded) return;
-    
+
     const interval = setInterval(() => {
       goToNext();
-    }, 5000); // ADJUST: Change interval time here (ms)
-    
+    }, 3000); // ADJUST: Change interval time here (ms)
+
     return () => clearInterval(interval);
   }, [goToNext, isPaused, imagesLoaded]);
 
   return (
-    <div 
-      className="relative w-full h-screen pt-16 bg-theme-primary overflow-hidden"
+    <div
+      className="relative w-full h-screen pt-16 bg-theme-primary overflow-hidden touch-pan-y"
       onMouseEnter={() => setIsPaused(true)}
       onMouseLeave={() => setIsPaused(false)}
-      onTouchStart={() => setIsPaused(true)}
-      onTouchEnd={() => setIsPaused(false)}
+      onTouchStart={handleTouchStart}
+      onTouchMove={handleTouchMove}
+      onTouchEnd={handleTouchEnd}
     >
       {/* CSS Animations for carousel */}
       <style>{`
@@ -716,10 +772,15 @@ const HeroCarousel = memo(function HeroCarousel({ theme, scrollToSection }) {
         {slides.map((slide, index) => {
           const isActive = index === currentSlide;
           const isLeaving = index === prevSlide;
-          
+          const dragging = dragOffset !== 0;
+
+          // Adjacent slide that peeks in during drag
+          const isNextPeek = dragging && dragOffset < 0 && index === (currentSlide + 1) % slides.length;
+          const isPrevPeek = dragging && dragOffset > 0 && index === (currentSlide - 1 + slides.length) % slides.length;
+
           // Determine position and animation based on state
           let slideStyle = {};
-          
+
           // Before images are loaded, hide all slides
           if (!imagesLoaded) {
             slideStyle = {
@@ -728,24 +789,48 @@ const HeroCarousel = memo(function HeroCarousel({ theme, scrollToSection }) {
               zIndex: 1,
               pointerEvents: 'none'
             };
+          } else if (dragging && isActive) {
+            // While dragging, follow finger
+            slideStyle = {
+              transform: `translateX(${dragOffset}px)`,
+              opacity: 1,
+              zIndex: 10,
+              transition: 'none'
+            };
+          } else if (isNextPeek) {
+            // Next slide peeks in from right during drag
+            slideStyle = {
+              transform: `translateX(calc(100% + ${dragOffset}px))`,
+              opacity: 1,
+              zIndex: 9,
+              transition: 'none'
+            };
+          } else if (isPrevPeek) {
+            // Previous slide peeks in from left during drag
+            slideStyle = {
+              transform: `translateX(calc(-100% + ${dragOffset}px))`,
+              opacity: 1,
+              zIndex: 9,
+              transition: 'none'
+            };
           } else if (isActive) {
             // Initial slide-in animation when images first load
             if (prevSlide === null && !initialAnimationDone) {
-              slideStyle = { 
+              slideStyle = {
                 animation: 'initialSlideIn 600ms ease-out forwards',
-                zIndex: 10 
+                zIndex: 10
               };
             } else if (prevSlide === null) {
               // After initial animation, just show normally
-              slideStyle = { 
+              slideStyle = {
                 transform: 'translateX(0)',
                 opacity: 1,
-                zIndex: 10 
+                zIndex: 10
               };
             } else {
               slideStyle = {
-                animation: direction === 1 
-                  ? 'slideInFromRight 700ms ease-out forwards' 
+                animation: direction === 1
+                  ? 'slideInFromRight 700ms ease-out forwards'
                   : 'slideInFromLeft 700ms ease-out forwards',
                 opacity: 1,
                 zIndex: 10
