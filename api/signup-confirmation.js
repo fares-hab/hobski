@@ -98,7 +98,7 @@ function generateLearnerEmail(firstName) {
 
                 <!-- Footer -->
                 <tr>
-                  <td style="padding: 20px 40px 40px; text-align: center; color: #666666; font-size: 14px; line-height: 1.6;">
+                  <td style="padding: 20px 40px 40px; text-align: center; color: #E6F6FF; font-size: 14px; line-height: 1.6;">
                     <p style="margin: 0;">
                       ℠ 2026 hobski. 
                       Dream it. Learn it. Do it.

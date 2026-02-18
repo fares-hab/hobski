@@ -51,6 +51,7 @@
 
   /* Required text color */
   --color-text-required: #4979D2;
+  --color-text-required-signup: #4979D2;
 }
 
 :root.dark {
@@ -102,6 +103,7 @@
 
   /* Required text color */
   --color-text-required: #0D2A5E;
+  --color-text-required-signup: #3F60CF;
 }
 
 /* Base styles using CSS variables */
@@ -133,6 +135,7 @@ body {
   .text-theme-on-card { color: var(--color-text-on-card); }
   .text-theme-on-card-muted { color: var(--color-text-on-card-muted); }
   .text-theme-required { color: var(--color-text-required); }
+  .text-theme-required-signup { color: var(--color-text-required-signup); }
   .text-theme-tab-inactive { color: var(--color-text-tab-inactive); }
   .text-theme-tab-active { color: var(--color-text-tab-active); }
   /* Border colors */

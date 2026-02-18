@@ -207,7 +207,7 @@ export default function LearnerSignup({ theme, setTheme }) {
                 <div className="grid md:grid-cols-2 gap-6">
                   <div>
                     <label className="block mb-2 text-theme-muted">
-                      First Name <span className="text-theme-required">(required)</span>
+                      First Name <span className="text-theme-required-signup">(required)</span>
                     </label>
                     <input
                       type="text"
@@ -222,7 +222,7 @@ export default function LearnerSignup({ theme, setTheme }) {
                   </div>
                   <div>
                     <label className="block mb-2 text-theme-muted">
-                      Last Name <span className="text-theme-required">(required)</span>
+                      Last Name <span className="text-theme-required-signup">(required)</span>
                     </label>
                     <input
                       type="text"
@@ -239,7 +239,7 @@ export default function LearnerSignup({ theme, setTheme }) {
 
                 <div>
                   <label className="block mb-2 text-theme-muted">
-                    Email <span className="text-theme-required">(required)</span>
+                    Email <span className="text-theme-required-signup">(required)</span>
                   </label>
                   <input
                     type="email"
@@ -295,7 +295,7 @@ export default function LearnerSignup({ theme, setTheme }) {
               <div className="space-y-8">
                 <div>
                   <label className="block mb-2 text-theme-muted">
-                    List 1-3 hobbies, skills, or projects that you'd like mentorship with <span className="text-theme-required">(required)</span>
+                    List 1-3 hobbies, skills, or projects that you'd like mentorship with <span className="text-theme-required-signup">(required)</span>
                   </label>
                   <textarea
                     name="hobbies"
@@ -312,7 +312,7 @@ export default function LearnerSignup({ theme, setTheme }) {
 
                 <div>
                   <label className="block mb-3 text-theme-muted">
-                    I would like to... <span className="text-theme-required">(required)</span>
+                    I would like to... <span className="text-theme-required-signup">(required)</span>
                   </label>
                   <div className="space-y-3">
                     <label className="flex items-center gap-3 cursor-pointer">
