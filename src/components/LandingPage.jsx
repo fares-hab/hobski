@@ -617,6 +617,7 @@ const HeroCarousel = memo(function HeroCarousel({ theme, scrollToSection }) {
   const [isPaused, setIsPaused] = useState(false);
   const [imagesLoaded, setImagesLoaded] = useState(false);
   const [initialAnimationDone, setInitialAnimationDone] = useState(false);
+  const [swipeRelease, setSwipeRelease] = useState(null); // null | { offset: number, phase: 'initial' | 'animating' }
 
   const slides = [
     { 
@@ -730,8 +731,10 @@ const HeroCarousel = memo(function HeroCarousel({ theme, scrollToSection }) {
     if (isDragging.current) {
       const threshold = window.innerWidth * 0.15;
       if (touchDeltaX.current < -threshold && currentSlide < slides.length - 1) {
+        setSwipeRelease({ offset: dragOffset, phase: 'initial' });
         goToNext();
       } else if (touchDeltaX.current > threshold && currentSlide > 0) {
+        setSwipeRelease({ offset: dragOffset, phase: 'initial' });
         goToPrevious();
       }
     }
@@ -743,6 +746,16 @@ const HeroCarousel = memo(function HeroCarousel({ theme, scrollToSection }) {
     setDragOffset(0);
     setIsPaused(false);
   };
+
+  // Phase-advance swipe release: initial → animating on next animation frame
+  useEffect(() => {
+    if (swipeRelease?.phase === 'initial') {
+      const frame = requestAnimationFrame(() => {
+        setSwipeRelease(prev => prev ? { ...prev, phase: 'animating' } : null);
+      });
+      return () => cancelAnimationFrame(frame);
+    }
+  }, [swipeRelease?.phase]);
 
   // Auto-cycle carousel every 3 seconds (only after images are loaded)
   useEffect(() => {
@@ -840,6 +853,42 @@ const HeroCarousel = memo(function HeroCarousel({ theme, scrollToSection }) {
               zIndex: 9,
               transition: 'none'
             };
+          } else if (swipeRelease && isActive) {
+            // Swipe-release: position new active slide where the peek was, then animate to 0
+            if (swipeRelease.phase === 'initial') {
+              slideStyle = {
+                transform: direction === 1
+                  ? `translateX(calc(100% + ${swipeRelease.offset}px))`
+                  : `translateX(calc(-100% + ${swipeRelease.offset}px))`,
+                opacity: 1,
+                zIndex: 10,
+                transition: 'none'
+              };
+            } else {
+              slideStyle = {
+                transform: 'translateX(0)',
+                opacity: 1,
+                zIndex: 10,
+                transition: 'transform 700ms ease-out'
+              };
+            }
+          } else if (swipeRelease && isLeaving) {
+            // Swipe-release: start leaving slide at the dragged position, then animate out
+            if (swipeRelease.phase === 'initial') {
+              slideStyle = {
+                transform: `translateX(${swipeRelease.offset}px)`,
+                opacity: 1,
+                zIndex: 5,
+                transition: 'none'
+              };
+            } else {
+              slideStyle = {
+                transform: direction === 1 ? 'translateX(-100%)' : 'translateX(100%)',
+                opacity: 1,
+                zIndex: 5,
+                transition: 'transform 700ms ease-out'
+              };
+            }
           } else if (isActive) {
             // Initial slide-in animation when images first load
             if (prevSlide === null && !initialAnimationDone) {
@@ -865,8 +914,8 @@ const HeroCarousel = memo(function HeroCarousel({ theme, scrollToSection }) {
             }
           } else if (isLeaving) {
             slideStyle = {
-              animation: direction === 1 
-                ? 'slideOutToLeft 700ms ease-out forwards' 
+              animation: direction === 1
+                ? 'slideOutToLeft 700ms ease-out forwards'
                 : 'slideOutToRight 700ms ease-out forwards',
               opacity: 1,
               zIndex: 5
@@ -890,6 +939,14 @@ const HeroCarousel = memo(function HeroCarousel({ theme, scrollToSection }) {
                 // Only handle the initialSlideIn animation, not bubbled events
                 if (e.animationName === 'initialSlideIn' && isActive && prevSlide === null) {
                   setInitialAnimationDone(true);
+                }
+              }}
+              onTransitionEnd={(e) => {
+                // Clear swipeRelease + prevSlide once the active slide finishes its CSS transition.
+                // Clearing prevSlide prevents the keyframe animation from re-firing on the next render.
+                if (e.propertyName === 'transform' && isActive && swipeRelease) {
+                  setPrevSlide(null);
+                  setSwipeRelease(null);
                 }
               }}
             >
