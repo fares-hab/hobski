@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { supabase } from '../lib/supabase';
+import { sendConfirmationEmail } from '../lib/email';
 import Navigation from './Navigation';
 
 export default function LearnerSignup({ theme, setTheme }) {
@@ -174,7 +175,8 @@ export default function LearnerSignup({ theme, setTheme }) {
         return;
       }
 
-      // Success - move to thank you page
+      // Success - send confirmation email (don't block on failure)
+      sendConfirmationEmail(formData.email.trim().toLowerCase(), formData.firstName.trim(), 'learner');
       setCurrentPage(3);
     } catch (err) {
       console.error('Submission error:', err);

@@ -532,10 +532,10 @@ export default function HobskiLanding({ theme, setTheme }) {
               </div>
 
               {contactStatus === 'success' && (
-                <p className="text-green-600 text-sm">Message sent! We'll get back to you soon.</p>
+                <p className="text-bg-primary text-lg">Message sent! We'll get back to you soon.</p>
               )}
               {contactStatus === 'error' && (
-                <p className="text-red-500 text-sm">Something went wrong. Please try again.</p>
+                <p className="text-red-500 text-lg">Something went wrong. Please try again.</p>
               )}
 
               <button

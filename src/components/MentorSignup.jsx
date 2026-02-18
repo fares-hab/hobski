@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { supabase } from '../lib/supabase';
+import { sendConfirmationEmail } from '../lib/email';
 import Navigation from './Navigation';
 
 export default function MentorSignup({ theme, setTheme }) {
@@ -173,7 +174,8 @@ export default function MentorSignup({ theme, setTheme }) {
         return;
       }
 
-      // Success - move to thank you page
+      // Success - send confirmation email (don't block on failure)
+      sendConfirmationEmail(formData.email.trim().toLowerCase(), formData.firstName.trim(), 'mentor');
       setCurrentPage(3);
     } catch (err) {
       console.error('Submission error:', err);
