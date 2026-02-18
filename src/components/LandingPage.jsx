@@ -4,11 +4,14 @@ import { ChevronDown } from 'lucide-react';
 import { motion, useScroll, useTransform } from 'framer-motion';
 import ImageWithSkeleton from './ImageWithSkeleton';
 import Navigation from './Navigation';
+import { sendContactEmail } from '../lib/email';
 
 export default function HobskiLanding({ theme, setTheme }) {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('learner');
   const [showNotice, setShowNotice] = useState(true);
+  const [contactForm, setContactForm] = useState({ firstName: '', lastName: '', email: '', message: '' });
+  const [contactStatus, setContactStatus] = useState(null); // 'sending' | 'success' | 'error'
   const [isMobile, setIsMobile] = useState(() => {
     // Initialize with correct value to prevent flash of wrong component
     if (typeof window !== 'undefined') {
@@ -487,6 +490,8 @@ export default function HobskiLanding({ theme, setTheme }) {
                   </label>
                   <input
                     type="text"
+                    value={contactForm.firstName}
+                    onChange={(e) => setContactForm(f => ({ ...f, firstName: e.target.value }))}
                     className="w-full px-4 py-3 border-0 rounded-lg focus:outline-none bg-theme-primary text-theme-primary"
                   />
                 </div>
@@ -496,6 +501,8 @@ export default function HobskiLanding({ theme, setTheme }) {
                   </label>
                   <input
                     type="text"
+                    value={contactForm.lastName}
+                    onChange={(e) => setContactForm(f => ({ ...f, lastName: e.target.value }))}
                     className="w-full px-4 py-3 border-0 rounded-lg focus:outline-none bg-theme-primary text-theme-primary"
                   />
                 </div>
@@ -505,6 +512,8 @@ export default function HobskiLanding({ theme, setTheme }) {
                   </label>
                   <input
                     type="email"
+                    value={contactForm.email}
+                    onChange={(e) => setContactForm(f => ({ ...f, email: e.target.value }))}
                     className="w-full px-4 py-3 border-0 rounded-lg focus:outline-none bg-theme-primary text-theme-primary"
                   />
                 </div>
@@ -516,18 +525,36 @@ export default function HobskiLanding({ theme, setTheme }) {
                 </label>
                 <textarea
                   rows="6"
+                  value={contactForm.message}
+                  onChange={(e) => setContactForm(f => ({ ...f, message: e.target.value }))}
                   className="w-full px-4 py-3 border-0 rounded-lg focus:outline-none resize-none bg-theme-primary text-theme-primary"
                 />
               </div>
 
+              {contactStatus === 'success' && (
+                <p className="text-green-600 text-sm">Message sent! We'll get back to you soon.</p>
+              )}
+              {contactStatus === 'error' && (
+                <p className="text-red-500 text-sm">Something went wrong. Please try again.</p>
+              )}
+
               <button
-                onClick={(e) => {
+                disabled={contactStatus === 'sending'}
+                onClick={async (e) => {
                   e.preventDefault();
-                  // Handle form submission
+                  if (!contactForm.firstName || !contactForm.lastName || !contactForm.email) return;
+                  setContactStatus('sending');
+                  const result = await sendContactEmail(contactForm);
+                  if (result.success) {
+                    setContactStatus('success');
+                    setContactForm({ firstName: '', lastName: '', email: '', message: '' });
+                  } else {
+                    setContactStatus('error');
+                  }
                 }}
-                className="w-full px-8 py-4 rounded-full font-medium text-lg bg-theme-accent text-theme-on-accent hover:opacity-80"
+                className="w-full px-8 py-4 rounded-full font-medium text-lg bg-theme-accent text-theme-on-accent hover:opacity-80 disabled:opacity-50"
               >
-                Send Message
+                {contactStatus === 'sending' ? 'Sending...' : 'Send Message'}
               </button>
             </div>
           </div>

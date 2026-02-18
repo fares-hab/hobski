@@ -19,7 +19,7 @@ export async function sendConfirmationEmail(userEmail, firstName, userType) {
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({
-        from: 'hobski <onboarding@resend.dev>',
+        from: 'hobski <hello@hobski.com>',
         to: [userEmail],
         subject: `Welcome to hobski, ${firstName}! 🎉`,
         html: emailContent
@@ -31,6 +31,28 @@ export async function sendConfirmationEmail(userEmail, firstName, userType) {
     if (!response.ok) {
       console.error('Resend API error:', data);
       return { success: false, error: data.message || 'Failed to send email' };
+    }
+
+    return { success: true, data };
+  } catch (error) {
+    console.error('Email sending error:', error);
+    return { success: false, error: error.message };
+  }
+}
+
+export async function sendContactEmail({ firstName, lastName, email, message }) {
+  try {
+    const response = await fetch('/api/contact', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ firstName, lastName, email, message })
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      console.error('Contact API error:', data);
+      return { success: false, error: data.error || 'Failed to send email' };
     }
 
     return { success: true, data };
