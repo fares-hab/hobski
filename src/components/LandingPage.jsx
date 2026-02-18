@@ -104,42 +104,39 @@ export default function HobskiLanding({ theme, setTheme }) {
               How does it work?
             </h2>
 
-            {/* Tab Buttons */}
+            {/* Pill Toggle */}
             <div className="max-w-7xl mx-auto mb-8 md:mb-10">
-              <div className="flex gap-0">
+              <div
+                className="relative flex w-full bg-theme-tab-inactive"
+                style={{ borderRadius: '9999px' }}
+              >
+                {/* Sliding pill indicator */}
+                <div
+                  className="absolute top-0 bottom-0 bg-theme-tab-active"
+                  style={{
+                    width: '50%',
+                    borderRadius: '9999px',
+                    transform: activeTab === 'learner' ? 'translateX(0)' : 'translateX(100%)',
+                    transition: 'transform 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                  }}
+                />
+                {/* Learner button */}
                 <button
                   onClick={() => setActiveTab('learner')}
-                  className={`flex-1 px-4 py-2 md:px-8 md:py-3 font-semibold text-lg md:text-xl border-toggle-accent ${
-                    activeTab === 'learner'
-                      ? 'text-theme-tab-active z-10 bg-theme-tab-active'
-                      : 'text-theme-tab-inactive bg-theme-tab-inactive hover:brightness-95'
+                  className={`relative z-10 flex-1 px-4 py-2 md:px-8 md:py-3 font-semibold text-lg md:text-xl text-center ${
+                    activeTab === 'learner' ? 'text-theme-tab-active' : 'text-theme-tab-inactive'
                   }`}
-                  style={{ 
-                    borderRadius: '9999px 0 0 9999px',
-                    position: 'relative',
-                    transform: activeTab === 'learner' ? 'scaleX(1.05) scaleY(1.05)' : 'scale(1)',
-                    transformOrigin: 'right center',
-                    transition: 'filter 0.2s',
-                    borderRight: 'none'
-                  }}
+                  style={{ transition: 'color 0.3s cubic-bezier(0.4, 0, 0.2, 1)' }}
                 >
                   Learner
                 </button>
+                {/* Mentor button */}
                 <button
                   onClick={() => setActiveTab('mentor')}
-                  className={`flex-1 px-4 py-2 md:px-8 md:py-3 font-semibold text-lg md:text-xl border-toggle-accent ${
-                    activeTab === 'mentor'
-                      ? 'text-theme-tab-active z-10 bg-theme-tab-active'
-                      : 'text-theme-tab-inactive bg-theme-tab-inactive hover:brightness-95'
+                  className={`relative z-10 flex-1 px-4 py-2 md:px-8 md:py-3 font-semibold text-lg md:text-xl text-center ${
+                    activeTab === 'mentor' ? 'text-theme-tab-active' : 'text-theme-tab-inactive'
                   }`}
-                  style={{ 
-                    borderRadius: '0 9999px 9999px 0',
-                    position: 'relative',
-                    transform: activeTab === 'mentor' ? 'scaleX(1.05) scaleY(1.05)' : 'scale(1)',
-                    transformOrigin: 'left center',
-                    transition: 'filter 0.2s',
-                    borderLeft: 'none'
-                  }}
+                  style={{ transition: 'color 0.3s cubic-bezier(0.4, 0, 0.2, 1)' }}
                 >
                   Mentor
                 </button>

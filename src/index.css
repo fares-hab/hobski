@@ -11,7 +11,7 @@
   --color-bg-card-alt: #143269;
   --color-bg-nav: #E6F6FF;
   --color-bg-tab-active: #143269;
-  --color-bg-tab-inactive: #E6F6FF;
+  --color-bg-tab-inactive: #4979D2;
   --color-bg-accent: #143269;
   --color-bg-accent-invert: #E6F6FF;
   
@@ -26,7 +26,7 @@
   --color-text-on-accent: #E6F6FF;
   --color-text-on-card: #E6F6FF;
   --color-text-on-card-muted: rgba(199, 219, 255, 0.85);
-  --color-text-tab-inactive: #143269;
+  --color-text-tab-inactive: #E6F6FF;
   --color-text-tab-active: #E6F6FF;
   --color-border: #BFDBFE; /* blue-200 */
   --color-border-muted: #E5E7EB; /* gray-200 */
@@ -61,7 +61,7 @@
   --color-bg-card-alt: #0D2A5E;
   --color-bg-nav: #0D2A5E;
   --color-bg-tab-active: #0D2A5E;
-  --color-bg-tab-inactive: #6C89EA;
+  --color-bg-tab-inactive: #809AF4;
   --color-bg-accent: #C7DBFF;
   --color-bg-accent-invert: #0D2A5E;
   
@@ -77,7 +77,7 @@
   --color-text-on-card: #C7DBFF;
   --color-text-on-card-muted: rgba(255, 255, 255, 0.75);
   --color-text-tab-inactive: #0D2A5E;
-  --color-text-tab-active: #C7DBFF;
+  --color-text-tab-active: #D4E3FF;
   
   --color-border: #374151; /* gray-700 */
   --color-border-muted: #4B5563; /* gray-600 */
@@ -125,16 +125,6 @@ body {
   .bg-theme-involved { background-color: var(--color-bg-involved); }
   .bg-theme-involved-card { background-color: var(--color-bg-involved-card); }
   .text-theme-involved { color: var(--color-text-involved); }
-  /* Toggle button accent border */
-  .border-toggle-accent {
-    border-width: 2px;
-    border-style: solid;
-    border-color: #143269;
-  }
-  .dark .border-toggle-accent {
-    border-color: #0D2A5E;
-  }
-  
   /* Text colors */
   .text-theme-primary { color: var(--color-text-primary); }
   .text-theme-secondary { color: var(--color-text-secondary); }
