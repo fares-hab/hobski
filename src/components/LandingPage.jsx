@@ -107,16 +107,19 @@ export default function HobskiLanding({ theme, setTheme }) {
             {/* Pill Toggle */}
             <div className="max-w-7xl mx-auto mb-8 md:mb-10">
               <div
-                className="relative flex w-full bg-theme-tab-inactive"
-                style={{ borderRadius: '9999px' }}
+                className="relative flex w-full bg-theme-tab-inactive p-1"
+                style={{ borderRadius: '9999999px' }}
               >
                 {/* Sliding pill indicator */}
                 <div
-                  className="absolute top-0 bottom-0 bg-theme-tab-active"
+                  className="absolute bg-theme-tab-active"
                   style={{
-                    width: '50%',
-                    borderRadius: '9999px',
-                    transform: activeTab === 'learner' ? 'translateX(0)' : 'translateX(100%)',
+                    top: '6px',
+                    bottom: '6px',
+                    width: 'calc(50% - 10px)',
+                    borderRadius: '9999999px',
+                    transform: activeTab === 'learner' ? 'translateX(0)' : 'translateX(calc(100% + 6px))',
+                    left: '6px',
                     transition: 'transform 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
                   }}
                 />
