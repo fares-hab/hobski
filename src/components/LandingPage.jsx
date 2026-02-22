@@ -619,6 +619,7 @@ const HeroCarousel = memo(function HeroCarousel({ theme, scrollToSection }) {
   const [initialAnimationDone, setInitialAnimationDone] = useState(false);
   const [swipeRelease, setSwipeRelease] = useState(null); // null | { offset: number, phase: 'initial' | 'animating' }
   const [swipeHintVisible, setSwipeHintVisible] = useState(false);
+  const [hasLooped, setHasLooped] = useState(false); // becomes true after first full wrap-around
 
   const slides = [
     { 
@@ -688,6 +689,7 @@ const HeroCarousel = memo(function HeroCarousel({ theme, scrollToSection }) {
   const goToNext = useCallback(() => {
     setDirection(1);
     setPrevSlide(currentSlide);
+    if (currentSlide === slides.length - 1) setHasLooped(true);
     setCurrentSlide((prev) => (prev === slides.length - 1 ? 0 : prev + 1));
   }, [currentSlide, slides.length]);
 
@@ -722,9 +724,8 @@ const HeroCarousel = memo(function HeroCarousel({ theme, scrollToSection }) {
       e.preventDefault();
       isDragging.current = true;
       touchDeltaX.current = deltaX;
-      // Apply resistance at edges
-      const isAtEdge = (deltaX > 0 && currentSlide === 0) || (deltaX < 0 && currentSlide === slides.length - 1);
-      setDragOffset(isAtEdge ? deltaX * 0.25 : deltaX);
+      const isBlockedEdge = !hasLooped && deltaX > 0 && currentSlide === 0;
+      setDragOffset(isBlockedEdge ? deltaX * 0.25 : deltaX);
     }
   };
 
@@ -732,10 +733,10 @@ const HeroCarousel = memo(function HeroCarousel({ theme, scrollToSection }) {
     if (isDragging.current) {
       setSwipeHintVisible(false);
       const threshold = window.innerWidth * 0.15;
-      if (touchDeltaX.current < -threshold && currentSlide < slides.length - 1) {
+      if (touchDeltaX.current < -threshold) {
         setSwipeRelease({ offset: dragOffset, phase: 'initial' });
         goToNext();
-      } else if (touchDeltaX.current > threshold && currentSlide > 0) {
+      } else if (touchDeltaX.current > threshold && (hasLooped || currentSlide > 0)) {
         setSwipeRelease({ offset: dragOffset, phase: 'initial' });
         goToPrevious();
       }
@@ -825,7 +826,7 @@ const HeroCarousel = memo(function HeroCarousel({ theme, scrollToSection }) {
 
           // Adjacent slide that peeks in during drag
           const isNextPeek = dragging && dragOffset < 0 && index === (currentSlide + 1) % slides.length;
-          const isPrevPeek = dragging && dragOffset > 0 && index === (currentSlide - 1 + slides.length) % slides.length;
+          const isPrevPeek = dragging && dragOffset > 0 && (hasLooped || currentSlide > 0) && index === (currentSlide - 1 + slides.length) % slides.length;
 
           // Determine position and animation based on state
           let slideStyle = {};
