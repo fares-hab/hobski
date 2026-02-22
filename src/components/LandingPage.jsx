@@ -618,6 +618,7 @@ const HeroCarousel = memo(function HeroCarousel({ theme, scrollToSection }) {
   const [imagesLoaded, setImagesLoaded] = useState(false);
   const [initialAnimationDone, setInitialAnimationDone] = useState(false);
   const [swipeRelease, setSwipeRelease] = useState(null); // null | { offset: number, phase: 'initial' | 'animating' }
+  const [swipeHintVisible, setSwipeHintVisible] = useState(false);
 
   const slides = [
     { 
@@ -729,6 +730,7 @@ const HeroCarousel = memo(function HeroCarousel({ theme, scrollToSection }) {
 
   const handleTouchEnd = () => {
     if (isDragging.current) {
+      setSwipeHintVisible(false);
       const threshold = window.innerWidth * 0.15;
       if (touchDeltaX.current < -threshold && currentSlide < slides.length - 1) {
         setSwipeRelease({ offset: dragOffset, phase: 'initial' });
@@ -756,6 +758,13 @@ const HeroCarousel = memo(function HeroCarousel({ theme, scrollToSection }) {
       return () => cancelAnimationFrame(frame);
     }
   }, [swipeRelease?.phase]);
+
+  // Fade in swipe hint after images are loaded
+  useEffect(() => {
+    if (!imagesLoaded) return;
+    const timer = setTimeout(() => setSwipeHintVisible(true), 400);
+    return () => clearTimeout(timer);
+  }, [imagesLoaded]);
 
   // Auto-cycle carousel every 3 seconds (only after images are loaded)
   useEffect(() => {
@@ -957,8 +966,8 @@ const HeroCarousel = memo(function HeroCarousel({ theme, scrollToSection }) {
                 </h1>
                 {/* Image container with reserved space to prevent layout shift */}
                 <div
-                  className="w-[120%] md:w-[95%] lg:w-[110%] max-w-7xl flex items-center justify-center"
-                  style={{ height: '70vh', minHeight: '300px' }}
+                  className="w-[120%] md:w-[95%] lg:w-[100%] max-w-7xl flex items-center justify-center"
+                  style={{ height: '70vh', minHeight: '320px' }}
                 >
                   <img
                     src={slide.image}
@@ -995,10 +1004,38 @@ const HeroCarousel = memo(function HeroCarousel({ theme, scrollToSection }) {
         ))}
       </div>
 
+      {/* Swipe hint - mobile only */}
+      <div
+        className="absolute md:hidden z-30 flex flex-row items-center gap-2 bottom-44 left-1/2 -translate-x-1/2"
+        style={{
+          opacity: swipeHintVisible ? 1 : 0,
+          transition: swipeHintVisible ? 'opacity 1.5s ease-in' : 'opacity 0.5s ease-out',
+          pointerEvents: 'none'
+        }}
+      >
+        <svg
+          viewBox="0 0 22 12"
+          width="22"
+          height="12"
+          aria-hidden="true"
+          fill="none"
+          style={{ color: theme === 'dark' ? '#809AF4' : '#B7D0FF' }}
+        >
+          <path d="M 20,6 L 3,6" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+          <path d="M 3,6 L 8,2 M 3,6 L 8,10" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+        </svg>
+        <span
+          className="text-xs font-medium tracking-widest uppercase"
+          style={{ color: theme === 'dark' ? '#809AF4' : '#B7D0FF' }}
+        >
+          swipe
+        </span>
+      </div>
+
       {/* Slider controls - fade in when loaded */}
       <button
         type="button"
-        className="absolute top-[70%] md:top-0 start-0 z-30 flex items-center justify-center h-auto md:h-full px-4 cursor-pointer group focus:outline-none transition-opacity duration-500"
+        className="absolute top-[70%] md:top-0 start-0 z-30 hidden md:flex items-center justify-center h-auto md:h-full px-4 cursor-pointer group focus:outline-none transition-opacity duration-500"
         style={{ opacity: imagesLoaded ? 1 : 0 }}
         onClick={goToPrevious}
         aria-label="Previous slide"
@@ -1017,7 +1054,7 @@ const HeroCarousel = memo(function HeroCarousel({ theme, scrollToSection }) {
       </button>
       <button
         type="button"
-        className="absolute top-[70%] md:top-0 end-0 z-30 flex items-center justify-center h-auto md:h-full px-4 cursor-pointer group focus:outline-none transition-opacity duration-500"
+        className="absolute top-[70%] md:top-0 end-0 z-30 hidden md:flex items-center justify-center h-auto md:h-full px-4 cursor-pointer group focus:outline-none transition-opacity duration-500"
         style={{ opacity: imagesLoaded ? 1 : 0 }}
         onClick={goToNext}
         aria-label="Next slide"
