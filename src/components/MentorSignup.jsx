@@ -1,15 +1,20 @@
 import { useState } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
 import { sendConfirmationEmail } from '../lib/email';
 import Navigation from './Navigation';
 
 export default function MentorSignup({ theme, setTheme }) {
-  const [currentPage, setCurrentPage] = useState(1);
+  const location = useLocation();
+  const navigate = useNavigate();
+  const prefill = location.state?.prefill;
+
+  const [currentPage, setCurrentPage] = useState(location.state?.startAtPage2 ? 2 : 1);
   const [formData, setFormData] = useState({
-    firstName: '',
-    lastName: '',
-    email: '',
-    phone: '',
+    firstName: prefill?.firstName || '',
+    lastName:  prefill?.lastName  || '',
+    email:     prefill?.email     || '',
+    phone:     prefill?.phone     || '',
     hobbies: '',
     participateResearch: false,
     notifyLaunch: false,
@@ -19,6 +24,8 @@ export default function MentorSignup({ theme, setTheme }) {
   const [errors, setErrors] = useState({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState('');
+  const [crossLinkChecking, setCrossLinkChecking] = useState(false);
+  const [crossLinkError, setCrossLinkError] = useState('');
 
   const isDark = theme === 'dark';
 
@@ -136,6 +143,34 @@ export default function MentorSignup({ theme, setTheme }) {
     }
   };
 
+  const handleCrossLinkToLearner = async () => {
+    setCrossLinkChecking(true);
+    setCrossLinkError('');
+    try {
+      const { data, error } = await supabase
+        .from('learners')
+        .select('email')
+        .eq('email', formData.email.trim().toLowerCase())
+        .limit(1);
+      if (error) throw error;
+      if (data && data.length > 0) {
+        setCrossLinkError("You're already signed up as a learner, because you're cool like that!");
+        return;
+      }
+      navigate('/signup/learner', {
+        state: {
+          prefill: { firstName: formData.firstName, lastName: formData.lastName,
+                     email: formData.email, phone: formData.phone },
+          startAtPage2: true
+        }
+      });
+    } catch {
+      setCrossLinkError('Something went wrong. Please try again.');
+    } finally {
+      setCrossLinkChecking(false);
+    }
+  };
+
   const handleBack = () => {
     setCurrentPage(1);
     setErrors({});
@@ -191,7 +226,7 @@ export default function MentorSignup({ theme, setTheme }) {
       <Navigation theme={theme} setTheme={setTheme} variant="page" />
 
       {/* Main Content */}
-      <main className="pt-32 pb-20 px-6">
+      <main className={`${currentPage === 3 ? 'pt-20' : 'pt-32'} pb-20 px-6`}>
         <div className="max-w-2xl mx-auto">
           
           {/* Page 1: Basic Info */}
@@ -436,19 +471,25 @@ export default function MentorSignup({ theme, setTheme }) {
           {/* Page 3: Thank You */}
           {currentPage === 3 && (
             <div className="text-center">
-              <h1 className="text-4xl md:text-5xl font-bold mb-6">Thank you for joining us on our journey!</h1>
-              <div className="text-lg space-y-6 mb-8 text-theme-muted">
+              <h1 className="text-4xl md:text-3xl font-bold mb-6 md:whitespace-nowrap">Thank you for joining us on our journey!</h1>
+              <div className="text-lg space-y-5 mb-1 text-primary">
                 <p>
                   As an early mentor, you'll be part of our pilot and help shape how hobski works while connecting with curious learners in your community.
                 </p>
                 <p>
-                  If there is a project you would like mentorship with or a skill you want to dip your toes into, be sure to <span className="underline cursor-pointer">sign up as a learner as well!</span>
+                  If there is a project you would like mentorship with or a skill you want to dip your toes into, be sure to <span
+                    className={`underline font-semibold text-theme-required-signup ${crossLinkChecking ? 'opacity-50 cursor-wait' : 'cursor-pointer'}`}
+                    onClick={crossLinkChecking ? undefined : handleCrossLinkToLearner}
+                  >sign up as a learner as well!</span>
+                  {crossLinkError && (
+                    <span className="block mt-2 text-sm font-normal text-red-500">{crossLinkError}</span>
+                  )}
                 </p>
                 <p className="font-medium">You're making it happen!</p>
               </div>
 
               {/* Character Image */}
-              <div className="mt-12 w-96 h-96 mx-auto flex items-center justify-center">
+              <div className="mt-0 w-96 h-96 mx-auto flex items-center justify-center">
                 <img 
                   src={`/images/${isDark ? 'Dark' : 'Light'}MentorForm.webp`}
                   alt="Mentor character illustration"

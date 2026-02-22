@@ -49,6 +49,10 @@
   --color-indicator-unselected: #B7D0FF;
   --color-indicator-selected: #143269;
 
+    /* HDIW Progress indicator colors */
+  --color-HDIWindicator-unselected: #C7DBFF;
+  --color-HDIWindicator-selected: #3F60CF;
+
   /* Required text color */
   --color-text-required: #4979D2;
   --color-text-required-signup: #4979D2;
@@ -100,6 +104,10 @@
   /* Progress indicator colors */
   --color-indicator-unselected: #C7DBFF;
   --color-indicator-selected: #3F60CF;
+
+    /* HDIW Progress indicator colors */
+  --color-HDIWindicator-unselected: #B7D0FF;
+  --color-HDIWindicator-selected: #143269;
 
   /* Required text color */
   --color-text-required: #0D2A5E;

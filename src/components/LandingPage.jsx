@@ -103,7 +103,7 @@ export default function HobskiLanding({ theme, setTheme }) {
             id="how-it-works"
           >
             <div className="max-w-7xl mx-auto px-5 sm:px-12">
-            <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-6 md:mb-8">
+            <h2 className="text-4xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-6 md:mb-8 whitespace-nowrap">
               How does it work?
             </h2>
 
@@ -359,7 +359,7 @@ export default function HobskiLanding({ theme, setTheme }) {
               Got a hobby or skill you're interested in? Join us!
             </p>
 
-            <div className="flex flex-col md:flex-row gap-6 md:gap-16 justify-center items-stretch md:items-stretch items-center">
+            <div className="flex flex-col md:flex-row gap-12 md:gap-16 justify-center items-stretch md:items-stretch items-center">
               {/* As a Learner Card with Illustration */}
               <div className="relative w-full max-w-md md:max-w-xl group md:transition-transform md:hover:scale-110">
                 {/* Card wrapper - mt creates space for image on mobile */}
@@ -1088,9 +1088,10 @@ const MobileStepCarousel = memo(function MobileStepCarousel({ steps, activeTab }
                 alt={`${steps[currentStep].title} illustration`}
                 loading="lazy"
                 className="w-[85%] h-[85%] object-cover rounded-lg"
-                style={{ 
+                style={{
                   objectPosition: 'center center',
-                  clipPath: 'inset(10% 0 10% 0)'
+                  clipPath: 'inset(10% 0 10% 0)',
+                  transform: 'translateX(8%)'
                 }}
                 onError={(e) => {
                   e.target.style.display = 'none';
@@ -1100,8 +1101,18 @@ const MobileStepCarousel = memo(function MobileStepCarousel({ steps, activeTab }
             </div>
           </div>
 
-          {/* Progress Indicators - right under the image */}
-          <div className="flex justify-center gap-2 mb-6">
+          {/* Step Title */}
+          <h3 className="text-2xl font-bold mb-4 text-theme-primary">
+            {steps[currentStep].number}. {steps[currentStep].title}
+          </h3>
+
+          {/* Step Description */}
+          <p className="text-lg font-normal leading-relaxed text-theme-primary">
+            {steps[currentStep].description}
+          </p>
+
+          {/* Progress Indicators - beneath the description */}
+          <div className="flex justify-center gap-2 mt-6">
             {steps.map((_, index) => (
               <button
                 key={index}
@@ -1111,23 +1122,13 @@ const MobileStepCarousel = memo(function MobileStepCarousel({ steps, activeTab }
                   width: index === currentStep ? '12px' : '8px',
                   height: index === currentStep ? '12px' : '8px',
                   backgroundColor: index === currentStep
-                    ? 'var(--color-indicator-selected)'
-                    : 'var(--color-indicator-unselected)'
+                    ? 'var(--color-HDIWindicator-selected)'
+                    : 'var(--color-HDIWindicator-unselected)'
                 }}
                 aria-label={`Go to step ${index + 1}`}
               />
             ))}
           </div>
-          
-          {/* Step Title */}
-          <h3 className="text-xl font-bold mb-4 text-theme-primary">
-            {steps[currentStep].number}. {steps[currentStep].title}
-          </h3>
-          
-          {/* Step Description */}
-          <p className="text-base md:text-lg font-normal leading-relaxed text-theme-primary">
-            {steps[currentStep].description}
-          </p>
         </div>
         
         {/* Navigation Arrows - Positioned relative to px-6 container */}
@@ -1158,7 +1159,6 @@ const MobileStepCarousel = memo(function MobileStepCarousel({ steps, activeTab }
         </button>
       </div>
 
-      {/* Progress Indicators moved inside carousel above */}
     </div>
   );
 });
