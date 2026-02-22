@@ -489,7 +489,7 @@ export default function MentorSignup({ theme, setTheme }) {
               </div>
 
               {/* Character Image */}
-              <div className="mt-0 w-96 h-96 mx-auto flex items-center justify-center">
+              <div className="mt-0 w-full max-w-96 aspect-square mx-auto flex items-center justify-center">
                 <img 
                   src={`/images/${isDark ? 'Dark' : 'Light'}MentorForm.webp`}
                   alt="Mentor character illustration"

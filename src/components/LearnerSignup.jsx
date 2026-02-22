@@ -496,7 +496,7 @@ export default function LearnerSignup({ theme, setTheme }) {
               </div>
 
               {/* Character Image */}
-              <div className="mt-0 w-96 h-96 mx-auto flex items-center justify-center -translate-x-4 md:translate-x-0">
+              <div className="mt-0 w-full max-w-96 aspect-square mx-auto flex items-center justify-center">
                 <img 
                   src={`/images/${isDark ? 'Dark' : 'Light'}LearnerForm.webp`}
                   alt="Learner character illustration"
