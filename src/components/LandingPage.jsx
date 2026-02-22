@@ -952,12 +952,12 @@ const HeroCarousel = memo(function HeroCarousel({ theme, scrollToSection }) {
             >
               <div className="flex flex-col items-center justify-center h-full px-6 -mt-12">
                 {/* Text Header */}
-                <h1 className="text-7xl sm:text-6xl md:text-7xl lg:text-9xl font-bold -mb-20 md:-mb-24 text-center text-theme-primary z-10">
+                <h1 className="text-7xl sm:text-6xl md:text-7xl lg:text-8xl font-bold -mb-20 md:-mb-24 text-center text-theme-primary z-10">
                   {slide.text}
                 </h1>
                 {/* Image container with reserved space to prevent layout shift */}
-                <div 
-                  className="w-[120%] md:w-[95%] lg:w-[90%] max-w-7xl flex items-center justify-center"
+                <div
+                  className="w-[120%] md:w-[95%] lg:w-[110%] max-w-7xl flex items-center justify-center"
                   style={{ height: '70vh', minHeight: '300px' }}
                 >
                   <img
