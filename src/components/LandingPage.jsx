@@ -817,29 +817,29 @@ const HeroCarousel = memo(function HeroCarousel({ theme, scrollToSection }) {
       {/* CSS Animations for carousel */}
       <style>{`
         @keyframes slideInFromRight {
-          from { transform: translateX(100%); }
-          to { transform: translateX(0); }
+          from { transform: translate3d(100%, 0, 0); }
+          to { transform: translate3d(0, 0, 0); }
         }
         @keyframes slideInFromLeft {
-          from { transform: translateX(-100%); }
-          to { transform: translateX(0); }
+          from { transform: translate3d(-100%, 0, 0); }
+          to { transform: translate3d(0, 0, 0); }
         }
         @keyframes slideOutToLeft {
-          from { transform: translateX(0); }
-          to { transform: translateX(-100%); }
+          from { transform: translate3d(0, 0, 0); }
+          to { transform: translate3d(-100%, 0, 0); }
         }
         @keyframes slideOutToRight {
-          from { transform: translateX(0); }
-          to { transform: translateX(100%); }
+          from { transform: translate3d(0, 0, 0); }
+          to { transform: translate3d(100%, 0, 0); }
         }
         @keyframes initialSlideIn {
-          from { 
-            transform: translateY(30px); 
-            opacity: 0; 
+          from {
+            transform: translate3d(0, 30px, 0);
+            opacity: 0;
           }
-          to { 
-            transform: translateY(0); 
-            opacity: 1; 
+          to {
+            transform: translate3d(0, 0, 0);
+            opacity: 1;
           }
         }
       `}</style>
@@ -858,10 +858,18 @@ const HeroCarousel = memo(function HeroCarousel({ theme, scrollToSection }) {
           // Determine position and animation based on state
           let slideStyle = {};
 
+          // Base styles for GPU layer promotion (fixes Safari animation skipping & swipe jank)
+          const gpuBase = {
+            willChange: 'transform',
+            backfaceVisibility: 'hidden',
+            WebkitBackfaceVisibility: 'hidden',
+          };
+
           // Before images are loaded, hide all slides
           if (!imagesLoaded) {
             slideStyle = {
-              transform: 'translateX(0)',
+              ...gpuBase,
+              transform: 'translate3d(0, 0, 0)',
               opacity: 0,
               zIndex: 1,
               pointerEvents: 'none'
@@ -869,7 +877,8 @@ const HeroCarousel = memo(function HeroCarousel({ theme, scrollToSection }) {
           } else if (dragging && isActive) {
             // While dragging, follow finger
             slideStyle = {
-              transform: `translateX(${dragOffset}px)`,
+              ...gpuBase,
+              transform: `translate3d(${dragOffset}px, 0, 0)`,
               opacity: 1,
               zIndex: 10,
               transition: 'none'
@@ -877,7 +886,8 @@ const HeroCarousel = memo(function HeroCarousel({ theme, scrollToSection }) {
           } else if (isNextPeek) {
             // Next slide peeks in from right during drag
             slideStyle = {
-              transform: `translateX(calc(100% + ${dragOffset}px))`,
+              ...gpuBase,
+              transform: `translate3d(calc(100% + ${dragOffset}px), 0, 0)`,
               opacity: 1,
               zIndex: 9,
               transition: 'none'
@@ -885,7 +895,8 @@ const HeroCarousel = memo(function HeroCarousel({ theme, scrollToSection }) {
           } else if (isPrevPeek) {
             // Previous slide peeks in from left during drag
             slideStyle = {
-              transform: `translateX(calc(-100% + ${dragOffset}px))`,
+              ...gpuBase,
+              transform: `translate3d(calc(-100% + ${dragOffset}px), 0, 0)`,
               opacity: 1,
               zIndex: 9,
               transition: 'none'
@@ -894,16 +905,18 @@ const HeroCarousel = memo(function HeroCarousel({ theme, scrollToSection }) {
             // Swipe-release: position new active slide where the peek was, then animate to 0
             if (swipeRelease.phase === 'initial') {
               slideStyle = {
+                ...gpuBase,
                 transform: direction === 1
-                  ? `translateX(calc(100% + ${swipeRelease.offset}px))`
-                  : `translateX(calc(-100% + ${swipeRelease.offset}px))`,
+                  ? `translate3d(calc(100% + ${swipeRelease.offset}px), 0, 0)`
+                  : `translate3d(calc(-100% + ${swipeRelease.offset}px), 0, 0)`,
                 opacity: 1,
                 zIndex: 10,
                 transition: 'none'
               };
             } else {
               slideStyle = {
-                transform: 'translateX(0)',
+                ...gpuBase,
+                transform: 'translate3d(0, 0, 0)',
                 opacity: 1,
                 zIndex: 10,
                 transition: 'transform 700ms ease-out'
@@ -913,14 +926,16 @@ const HeroCarousel = memo(function HeroCarousel({ theme, scrollToSection }) {
             // Swipe-release: start leaving slide at the dragged position, then animate out
             if (swipeRelease.phase === 'initial') {
               slideStyle = {
-                transform: `translateX(${swipeRelease.offset}px)`,
+                ...gpuBase,
+                transform: `translate3d(${swipeRelease.offset}px, 0, 0)`,
                 opacity: 1,
                 zIndex: 5,
                 transition: 'none'
               };
             } else {
               slideStyle = {
-                transform: direction === 1 ? 'translateX(-100%)' : 'translateX(100%)',
+                ...gpuBase,
+                transform: direction === 1 ? 'translate3d(-100%, 0, 0)' : 'translate3d(100%, 0, 0)',
                 opacity: 1,
                 zIndex: 5,
                 transition: 'transform 700ms ease-out'
@@ -930,18 +945,21 @@ const HeroCarousel = memo(function HeroCarousel({ theme, scrollToSection }) {
             // Initial slide-in animation when images first load
             if (prevSlide === null && !initialAnimationDone) {
               slideStyle = {
+                ...gpuBase,
                 animation: 'initialSlideIn 600ms ease-out forwards',
                 zIndex: 10
               };
             } else if (prevSlide === null) {
               // After initial animation, just show normally
               slideStyle = {
-                transform: 'translateX(0)',
+                ...gpuBase,
+                transform: 'translate3d(0, 0, 0)',
                 opacity: 1,
                 zIndex: 10
               };
             } else {
               slideStyle = {
+                ...gpuBase,
                 animation: direction === 1
                   ? 'slideInFromRight 700ms ease-out forwards'
                   : 'slideInFromLeft 700ms ease-out forwards',
@@ -951,6 +969,7 @@ const HeroCarousel = memo(function HeroCarousel({ theme, scrollToSection }) {
             }
           } else if (isLeaving) {
             slideStyle = {
+              ...gpuBase,
               animation: direction === 1
                 ? 'slideOutToLeft 700ms ease-out forwards'
                 : 'slideOutToRight 700ms ease-out forwards',
@@ -960,7 +979,8 @@ const HeroCarousel = memo(function HeroCarousel({ theme, scrollToSection }) {
           } else {
             // Inactive slides - keep at same position but hidden BEHIND active slide
             slideStyle = {
-              transform: 'translateX(0)',
+              ...gpuBase,
+              transform: 'translate3d(0, 0, 0)',
               opacity: 0.01,
               zIndex: 1,
               pointerEvents: 'none'
