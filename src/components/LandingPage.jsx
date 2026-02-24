@@ -620,6 +620,20 @@ const HeroCarousel = memo(function HeroCarousel({ theme, scrollToSection }) {
   const [swipeRelease, setSwipeRelease] = useState(null); // null | { offset: number, phase: 'initial' | 'animating' }
   const [swipeHintVisible, setSwipeHintVisible] = useState(false);
   const [hasLooped, setHasLooped] = useState(false); // becomes true after first full wrap-around
+  const manualPauseTimer = useRef(null);
+
+  // Pause auto-scroll for 10 seconds after manual navigation
+  const pauseAutoScroll = useCallback(() => {
+    clearTimeout(manualPauseTimer.current);
+    setIsPaused(true);
+    manualPauseTimer.current = setTimeout(() => {
+      manualPauseTimer.current = null;
+      setIsPaused(false);
+    }, 10000);
+  }, []);
+
+  // Clean up timer on unmount
+  useEffect(() => () => clearTimeout(manualPauseTimer.current), []);
 
   const slides = [
     { 
@@ -747,6 +761,7 @@ const HeroCarousel = memo(function HeroCarousel({ theme, scrollToSection }) {
     isSwipingHorizontally.current = null;
     isDragging.current = false;
     setDragOffset(0);
+    pauseAutoScroll();
     setIsPaused(false);
   };
 
@@ -767,6 +782,20 @@ const HeroCarousel = memo(function HeroCarousel({ theme, scrollToSection }) {
     return () => clearTimeout(timer);
   }, [imagesLoaded]);
 
+  // Pause carousel when the browser tab is hidden
+  useEffect(() => {
+    const handleVisibility = () => {
+      if (document.hidden) {
+        setIsPaused(true);
+      } else if (!manualPauseTimer.current) {
+        // Only unpause if there's no active manual pause
+        setIsPaused(false);
+      }
+    };
+    document.addEventListener('visibilitychange', handleVisibility);
+    return () => document.removeEventListener('visibilitychange', handleVisibility);
+  }, []);
+
   // Auto-cycle carousel every 3 seconds (only after images are loaded)
   useEffect(() => {
     if (isPaused || !imagesLoaded) return;
@@ -781,8 +810,6 @@ const HeroCarousel = memo(function HeroCarousel({ theme, scrollToSection }) {
   return (
     <div
       className="relative w-full h-screen pt-16 bg-theme-primary overflow-hidden touch-pan-y"
-      onMouseEnter={() => setIsPaused(true)}
-      onMouseLeave={() => setIsPaused(false)}
       onTouchStart={handleTouchStart}
       onTouchMove={handleTouchMove}
       onTouchEnd={handleTouchEnd}
@@ -1038,7 +1065,7 @@ const HeroCarousel = memo(function HeroCarousel({ theme, scrollToSection }) {
         type="button"
         className="absolute top-[70%] md:top-0 start-0 z-30 hidden md:flex items-center justify-center h-auto md:h-full px-4 cursor-pointer group focus:outline-none transition-opacity duration-500"
         style={{ opacity: imagesLoaded ? 1 : 0 }}
-        onClick={goToPrevious}
+        onClick={() => { goToPrevious(); pauseAutoScroll(); }}
         aria-label="Previous slide"
       >
         <span className="inline-flex items-center justify-center w-10 h-10 rounded-full card-nav-arrow group-hover:opacity-80 group-focus:ring-4 group-focus:outline-none">
@@ -1057,7 +1084,7 @@ const HeroCarousel = memo(function HeroCarousel({ theme, scrollToSection }) {
         type="button"
         className="absolute top-[70%] md:top-0 end-0 z-30 hidden md:flex items-center justify-center h-auto md:h-full px-4 cursor-pointer group focus:outline-none transition-opacity duration-500"
         style={{ opacity: imagesLoaded ? 1 : 0 }}
-        onClick={goToNext}
+        onClick={() => { goToNext(); pauseAutoScroll(); }}
         aria-label="Next slide"
       >
         <span className="inline-flex items-center justify-center w-10 h-10 rounded-full card-nav-arrow group-hover:opacity-80 group-focus:ring-4 group-focus:outline-none">
