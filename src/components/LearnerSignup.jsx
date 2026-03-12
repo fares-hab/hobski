@@ -496,14 +496,20 @@ export default function LearnerSignup({ theme, setTheme }) {
               </div>
 
               {/* Character Image */}
-              <div className="mt-0 w-full max-w-96 aspect-square mx-auto flex items-center justify-center">
-                <img 
-                  src={`/images/${isDark ? 'Dark' : 'Light'}LearnerForm.webp`}
-                  alt="Learner character illustration"
-                  loading="eager"
-                  fetchpriority="high"
-                  className="w-full h-full object-contain"
-                />
+              <div className="-mt-6 w-full max-w-2xl mx-auto flex items-center justify-center">
+                <picture>
+                  <source
+                    media="(min-width: 768px)"
+                    srcSet={`/images/${isDark ? 'Dark' : 'Light'}LearnerFormDesktop.webp`}
+                  />
+                  <img
+                    src={`/images/${isDark ? 'Dark' : 'Light'}LearnerForm.webp`}
+                    alt="Learner character illustration"
+                    loading="eager"
+                    fetchpriority="high"
+                    className="w-full h-full object-contain"
+                  />
+                </picture>
               </div>
             </div>
           )}
