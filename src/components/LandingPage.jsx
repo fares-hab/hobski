@@ -157,7 +157,7 @@ export default function HobskiLanding({ theme, setTheme }) {
                   {/* Single Horizontal Image */}
                   <div className="w-full mb-0 rounded-lg overflow-hidden">
                     <ImageWithSkeleton
-                      src={`/images/${isDark ? 'Dark' : 'Light'}LearnerSteps.png`}
+                      src={`/images/${isDark ? 'Dark' : 'Light'}LearnerSteps.webp`}
                       alt="Learner steps illustration"
                       className="w-full h-auto object-contain"
                       loading="lazy"
@@ -248,7 +248,7 @@ export default function HobskiLanding({ theme, setTheme }) {
                 {/* Single Horizontal Image */}
                 <div className="w-full mb-0 rounded-lg overflow-hidden">
                   <ImageWithSkeleton
-                    src={`/images/${isDark ? 'Dark' : 'Light'}MentorSteps.png`}
+                    src={`/images/${isDark ? 'Dark' : 'Light'}MentorSteps.webp`}
                     alt="Mentor steps illustration"
                     className="w-full h-auto object-contain"
                     loading="lazy"
