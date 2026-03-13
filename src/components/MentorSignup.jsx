@@ -1,7 +1,8 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
 import { sendConfirmationEmail } from '../lib/email';
+import { trackEvent } from '../lib/analytics';
 import Navigation from './Navigation';
 
 export default function MentorSignup({ theme, setTheme }) {
@@ -28,6 +29,8 @@ export default function MentorSignup({ theme, setTheme }) {
   const [crossLinkError, setCrossLinkError] = useState('');
 
   const isDark = theme === 'dark';
+
+  useEffect(() => { trackEvent('page_view', { page: '/signup/mentor' }); }, []);
 
   const handleInputChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -211,6 +214,7 @@ export default function MentorSignup({ theme, setTheme }) {
 
       // Success - send confirmation email (don't block on failure)
       sendConfirmationEmail(formData.email.trim().toLowerCase(), formData.firstName.trim(), 'mentor');
+      trackEvent('form_complete', { form: 'mentor' });
       setCurrentPage(3);
     } catch (err) {
       console.error('Submission error:', err);

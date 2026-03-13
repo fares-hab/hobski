@@ -6,6 +6,7 @@ const LandingPage = lazy(() => import('./components/LandingPage'));
 const About = lazy(() => import('./components/About'));
 const LearnerSignup = lazy(() => import('./components/LearnerSignup'));
 const MentorSignup = lazy(() => import('./components/MentorSignup'));
+const Admin = lazy(() => import('./components/Admin'));
 
 // Loading fallback component - shows header skeleton while chunks load
 function PageLoader() {
@@ -117,6 +118,7 @@ function AppContent() {
               />
             } 
           />
+          <Route path="/admin-4a790d6c2c834afa" element={<Admin />} />
         </Routes>
       </Suspense>
     </>

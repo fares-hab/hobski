@@ -5,6 +5,7 @@ import { motion, useScroll, useTransform } from 'framer-motion';
 import ImageWithSkeleton from './ImageWithSkeleton';
 import Navigation from './Navigation';
 import { sendContactEmail } from '../lib/email';
+import { trackEvent } from '../lib/analytics';
 
 export default function HobskiLanding({ theme, setTheme }) {
   const navigate = useNavigate();
@@ -37,6 +38,8 @@ export default function HobskiLanding({ theme, setTheme }) {
       window.removeEventListener('resize', debouncedCheck);
     };
   }, []);
+
+  useEffect(() => { trackEvent('page_view', { page: '/' }); }, []);
 
   const scrollToSection = (id) => {
     const element = document.getElementById(id);
@@ -387,8 +390,8 @@ export default function HobskiLanding({ theme, setTheme }) {
                   />
                   
                   {/* Card */}
-                  <button 
-                    onClick={() => navigate('/signup/learner')}
+                  <button
+                    onClick={() => { trackEvent('form_click', { form: 'learner' }); navigate('/signup/learner'); }}
                     className="relative z-0 rounded-2xl p-8 text-left w-full bg-theme-involved-card"
                   >
                     <h3 className="text-2xl font-bold mb-3 text-theme-on-card">As a Learner</h3>
@@ -426,8 +429,8 @@ export default function HobskiLanding({ theme, setTheme }) {
                   />
 
                   {/* Card */}
-                  <button 
-                    onClick={() => navigate('/signup/mentor')}
+                  <button
+                    onClick={() => { trackEvent('form_click', { form: 'mentor' }); navigate('/signup/mentor'); }}
                     className="relative z-10 rounded-2xl p-8 text-left w-full bg-theme-involved-card"
                   >
                     <h3 className="text-2xl font-bold mb-3 text-theme-on-card">As a Mentor</h3>
