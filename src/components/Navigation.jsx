@@ -79,19 +79,19 @@ const Navigation = memo(function Navigation({
               {/* Landing Page Navigation */}
               <button 
                 onClick={handleJoinClick}
-                className="px-2 sm:px-6 py-1.5 sm:py-2 rounded-full text-sm sm:text-base font-medium bg-theme-accent text-theme-on-accent hover:opacity-80 transition-opacity"
+                className="px-2 sm:px-6 py-1.5 sm:py-2 rounded-full text-sm sm:text-base lg:text-lg font-medium bg-theme-accent text-theme-on-accent hover:opacity-80 transition-opacity"
               >
                 Join
               </button>
               <button
                 onClick={() => navigate('/about')}
-                className="px-2 sm:px-6 py-1.5 sm:py-2 text-sm sm:text-base text-primary hover:opacity-80 transition-opacity"
+                className="px-2 sm:px-6 py-1.5 sm:py-2 text-sm sm:text-base lg:text-lg text-primary hover:opacity-80 transition-opacity"
               >
                 About
               </button>
               <button
                 onClick={handleContactClick}
-                className="px-2 sm:px-6 py-1.5 sm:py-2 text-sm sm:text-base text-primary hover:opacity-80 transition-opacity"
+                className="px-2 sm:px-6 py-1.5 sm:py-2 text-sm sm:text-base lg:text-lg text-primary hover:opacity-80 transition-opacity"
               >
                 Contact
               </button>
@@ -101,7 +101,7 @@ const Navigation = memo(function Navigation({
               {/* Page Navigation (About, Signup pages) */}
               <button 
                 onClick={() => navigate('/')}
-                className="flex items-center gap-2 px-3 sm:px-6 py-1.5 sm:py-2 text-sm sm:text-base text-primary hover:opacity-80 transition-opacity"
+                className="flex items-center gap-2 px-3 sm:px-6 py-1.5 sm:py-2 text-sm sm:text-base lg:text-lg text-primary hover:opacity-80 transition-opacity"
               >
                 <ChevronLeft className="w-4 h-4 sm:w-5 sm:h-5" />
                 Home
@@ -109,7 +109,7 @@ const Navigation = memo(function Navigation({
               {location.pathname !== '/about' && (
                 <button 
                   onClick={() => navigate('/about')}
-                  className="px-3 sm:px-6 py-1.5 sm:py-2 text-sm sm:text-base text-primary hover:opacity-80 transition-opacity"
+                  className="px-3 sm:px-6 py-1.5 sm:py-2 text-sm sm:text-base lg:text-lg text-primary hover:opacity-80 transition-opacity"
                 >
                   About
                 </button>

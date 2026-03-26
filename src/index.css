@@ -61,7 +61,7 @@
 :root.dark {
   /* Dark theme */
   --color-bg-primary: #0D2A5E;
-  --color-bg-secondary: #3F60CF;
+  --color-bg-secondary: #304EB6;
   --color-bg-card: #0D2A5E;
   --color-bg-card-alt: #0D2A5E;
   --color-bg-nav: #0D2A5E;
@@ -72,7 +72,7 @@
   
   /* Get Involved section */
   --color-bg-involved: #0D2A5E;
-  --color-bg-involved-card: #3F60CF;
+  --color-bg-involved-card: #304EB6;
   --color-text-involved: #D4E3FF;
   
   --color-text-primary: #C7DBFF;
@@ -110,7 +110,7 @@
   --color-HDIWindicator-selected: #143269;
 
   /* Required text color */
-  --color-text-required: #0D2A5E;
+  --color-text-required: #809AF4;
   --color-text-required-signup: #3F60CF;
 }
 

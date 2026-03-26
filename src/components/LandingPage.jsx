@@ -80,6 +80,30 @@ export default function HobskiLanding({ theme, setTheme }) {
       {/* Hero Carousel Section */}
       <HeroCarousel theme={theme} scrollToSection={scrollToSection} />
 
+      {/* What's Hobski Section */}
+      <div id="whats-hobski" className="bg-theme-primary py-12 md:py-16">
+        <div className="max-w-7xl mx-auto px-5 sm:px-12">
+          <h2 className="text-4xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-4 md:mb-6 text-theme-primary">
+            What's hobski?
+          </h2>
+          <p className="text-lg md:text-xl lg:text-2xl text-theme-primary">
+            A mobile platform for skill-sharing that allows you to choose from the skilled people in your area to guide or coach you through any hobby and even share tools and resources, all in person.
+          </p>
+          {/* There's more button - temporarily hidden
+          <div className="flex justify-center mt-36">
+            <button
+              onClick={() => scrollToSection('how-it-works')}
+              className="inline-flex items-center gap-2 px-4 py-2 md:px-6 md:py-3 text-sm md:text-base rounded-full border-2 border-theme-accent text-theme-accent hover:bg-theme-accent hover:text-theme-on-accent transition-colors group"
+              aria-label="Scroll to How does it work"
+            >
+              There's more
+              <ChevronDown className="w-4 h-4 md:w-5 md:h-5 group-hover:translate-y-1 transition-transform" />
+            </button>
+          </div>
+          */}
+        </div>
+      </div>
+
       {/* SVG definitions for wavy clip paths */}
       <svg width="0" height="0" style={{ position: 'absolute' }}>
       <defs>
@@ -96,7 +120,7 @@ export default function HobskiLanding({ theme, setTheme }) {
       <div 
         className="bg-theme-secondary"
         style={{ 
-          marginTop: '-0.5rem',
+          marginTop: '8rem',
           marginBottom: '-5rem',
           paddingTop: '3rem',
           paddingBottom: '3rem',
@@ -111,7 +135,7 @@ export default function HobskiLanding({ theme, setTheme }) {
             </h2>
 
             {/* Pill Toggle */}
-            <div className="max-w-7xl mx-auto mb-8 md:mb-10">
+            <div className="max-w-7xl mx-auto mb-8 md:mb-2">
               <div
                 className="relative flex w-full bg-theme-tab-inactive p-1"
                 style={{ borderRadius: '9999999px' }}
@@ -132,7 +156,7 @@ export default function HobskiLanding({ theme, setTheme }) {
                 {/* Learner button */}
                 <button
                   onClick={() => setActiveTab('learner')}
-                  className={`relative z-10 flex-1 px-4 py-2 md:px-8 md:py-3 font-semibold text-lg md:text-xl text-center ${
+                  className={`relative z-10 flex-1 px-4 py-2 md:px-8 md:py-3 font-semibold text-lg md:text-xl lg:text-2xl text-center ${
                     activeTab === 'learner' ? 'text-theme-tab-active' : 'text-theme-tab-inactive'
                   }`}
                   style={{ transition: 'color 0.3s cubic-bezier(0.4, 0, 0.2, 1)' }}
@@ -142,7 +166,7 @@ export default function HobskiLanding({ theme, setTheme }) {
                 {/* Mentor button */}
                 <button
                   onClick={() => setActiveTab('mentor')}
-                  className={`relative z-10 flex-1 px-4 py-2 md:px-8 md:py-3 font-semibold text-lg md:text-xl text-center ${
+                  className={`relative z-10 flex-1 px-4 py-2 md:px-8 md:py-3 font-semibold text-lg md:text-xl lg:text-2xl text-center ${
                     activeTab === 'mentor' ? 'text-theme-tab-active' : 'text-theme-tab-inactive'
                   }`}
                   style={{ transition: 'color 0.3s cubic-bezier(0.4, 0, 0.2, 1)' }}
@@ -173,40 +197,40 @@ export default function HobskiLanding({ theme, setTheme }) {
                   <div className="grid grid-cols-1 md:grid-cols-4 gap-3 md:gap-20">
                     {/* Step 1 */}
                     <div className="flex flex-col items-start">
-                      <h3 className="text-base md:text-lg font-bold mb-3 md:mb-4 text-theme-primary">
+                      <h3 className="text-lg md:text-xl lg:text-2xl font-bold mb-3 md:mb-4 text-theme-primary">
                         1. Find your hobby
                       </h3>
-                      <p className="text-base md:text-lg font-normal leading-relaxed text-theme-primary">
+                      <p className="text-base md:text-lg font-medium leading-relaxed text-theme-primary">
                         Got a hobby or project in mind? Type it into our search bar or browse through our categories for inspiration!
                       </p>
                     </div>
 
                     {/* Step 2 */}
                     <div className="flex flex-col items-start">
-                      <h3 className="text-base md:text-lg font-bold mb-3 md:mb-4 text-theme-primary">
+                      <h3 className="text-lg md:text-xl lg:text-2xl font-bold mb-3 md:mb-4 text-theme-primary">
                         2. Browse mentors
                       </h3>
-                      <p className="text-base md:text-lg font-normal leading-relaxed text-theme-primary">
+                      <p className="text-base md:text-lg font-medium leading-relaxed text-theme-primary">
                         Browse through available mentors and their profiles for rates, schedules, resources, and reviews!
                       </p>
                     </div>
 
                     {/* Step 3 */}
                     <div className="flex flex-col items-start">
-                      <h3 className="text-base md:text-lg font-bold mb-3 md:mb-4 text-theme-primary">
+                      <h3 className="text-lg md:text-xl lg:text-2xl font-bold mb-3 md:mb-4 text-theme-primary">
                         3. Book a session
                       </h3>
-                      <p className="text-base md:text-lg font-normal leading-relaxed text-theme-primary">
+                      <p className="text-base md:text-lg font-medium leading-relaxed text-theme-primary">
                         Request a session with a mentor. Outline your goals and chat with your mentor before confirming!
                       </p>
                     </div>
 
                     {/* Step 4 */}
                     <div className="flex flex-col items-start">
-                      <h3 className="text-base md:text-lg font-bold mb-3 md:mb-4 text-theme-primary">
+                      <h3 className="text-lg md:text-xl lg:text-2xl font-bold mb-3 md:mb-4 text-theme-primary">
                         4. Get learning!
                       </h3>
-                      <p className="text-base md:text-lg font-normal leading-relaxed text-theme-primary">
+                      <p className="text-base md:text-lg font-medium leading-relaxed text-theme-primary">
                         Meet your mentor in-person or virtually and get learning!
                       </p>
                     </div>
@@ -264,40 +288,40 @@ export default function HobskiLanding({ theme, setTheme }) {
                 <div className="grid grid-cols-1 md:grid-cols-4 gap-3 md:gap-20">
                   {/* Mentor Step 1 */}
                   <div className="flex flex-col items-start">
-                    <h3 className="text-base md:text-lg font-bold mb-3 md:mb-4 text-theme-primary">
-                      1. Find your skill OR Create one
+                    <h3 className="text-lg md:text-xl lg:text-2xl font-bold mb-3 md:mb-4 text-theme-primary">
+                      1. Pick your skill
                     </h3>
-                    <p className="text-base md:text-lg font-normal leading-relaxed text-theme-primary">
+                    <p className="text-base md:text-lg font-medium leading-relaxed text-theme-primary">
                       Browse through our skill categories and choose yours. If you can't find it, add your skill!
                     </p>
                   </div>
 
                   {/* Mentor Step 2 */}
                   <div className="flex flex-col items-start">
-                    <h3 className="text-base md:text-lg font-bold mb-3 md:mb-4 text-theme-primary">
+                    <h3 className="text-lg md:text-xl lg:text-2xl font-bold mb-3 md:mb-4 text-theme-primary">
                       2. Set up your profile
                     </h3>
-                    <p className="text-base md:text-lg font-normal leading-relaxed text-theme-primary">
+                    <p className="text-base md:text-lg font-medium leading-relaxed text-theme-primary">
                        Build your portfolio. Pick your skill level. Set your rate and schedule. Outline your offerings.
                     </p>
                   </div>
 
                   {/* Mentor Step 3 */}
                   <div className="flex flex-col items-start">
-                    <h3 className="text-base md:text-lg font-bold mb-3 md:mb-4 text-theme-primary">
+                    <h3 className="text-lg md:text-xl lg:text-2xl font-bold mb-3 md:mb-4 text-theme-primary">
                       3. Chat with learners
                     </h3>
-                    <p className="text-base md:text-lg font-normal leading-relaxed text-theme-primary">
+                    <p className="text-base md:text-lg font-medium leading-relaxed text-theme-primary">
                       Chat with learners after they have requested a session to discuss goals before confirming!
                     </p>
                   </div>
 
                   {/* Mentor Step 4 */}
                   <div className="flex flex-col items-start">
-                    <h3 className="text-base md:text-lg font-bold mb-3 md:mb-4 text-theme-primary">
+                    <h3 className="text-lg md:text-xl lg:text-2xl font-bold mb-3 md:mb-4 text-theme-primary">
                       4. Get mentoring!
                     </h3>
-                    <p className="text-base md:text-lg font-normal leading-relaxed text-theme-primary">
+                    <p className="text-base md:text-lg font-medium leading-relaxed text-theme-primary">
                       Meet your learner in-person or virtually and get mentoring!
                     </p>
                   </div>
@@ -338,6 +362,15 @@ export default function HobskiLanding({ theme, setTheme }) {
               </>
             )}
 
+          </div>
+          <div className="flex justify-center mt-12">
+            <button
+              onClick={() => scrollToSection('get-involved')}
+              className="inline-flex items-center gap-2 px-4 py-2 md:px-6 md:py-3 text-sm md:text-base rounded-full border-2 border-theme-accent text-theme-accent hover:bg-theme-accent hover:text-theme-on-accent transition-colors group"
+            >
+              Almost there!
+              <ChevronDown className="w-4 h-4 md:w-5 md:h-5 group-hover:translate-y-1 transition-transform" />
+            </button>
           </div>
         </ScrollSection>
       </div>
@@ -1012,13 +1045,13 @@ const HeroCarousel = memo(function HeroCarousel({ theme, scrollToSection }) {
             >
               <div className="flex flex-col items-center justify-center h-full px-6 -mt-12">
                 {/* Text Header */}
-                <h1 className="text-7xl sm:text-6xl md:text-7xl lg:text-8xl font-bold -mb-20 md:-mb-24 text-center text-theme-primary z-10">
+                <h1 className="text-7xl sm:text-6xl md:text-7xl lg:text-8xl font-bold -mb-32 md:-mb-18 text-center text-theme-primary z-10">
                   {slide.text}
                 </h1>
                 {/* Image container with reserved space to prevent layout shift */}
                 <div
-                  className="w-[120%] md:w-[95%] lg:w-[100%] max-w-7xl flex items-center justify-center"
-                  style={{ height: '70vh', minHeight: '320px' }}
+                  className="w-[120%] md:w-[110%] lg:w-[120%] max-w-7xl flex items-center justify-center"
+                  style={{ height: '80vh', minHeight: '320px' }}
                 >
                   <img
                     src={slide.image}
@@ -1124,15 +1157,15 @@ const HeroCarousel = memo(function HeroCarousel({ theme, scrollToSection }) {
       </button>
 
       {/* Scroll down button - fade in when loaded */}
-      <div 
-        className="absolute bottom-4 md:bottom-8 left-1/2 -translate-x-1/2 z-30 transition-opacity duration-500"
+      <div
+        className="absolute bottom-1 md:bottom-4 left-1/2 -translate-x-1/2 z-30 transition-opacity duration-500"
         style={{ opacity: imagesLoaded ? 1 : 0 }}
       >
-        <button 
-          onClick={() => scrollToSection('how-it-works')}
+        <button
+          onClick={() => scrollToSection('whats-hobski')}
           className="inline-flex items-center gap-1.5 md:gap-2 px-4 py-2 md:px-6 md:py-3 text-sm md:text-base rounded-full border-2 group border-theme-accent text-theme-accent hover:bg-theme-accent hover:text-theme-on-accent transition-colors"
         >
-          Pssst there's more
+          Pssst...  
           <ChevronDown className="w-4 h-4 md:w-5 md:h-5 group-hover:translate-y-1 transition-transform" />
         </button>
       </div>
@@ -1195,7 +1228,7 @@ const MobileStepCarousel = memo(function MobileStepCarousel({ steps, activeTab }
           </h3>
 
           {/* Step Description */}
-          <p className="text-lg font-normal leading-relaxed text-theme-primary">
+          <p className="text-base md:text-lg font-medium leading-relaxed text-theme-primary">
             {steps[currentStep].description}
           </p>
 
