@@ -335,7 +335,7 @@ export default function HobskiLanding({ theme, setTheme }) {
                 steps={[
                   {
                     number: 1,
-                    title: 'Find your skill OR Create one',
+                    title: 'Pick your skill',
                     image: `/images/${isDark ? 'Dark' : 'Light'}MentorStep1.webp`,
                     description: 'Browse through our skill categories and choose yours. If you can\'t find it, add your skill!'
                   },
