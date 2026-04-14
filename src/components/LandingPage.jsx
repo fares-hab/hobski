@@ -382,7 +382,7 @@ export default function HobskiLanding({ theme, setTheme }) {
             <h2 className="text-4xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-4 md:mb-6 text-theme-primary">
               Get involved
             </h2>
-            <p className="text-2xl mb-8 md:mb-60 text-theme-involved leading-relaxed">              
+            <p className="text-lg md:text-xl lg:text-2xl mb-8 md:mb-60 text-theme-involved leading-relaxed">              
               Want to help us bring Hobski to life? <br /> Join our waitlist to get notified when we launch or even participate in our early testing!
             </p>
 
