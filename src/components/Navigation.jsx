@@ -1,6 +1,6 @@
 import { useCallback, memo } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { ChevronLeft, Sun, Moon } from 'lucide-react';
+import { ChevronLeft, Sun, Moon, Instagram } from 'lucide-react';
 
 /**
  * Shared Navigation component for all pages
@@ -95,6 +95,15 @@ const Navigation = memo(function Navigation({
               >
                 Contact
               </button>
+              <a
+                href="https://www.instagram.com/hobski.app"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="p-2 rounded-full text-primary hover:opacity-80 transition-opacity"
+                aria-label="hobski on Instagram"
+              >
+                <Instagram className="w-4 h-4 sm:w-5 sm:h-5" />
+              </a>
             </>
           ) : (
             <>

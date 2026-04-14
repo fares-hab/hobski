@@ -1,3 +1,4 @@
+import { Instagram } from 'lucide-react';
 import Navigation from './Navigation';
 
 export default function About({ theme, setTheme }) {
@@ -62,7 +63,16 @@ export default function About({ theme, setTheme }) {
 
       {/* Footer */}
       <footer className="relative z-20 py-8 px-6 bg-theme-primary">
-        <div className="max-w-7xl mx-auto text-center text-sm text-theme-primary">
+        <div className="max-w-7xl mx-auto flex flex-col items-center gap-3 text-sm text-theme-primary">
+          <a
+            href="https://www.instagram.com/hobski.app"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-theme-primary hover:opacity-80 transition-opacity"
+            aria-label="hobski on Instagram"
+          >
+            <Instagram className="w-5 h-5" />
+          </a>
           ℠ 2026 hobski.
         </div>
       </footer>

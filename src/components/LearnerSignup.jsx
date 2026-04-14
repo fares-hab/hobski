@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
+import { Instagram } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import { sendConfirmationEmail } from '../lib/email';
 import { trackEvent } from '../lib/analytics';
@@ -96,14 +97,8 @@ export default function LearnerSignup({ theme, setTheme }) {
   };
 
   const validatePage2 = () => {
-    const newErrors = {};
-    
-    if (!formData.hobbies.trim()) {
-      newErrors.hobbies = 'Please list at least one hobby or skill';
-    }
-    
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
+    setErrors({});
+    return true;
   };
 
   const handleNext = async () => {
@@ -238,14 +233,10 @@ export default function LearnerSignup({ theme, setTheme }) {
           {currentPage === 1 && (
             <div>
               <h1 className="text-4xl md:text-5xl font-bold mb-6">Become a learner</h1>
-              <p className="text-lg mb-8 text-theme-muted">
-                We are currently working to bring this app to you. Sign up to participate in our early testing, get notified when we launch, and help us make this a reality!
-              </p>
-
               <div className="space-y-6">
                 <div className="grid md:grid-cols-2 gap-6">
                   <div>
-                    <label className="block mb-2 text-theme-muted">
+                    <label className="block mb-2 text-theme-primary">
                       First Name <span className="text-theme-required-signup">(required)</span>
                     </label>
                     <input
@@ -260,7 +251,7 @@ export default function LearnerSignup({ theme, setTheme }) {
                     )}
                   </div>
                   <div>
-                    <label className="block mb-2 text-theme-muted">
+                    <label className="block mb-2 text-theme-primary">
                       Last Name <span className="text-theme-required-signup">(required)</span>
                     </label>
                     <input
@@ -277,7 +268,7 @@ export default function LearnerSignup({ theme, setTheme }) {
                 </div>
 
                 <div>
-                  <label className="block mb-2 text-theme-muted">
+                  <label className="block mb-2 text-theme-primary">
                     Email <span className="text-theme-required-signup">(required)</span>
                   </label>
                   <input
@@ -293,7 +284,7 @@ export default function LearnerSignup({ theme, setTheme }) {
                 </div>
 
                 <div>
-                  <label className="block mb-2 text-theme-muted">
+                  <label className="block mb-2 text-theme-primary">
                     Phone
                   </label>
                   <input
@@ -333,24 +324,7 @@ export default function LearnerSignup({ theme, setTheme }) {
 
               <div className="space-y-8">
                 <div>
-                  <label className="block mb-2 text-theme-muted">
-                    List 1-3 hobbies, skills, or projects that you'd like mentorship with <span className="text-theme-required-signup">(required)</span>
-                  </label>
-                  <textarea
-                    name="hobbies"
-                    value={formData.hobbies}
-                    onChange={handleInputChange}
-                    placeholder="(e.g, Guitar, Muay-Thai, Sewing, DIY home projects)"
-                    rows="6"
-                    className={`w-full px-4 py-3 border rounded-lg resize-none input-theme placeholder-theme-secondary ${errors.hobbies ? 'error' : ''}`}
-                  />
-                  {errors.hobbies && (
-                    <p className="text-red-500 text-sm mt-1">{errors.hobbies}</p>
-                  )}
-                </div>
-
-                <div>
-                  <label className="block mb-3 text-theme-muted">
+                  <label className="block mb-3 text-theme-primary">
                     I would like to... <span className="text-theme-required-signup">(required)</span>
                   </label>
                   <div className="space-y-3">
@@ -378,7 +352,7 @@ export default function LearnerSignup({ theme, setTheme }) {
                 </div>
 
                 <div>
-                  <label className="block mb-3 text-theme-muted">
+                  <label className="block mb-3 text-theme-primary">
                     How did you hear about us?
                   </label>
                   <div className="space-y-3">
@@ -447,6 +421,20 @@ export default function LearnerSignup({ theme, setTheme }) {
                       />
                     )}
                   </div>
+                </div>
+
+                <div>
+                  <label className="block mb-2 text-theme-primary">
+                    List 1-3 hobbies or skills you're interested in learning
+                  </label>
+                  <textarea
+                    name="hobbies"
+                    value={formData.hobbies}
+                    onChange={handleInputChange}
+                    placeholder="(e.g, Guitar, Muay-Thai, Sewing, DIY home projects)"
+                    rows="6"
+                    className="w-full px-4 py-3 border rounded-lg resize-none input-theme placeholder-theme-secondary"
+                  />
                 </div>
 
                 {submitError && (
@@ -519,6 +507,20 @@ export default function LearnerSignup({ theme, setTheme }) {
           )}
         </div>
       </main>
+      <footer className="relative z-20 py-8 px-6 bg-theme-primary">
+        <div className="max-w-7xl mx-auto flex flex-col items-center gap-3 text-sm text-theme-primary">
+          <a
+            href="https://www.instagram.com/hobski.app"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-theme-primary hover:opacity-80 transition-opacity"
+            aria-label="hobski on Instagram"
+          >
+            <Instagram className="w-5 h-5" />
+          </a>
+          ℠ 2026 hobski.
+        </div>
+      </footer>
     </div>
   );
 }

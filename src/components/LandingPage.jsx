@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef, useCallback, memo } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ChevronDown } from 'lucide-react';
+import { ChevronDown, Instagram } from 'lucide-react';
 import { motion, useScroll, useTransform } from 'framer-motion';
 import ImageWithSkeleton from './ImageWithSkeleton';
 import Navigation from './Navigation';
@@ -87,20 +87,20 @@ export default function HobskiLanding({ theme, setTheme }) {
             What's hobski?
           </h2>
           <p className="text-lg md:text-xl lg:text-2xl text-theme-primary">
-            A mobile platform for skill-sharing that allows you to choose from the skilled people in your area to guide or coach you through any hobby and even share tools and resources, all in person.
+            An app for skill-sharing that allows you to choose from the skilled people in your area to guide or coach you through any hobby and even share tools and resources, all in person.
           </p>
-          {/* There's more button - temporarily hidden
-          <div className="flex justify-center mt-36">
+          <p className="text-lg md:text-xl lg:text-2xl text-theme-primary mt-4">
+            We're currently designing and developing the <span class="font-bold">beta</span>.
+          </p>
+          <div className="mt-24">
             <button
-              onClick={() => scrollToSection('how-it-works')}
-              className="inline-flex items-center gap-2 px-4 py-2 md:px-6 md:py-3 text-sm md:text-base rounded-full border-2 border-theme-accent text-theme-accent hover:bg-theme-accent hover:text-theme-on-accent transition-colors group"
-              aria-label="Scroll to How does it work"
+              onClick={() => scrollToSection('get-involved')}
+              className="px-2 sm:px-8 py-1.5 sm:py-4 rounded-full text-sm sm:text-base lg:text-lg font-medium bg-theme-accent text-theme-on-accent hover:opacity-80 transition-opacity"
+              aria-label="Scroll to Get Involved"
             >
-              There's more
-              <ChevronDown className="w-4 h-4 md:w-5 md:h-5 group-hover:translate-y-1 transition-transform" />
+              Stay tuned
             </button>
           </div>
-          */}
         </div>
       </div>
 
@@ -120,7 +120,7 @@ export default function HobskiLanding({ theme, setTheme }) {
       <div 
         className="bg-theme-secondary"
         style={{ 
-          marginTop: '8rem',
+          marginTop: '4rem',
           marginBottom: '-5rem',
           paddingTop: '3rem',
           paddingBottom: '3rem',
@@ -299,17 +299,17 @@ export default function HobskiLanding({ theme, setTheme }) {
                   {/* Mentor Step 2 */}
                   <div className="flex flex-col items-start">
                     <h3 className="text-lg md:text-xl lg:text-2xl font-bold mb-3 md:mb-4 text-theme-primary">
-                      2. Set up your profile
+                      2. Build your profile
                     </h3>
                     <p className="text-base md:text-lg font-medium leading-relaxed text-theme-primary">
-                       Build your portfolio. Pick your skill level. Set your rate and schedule. Outline your offerings.
+                       Set-up your portfolio. Pick your skill level. Set your rate and schedule. Outline your offerings.
                     </p>
                   </div>
 
                   {/* Mentor Step 3 */}
                   <div className="flex flex-col items-start">
                     <h3 className="text-lg md:text-xl lg:text-2xl font-bold mb-3 md:mb-4 text-theme-primary">
-                      3. Chat with learners
+                      3. Confirm
                     </h3>
                     <p className="text-base md:text-lg font-medium leading-relaxed text-theme-primary">
                       Chat with learners after they have requested a session to discuss goals before confirming!
@@ -341,13 +341,13 @@ export default function HobskiLanding({ theme, setTheme }) {
                   },
                   {
                     number: 2,
-                    title: 'Set up your profile',
+                    title: 'Build your profile',
                     image: `/images/${isDark ? 'Dark' : 'Light'}MentorStep2.webp`,
                     description: 'Build your portfolio. Pick your skill level. Set your rate and schedule. Outline your offerings.'
                   },
                   {
                     number: 3,
-                    title: 'Chat with learners',
+                    title: 'Message learners',
                     image: `/images/${isDark ? 'Dark' : 'Light'}MentorStep3.webp`,
                     description: 'Chat with learners after they have requested a session to discuss goals before confirming!'
                   },
@@ -362,15 +362,6 @@ export default function HobskiLanding({ theme, setTheme }) {
               </>
             )}
 
-          </div>
-          <div className="flex justify-center mt-12">
-            <button
-              onClick={() => scrollToSection('get-involved')}
-              className="inline-flex items-center gap-2 px-4 py-2 md:px-6 md:py-3 text-sm md:text-base rounded-full border-2 border-theme-accent text-theme-accent hover:bg-theme-accent hover:text-theme-on-accent transition-colors group"
-            >
-              Almost there!
-              <ChevronDown className="w-4 h-4 md:w-5 md:h-5 group-hover:translate-y-1 transition-transform" />
-            </button>
           </div>
         </ScrollSection>
       </div>
@@ -388,11 +379,11 @@ export default function HobskiLanding({ theme, setTheme }) {
             id="get-involved"
           >
             <div className="max-w-7xl mx-auto px-5 sm:px-12">
-            <h2 className="text-4xl md:text-5xl font-bold mb-4 text-theme-involved">
+            <h2 className="text-4xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-4 md:mb-6 text-theme-primary">
               Get involved
             </h2>
-            <p className="text-2xl mb-8 md:mb-60 text-theme-involved">              
-              Got a hobby or skill you're interested in? Join us!
+            <p className="text-2xl mb-8 md:mb-60 text-theme-involved leading-relaxed">              
+              Want to help us bring Hobski to life? <br /> Join our waitlist to get notified when we launch or even participate in our early testing!
             </p>
 
             <div className="flex flex-col md:flex-row gap-12 md:gap-16 justify-center items-stretch md:items-stretch items-center">
@@ -429,7 +420,7 @@ export default function HobskiLanding({ theme, setTheme }) {
                   >
                     <h3 className="text-2xl font-bold mb-3 text-theme-on-card">As a Learner</h3>
                     <p className="leading-relaxed text-theme-on-card-muted">
-                      Explore a new hobby, get guidance on that DIY project, and take your skills to the next level when you join our community of learners.
+                      Share the hobbies you’re interested in and help us shape the learner experience!
                     </p>
                   </button>
                 </div>
@@ -468,7 +459,7 @@ export default function HobskiLanding({ theme, setTheme }) {
                   >
                     <h3 className="text-2xl font-bold mb-3 text-theme-on-card">As a Mentor</h3>
                     <p className="leading-relaxed text-theme-on-card-muted">
-                      Share your passions, pass down your knowledge, and help others achieve their goals when you make their hobby dreams come true as a mentor.
+                      Share your hobbies and experience to help us make hobski work for you. You don't have to be an expert to teach!
                     </p>
                   </button>
                   
@@ -599,8 +590,17 @@ export default function HobskiLanding({ theme, setTheme }) {
 
       {/* Footer */}
       <footer className="relative z-20 py-8 px-6 bg-theme-secondary">
-        <div className="max-w-7xl mx-auto text-center text-sm text-theme-primary">
-          ℠ 2026 hobski. 
+        <div className="max-w-7xl mx-auto flex flex-col items-center gap-3 text-sm text-theme-primary">
+          <a
+            href="https://www.instagram.com/hobski.app"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-theme-primary hover:opacity-80 transition-opacity"
+            aria-label="hobski on Instagram"
+          >
+            <Instagram className="w-5 h-5" />
+          </a>
+          ℠ 2026 hobski.
         </div>
       </footer>
     </div>
@@ -1163,7 +1163,7 @@ const HeroCarousel = memo(function HeroCarousel({ theme, scrollToSection }) {
       >
         <button
           onClick={() => scrollToSection('whats-hobski')}
-          className="inline-flex items-center gap-1.5 md:gap-2 px-4 py-2 md:px-6 md:py-3 text-sm md:text-base rounded-full border-2 group border-theme-accent text-theme-accent hover:bg-theme-accent hover:text-theme-on-accent transition-colors"
+          className="inline-flex items-center gap-1.5 md:gap-2 px-4 py-2 md:px-2 md:py-3 text-sm md:text-base rounded-full border-2 group border-theme-accent text-theme-accent hover:bg-theme-accent hover:text-theme-on-accent transition-colors"
         >
           Pssst...  
           <ChevronDown className="w-4 h-4 md:w-5 md:h-5 group-hover:translate-y-1 transition-transform" />

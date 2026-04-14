@@ -33,7 +33,7 @@
   
   /* Input/Form colors */
   --color-input-bg: #FFFFFF;
-  --color-input-border: #D1D5DB; /* gray-300 */
+  --color-input-border: #C7DBFF; /* gray-300 */
   --color-input-border-focus: #143269;
   
   /* Hover states */
@@ -89,7 +89,7 @@
   
   /* Input/Form colors */
   --color-input-bg: #1E3A5F;
-  --color-input-border: #4B5563;
+  --color-input-border: #4979D2;
   --color-input-border-focus: #C7DBFF;
   
   /* Hover states */
