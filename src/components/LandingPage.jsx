@@ -95,7 +95,7 @@ export default function HobskiLanding({ theme, setTheme }) {
           <div className="mt-24">
             <button
               onClick={() => scrollToSection('get-involved')}
-              className="px-2 sm:px-8 py-1.5 sm:py-4 rounded-full text-sm sm:text-base lg:text-lg font-medium bg-theme-accent text-theme-on-accent hover:opacity-80 transition-opacity"
+              className="px-3 sm:px-8 py-2.5 sm:py-4 rounded-full text-sm sm:text-base lg:text-lg font-medium bg-theme-accent text-theme-on-accent hover:opacity-80 transition-opacity"
               aria-label="Scroll to Get Involved"
             >
               Stay tuned
