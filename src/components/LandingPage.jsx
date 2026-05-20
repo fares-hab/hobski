@@ -600,7 +600,7 @@ export default function HobskiLanding({ theme, setTheme }) {
           >
             <Instagram className="w-5 h-5" />
           </a>
-          ℠ 2026 hobski.
+          © 2026 hobski. All rights reserved.
         </div>
       </footer>
     </div>
