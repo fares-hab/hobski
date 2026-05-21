@@ -11,7 +11,7 @@ export default function LearnerSignup({ theme, setTheme }) {
   const navigate = useNavigate();
   const prefill = location.state?.prefill;
 
-  const [currentPage, setCurrentPage] = useState(location.state?.startAtPage2 ? 2 : 1);
+  const [currentPage, setCurrentPage] = useState(1);
   const [formData, setFormData] = useState({
     firstName: prefill?.firstName || '',
     lastName:  prefill?.lastName  || '',
@@ -68,78 +68,31 @@ export default function LearnerSignup({ theme, setTheme }) {
     return null;
   };
 
-  const validatePage1 = () => {
+  const validateForm = () => {
     const newErrors = {};
-    
+
     if (!formData.firstName.trim()) {
       newErrors.firstName = 'First name is required';
     }
-    
+
     if (!formData.lastName.trim()) {
       newErrors.lastName = 'Last name is required';
     }
-    
+
     if (!formData.email.trim()) {
       newErrors.email = 'Email is required';
     } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
       newErrors.email = 'Please enter a valid email';
     } else {
-      // Check for typos
       const suggestedDomain = checkEmailTypo(formData.email);
       if (suggestedDomain) {
         const username = formData.email.split('@')[0];
         newErrors.email = `Did you mean ${username}@${suggestedDomain}?`;
       }
     }
-    
+
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
-  };
-
-  const validatePage2 = () => {
-    setErrors({});
-    return true;
-  };
-
-  const handleNext = async () => {
-    if (!validatePage1()) {
-      return;
-    }
-
-    // Check for duplicate email before moving to page 2
-    setIsSubmitting(true);
-    setSubmitError('');
-
-    try {
-      const emailToCheck = formData.email.trim().toLowerCase();
-      const { data: existingUsers, error: checkError } = await supabase
-        .from('learners')
-        .select('email')
-        .eq('email', emailToCheck)
-        .limit(1);
-
-      if (checkError) {
-        console.error('Error checking duplicate email:', checkError);
-        setSubmitError('An error occurred. Please try again.');
-        setIsSubmitting(false);
-        return;
-      }
-
-      if (existingUsers && existingUsers.length > 0) {
-        setErrors({ email: 'This email is already registered as a learner' });
-        setSubmitError('This email is already registered. Please use a different email or contact us if you need help.');
-        setIsSubmitting(false);
-        return;
-      }
-
-      // Email is unique, proceed to page 2
-      setIsSubmitting(false);
-      setCurrentPage(2);
-    } catch (err) {
-      console.error('Error during duplicate check:', err);
-      setSubmitError('An error occurred. Please try again.');
-      setIsSubmitting(false);
-    }
   };
 
   const handleCrossLinkToMentor = async () => {
@@ -159,8 +112,7 @@ export default function LearnerSignup({ theme, setTheme }) {
       navigate('/signup/mentor', {
         state: {
           prefill: { firstName: formData.firstName, lastName: formData.lastName,
-                     email: formData.email, phone: formData.phone },
-          startAtPage2: true
+                     email: formData.email, phone: formData.phone }
         }
       });
     } catch {
@@ -170,13 +122,8 @@ export default function LearnerSignup({ theme, setTheme }) {
     }
   };
 
-  const handleBack = () => {
-    setCurrentPage(1);
-    setErrors({});
-  };
-
   const handleSubmit = async () => {
-    if (!validatePage2()) {
+    if (!validateForm()) {
       return;
     }
 
@@ -184,14 +131,35 @@ export default function LearnerSignup({ theme, setTheme }) {
     setSubmitError('');
 
     try {
+      const emailToCheck = formData.email.trim().toLowerCase();
+
+      // Check for duplicate email
+      const { data: existingUsers, error: checkError } = await supabase
+        .from('learners')
+        .select('email')
+        .eq('email', emailToCheck)
+        .limit(1);
+
+      if (checkError) {
+        console.error('Error checking duplicate email:', checkError);
+        setSubmitError('An error occurred. Please try again.');
+        return;
+      }
+
+      if (existingUsers && existingUsers.length > 0) {
+        setErrors({ email: 'This email is already registered as a learner' });
+        setSubmitError('This email is already registered. Please use a different email or contact us if you need help.');
+        return;
+      }
+
       // Proceed with insertion
-      const { data, error } = await supabase
+      const { error } = await supabase
         .from('learners')
         .insert([
           {
             first_name: formData.firstName.trim(),
             last_name: formData.lastName.trim(),
-            email: formData.email.trim().toLowerCase(),
+            email: emailToCheck,
             phone: formData.phone.trim() || null,
             hobbies: formData.hobbies.trim(),
             participate_research: formData.participateResearch,
@@ -209,9 +177,10 @@ export default function LearnerSignup({ theme, setTheme }) {
       }
 
       // Success - send confirmation email (don't block on failure)
-      sendConfirmationEmail(formData.email.trim().toLowerCase(), formData.firstName.trim(), 'learner');
+      sendConfirmationEmail(emailToCheck, formData.firstName.trim(), 'learner');
       trackEvent('form_complete', { form: 'learner' });
-      setCurrentPage(3);
+      window.scrollTo(0, 0);
+      setCurrentPage(2);
     } catch (err) {
       console.error('Submission error:', err);
       setSubmitError('An unexpected error occurred. Please try again.');
@@ -226,10 +195,10 @@ export default function LearnerSignup({ theme, setTheme }) {
       <Navigation theme={theme} setTheme={setTheme} variant="page" />
 
       {/* Main Content */}
-      <main className={`${currentPage === 3 ? 'pt-20' : 'pt-32'} pb-20 px-6`}>
+      <main className={`${currentPage === 2 ? 'pt-20' : 'pt-32'} pb-20 px-6`}>
         <div className="max-w-2xl mx-auto">
-          
-          {/* Page 1: Basic Info */}
+
+          {/* Page 1: Form */}
           {currentPage === 1 && (
             <div>
               <h1 className="text-4xl md:text-5xl font-bold mb-6">Become a learner</h1>
@@ -296,36 +265,9 @@ export default function LearnerSignup({ theme, setTheme }) {
                   />
                 </div>
 
-                {submitError && (
-                  <div className="p-4 rounded-lg bg-red-100 border border-red-300 text-red-700">
-                    {submitError}
-                  </div>
-                )}
-
-                <div className="flex justify-end">
-                  <button
-                    onClick={handleNext}
-                    disabled={isSubmitting}
-                    className={`px-8 py-3 rounded-full font-medium transition-colors btn-primary ${
-                      isSubmitting ? 'opacity-50 cursor-not-allowed' : ''
-                    }`}
-                  >
-                    {isSubmitting ? 'Checking...' : 'Next'}
-                  </button>
-                </div>
-              </div>
-            </div>
-          )}
-
-          {/* Page 2: Additional Info */}
-          {currentPage === 2 && (
-            <div>
-              <h1 className="text-4xl md:text-5xl font-bold mb-8">Become a learner</h1>
-
-              <div className="space-y-8">
                 <div>
                   <label className="block mb-3 text-theme-primary">
-                    I would like to... <span className="text-theme-required-signup">(required)</span>
+                    I would like to...
                   </label>
                   <div className="space-y-3">
                     <label className="flex items-center gap-3 cursor-pointer">
@@ -349,6 +291,20 @@ export default function LearnerSignup({ theme, setTheme }) {
                       <span>Get notified when we launch</span>
                     </label>
                   </div>
+                </div>
+
+                <div>
+                  <label className="block mb-2 text-theme-primary">
+                    List 1-3 hobbies or skills you're interested in learning
+                  </label>
+                  <textarea
+                    name="hobbies"
+                    value={formData.hobbies}
+                    onChange={handleInputChange}
+                    placeholder="(e.g, Guitar, Muay-Thai, Sewing, DIY home projects)"
+                    rows="6"
+                    className="w-full px-4 py-3 border rounded-lg resize-none input-theme placeholder-theme-secondary"
+                  />
                 </div>
 
                 <div>
@@ -423,36 +379,13 @@ export default function LearnerSignup({ theme, setTheme }) {
                   </div>
                 </div>
 
-                <div>
-                  <label className="block mb-2 text-theme-primary">
-                    List 1-3 hobbies or skills you're interested in learning
-                  </label>
-                  <textarea
-                    name="hobbies"
-                    value={formData.hobbies}
-                    onChange={handleInputChange}
-                    placeholder="(e.g, Guitar, Muay-Thai, Sewing, DIY home projects)"
-                    rows="6"
-                    className="w-full px-4 py-3 border rounded-lg resize-none input-theme placeholder-theme-secondary"
-                  />
-                </div>
-
                 {submitError && (
                   <div className="p-4 rounded-lg bg-red-100 border border-red-300 text-red-700">
                     {submitError}
                   </div>
                 )}
 
-                <div className="flex justify-between pt-4">
-                  <button
-                    onClick={handleBack}
-                    disabled={isSubmitting}
-                    className={`px-8 py-3 rounded-full font-medium transition-colors btn-secondary ${
-                      isSubmitting ? 'opacity-50 cursor-not-allowed' : ''
-                    }`}
-                  >
-                    Back
-                  </button>
+                <div className="flex justify-end pt-4">
                   <button
                     onClick={handleSubmit}
                     disabled={isSubmitting}
@@ -467,8 +400,8 @@ export default function LearnerSignup({ theme, setTheme }) {
             </div>
           )}
 
-          {/* Page 3: Thank You */}
-          {currentPage === 3 && (
+          {/* Page 2: Thank You */}
+          {currentPage === 2 && (
             <div className="text-center">
               <h1 className="text-4xl md:text-3xl font-bold mb-6 md:whitespace-nowrap">Thank you for joining us on our journey!</h1>
               <div className="text-lg space-y-5 mb-0 text-primary">
